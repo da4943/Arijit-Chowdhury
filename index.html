@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>AOV AI Jobs - Advanced AI System</title>
+  <title>AOV AI Jobs - Startup AI System</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <style>
@@ -55,8 +55,8 @@
       margin-top: 10px;
       width: 100%;
       display: block;
-      text-decoration: none;
       text-align: center;
+      text-decoration: none;
     }
 
     .skill-box {
@@ -85,12 +85,12 @@
       font-weight: bold;
     }
 
-    .job-card{
-      margin-top:10px;
-      padding:12px;
-      background:#0f172a;
-      border-radius:12px;
-      border:1px solid #334155;
+    .job-card {
+      margin-top: 12px;
+      padding: 14px;
+      background: #0f172a;
+      border-radius: 12px;
+      border: 1px solid #334155;
     }
   </style>
 </head>
@@ -99,7 +99,7 @@
 
 <header>
   <h1>🤖 AOV AI Jobs</h1>
-  <p>Advanced AI Resume + Job Matching System</p>
+  <p>Startup AI Job Matching System</p>
 </header>
 
 <div class="container">
@@ -139,26 +139,12 @@
 
 <script>
 const jobs = [
-  {
-    title:"AI Developer",
-    skills:["ai","python","ml"],
-    level:"senior"
-  },
-  {
-    title:"ML Intern",
-    skills:["ml","python"],
-    level:"fresher"
-  },
-  {
-    title:"Data Analyst",
-    skills:["data","sql"],
-    level:"junior"
-  },
-  {
-    title:"Web Developer",
-    skills:["web","javascript","react"],
-    level:"junior"
-  }
+  { title:"AI Developer", skills:["ai","python","ml"], level:"senior" },
+  { title:"ML Intern", skills:["ml","python"], level:"fresher" },
+  { title:"Data Analyst", skills:["data","sql"], level:"junior" },
+  { title:"Web Developer", skills:["web","javascript","react"], level:"junior" },
+  { title:"Chatbot Engineer", skills:["chatbot","ai","javascript"], level:"junior" },
+  { title:"Marketing Executive", skills:["marketing"], level:"fresher" }
 ];
 
 function selectSkill(skill){
@@ -182,41 +168,40 @@ function generateAI(){
 
     if(exp.includes(job.level)) score += 20;
 
-    if(score>0){
+    if(score > 0){
       results.push({...job, score});
     }
   });
 
   results.sort((a,b)=>b.score-a.score);
 
-  let html = "<div class='card'><h2>🎯 AI Results</h2>";
+  let html = `<div class="card"><h2>🎯 AI Job Matches</h2>`;
 
-  if(results.length===0){
-    html += "<p>No jobs found</p>";
+  if(results.length === 0){
+    html += `<p>No jobs found. Try more skills.</p>`;
   } else {
 
     results.forEach(j=>{
       html += `
         <div class="job-card">
           <h3>${j.title}</h3>
-          <p class="score">${j.score}% match</p>
+          <p class="score">${j.score}% Match</p>
 
           <a class="btn" target="_blank"
             href="https://www.linkedin.com/jobs/search/?keywords=${j.title}">
-            LinkedIn Jobs
+            Apply on LinkedIn
           </a>
 
           <a class="btn" target="_blank"
             href="https://www.google.com/search?q=${j.title}+jobs">
-            Google Jobs
+            Search on Google
           </a>
         </div>
       `;
     });
-
   }
 
-  html += "</div>";
+  html += `</div>`;
 
   document.getElementById("results").innerHTML = html;
 }
