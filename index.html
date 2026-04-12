@@ -22,10 +22,6 @@
       color: #38bdf8;
     }
 
-    p {
-      color: #cbd5e1;
-    }
-
     .search {
       margin-top: 10px;
       padding: 14px;
@@ -35,10 +31,6 @@
       font-size: 16px;
     }
 
-    select.search {
-      width: 62%;
-    }
-
     .btn {
       background: #38bdf8;
       color: black;
@@ -46,7 +38,7 @@
       border-radius: 10px;
       text-decoration: none;
       display: inline-block;
-      margin-top: 15px;
+      margin-top: 10px;
       font-weight: bold;
       cursor: pointer;
     }
@@ -78,15 +70,6 @@
 
   <br><br>
 
-  <select id="experience" class="search">
-    <option value="">Select Experience</option>
-    <option value="intern">Fresher</option>
-    <option value="junior">1-2 Years</option>
-    <option value="senior">3+ Years</option>
-  </select>
-
-  <br><br>
-
   <a class="btn" onclick="matchJobs()">Find Best Jobs</a>
 </header>
 
@@ -94,10 +77,10 @@
 
 <script>
 const jobs = [
-  { title: "AI Developer", description: "AI automation work", type: "senior" },
-  { title: "ML Intern", description: "Machine learning work", type: "intern" },
-  { title: "Chatbot Builder", description: "Freelance chatbot", type: "junior" },
-  { title: "Data Analyst", description: "Data analysis job", type: "junior" }
+  { title: "AI Developer", description: "AI automation work" },
+  { title: "ML Intern", description: "Machine learning work" },
+  { title: "Chatbot Builder", description: "Freelance chatbot" },
+  { title: "Data Analyst", description: "Data analysis job" }
 ];
 
 // show jobs
@@ -116,7 +99,7 @@ function displayJobs(list) {
   }
 }
 
-// SEARCH (FINAL WORKING)
+// SEARCH (FINAL)
 function searchJobs() {
   let input = document.getElementById("jobSearch").value.toLowerCase().trim();
   let container = document.getElementById("jobContainer");
@@ -150,12 +133,22 @@ function searchJobs() {
     container.innerHTML = `
       <div class="card">
         <h2>No result found</h2>
+        <p>Search jobs on external platforms</p>
+
         <a class="btn" target="_blank" href="https://www.google.com/search?q=${input}+jobs">
-          Search "${input}" jobs on Google
+          Search on Google
+        </a>
+
+        <br>
+
+        <a class="btn" target="_blank" href="https://www.linkedin.com/jobs/search/?keywords=${input}">
+          Search on LinkedIn
         </a>
       </div>
     `;
   }
+
+  window.scrollTo(0, 300);
 }
 
 // AI match
@@ -176,6 +169,8 @@ function matchJobs() {
       </div>
     `;
   }
+
+  window.scrollTo(0, 300);
 }
 
 // load
