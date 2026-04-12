@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>AOV AI Jobs - Level 6 Startup System</title>
+  <title>AOV AI Jobs - Level 7 SaaS</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <style>
@@ -13,30 +13,19 @@
     }
 
     .nav{
-      background:#111827;
       padding:12px;
       text-align:center;
+      background:#111827;
       color:#38bdf8;
       font-weight:bold;
       position:sticky;
       top:0;
-      border-bottom:1px solid #334155;
     }
 
     .container{
       max-width:1000px;
       margin:auto;
       padding:15px;
-    }
-
-    .grid{
-      display:grid;
-      grid-template-columns:1fr 1fr;
-      gap:15px;
-    }
-
-    @media(max-width:800px){
-      .grid{grid-template-columns:1fr;}
     }
 
     .card{
@@ -83,22 +72,8 @@
       font-weight:bold;
     }
 
-    .locked{
-      filter:blur(4px);
-      pointer-events:none;
-      opacity:0.6;
-    }
-
-    .qr{
-      width:170px;
-      margin-top:10px;
-    }
-
-    .tag{
-      font-size:12px;
-      background:red;
-      padding:3px 8px;
-      border-radius:5px;
+    .premium{
+      border:2px dashed gold;
     }
 
   </style>
@@ -106,115 +81,67 @@
 
 <body>
 
-<div class="nav">🤖 AOV AI STARTUP SYSTEM - LEVEL 6</div>
+<div class="nav">🚀 AOV AI STARTUP - LEVEL 7 SYSTEM</div>
 
-<div class="container grid">
+<div class="container">
 
   <!-- LOGIN -->
   <div class="card">
-    <h2>🔐 Login System</h2>
-    <input id="user" placeholder="Enter Username">
+    <h2>🔐 Login</h2>
+    <input id="email" placeholder="Email">
+    <input id="password" placeholder="Password">
     <button class="btn" onclick="login()">Login</button>
-    <p id="loginStatus"></p>
   </div>
 
   <!-- PROFILE -->
   <div class="card">
-    <h2>📄 AI Profile Builder</h2>
+    <h2>📄 AI Resume Builder</h2>
 
     <input id="name" placeholder="Full Name">
     <input id="skills" placeholder="Skills (ai, python, ml)">
-    <input id="exp" placeholder="Experience (fresher/junior/senior)">
+    <input id="exp" placeholder="Experience">
 
     <button class="btn" onclick="saveProfile()">Save Profile</button>
     <button class="btn" onclick="generateAI()">Find Jobs</button>
   </div>
 
-</div>
-
-<!-- SKILLS -->
-<div class="container">
-  <div class="card">
-    <h2>🔥 Skills Library</h2>
-
-    <button class="btn" onclick="addSkill('ai')">AI</button>
-    <button class="btn" onclick="addSkill('python')">Python</button>
-    <button class="btn" onclick="addSkill('ml')">ML</button>
-    <button class="btn" onclick="addSkill('data')">Data</button>
-    <button class="btn" onclick="addSkill('react')">React</button>
-    <button class="btn" onclick="addSkill('chatbot')">Chatbot</button>
-  </div>
-</div>
-
-<!-- JOBS -->
-<div class="container">
+  <!-- RESULTS -->
   <div class="card">
     <h2>🎯 AI Job Matches</h2>
     <div id="results"></div>
   </div>
-</div>
 
-<!-- RESUME -->
-<div class="container">
-  <div class="card">
-    <h2>📄 Auto Resume</h2>
+  <!-- PREMIUM -->
+  <div class="card premium">
+    <h2>💎 Premium System</h2>
 
-    <p><b>Name:</b> <span id="rname">-</span></p>
-    <p><b>Skills:</b> <span id="rskills">-</span></p>
-    <p><b>Experience:</b> <span id="rexp">-</span></p>
+    <p>✔ AI Resume PDF</p>
+    <p>✔ Auto Apply Jobs</p>
+    <p>✔ AI Interview Bot</p>
+
+    <img width="160"
+      src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=upi://pay?pa=9975076459@mbk&pn=AOV&am=200&cu=INR">
+
+    <button class="btn" onclick="pay()">Unlock ₹200</button>
   </div>
-</div>
 
-<!-- PREMIUM -->
-<div class="container">
-  <div class="card">
-    <h2>💎 Premium System <span class="tag">LOCKED</span></h2>
-
-    <div id="premium" class="locked">
-
-      <p>✔ AI Resume PDF Download</p>
-      <p>✔ Auto Job Apply Bot</p>
-      <p>✔ AI Interview Chatbot</p>
-      <p>✔ Priority Job Matching</p>
-
-    </div>
-
-    <img class="qr"
-      src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=upi://pay?pa=9975076459@mbk&pn=AOV%20AI%20Jobs&am=200&cu=INR">
-
-    <button class="btn" onclick="unlock()">Unlock Premium ₹200</button>
-  </div>
 </div>
 
 <script>
 
-let loggedUser="";
-
 const jobs=[
-  {title:"AI Engineer",skills:["ai","python","ml"],level:"senior"},
-  {title:"ML Intern",skills:["ml","python"],level:"fresher"},
-  {title:"Data Analyst",skills:["data","sql"],level:"junior"},
-  {title:"Web Developer",skills:["react","javascript"],level:"junior"},
-  {title:"Chatbot Dev",skills:["chatbot","ai"],level:"junior"}
+  {title:"AI Engineer",skills:["ai","python","ml"]},
+  {title:"Data Analyst",skills:["data","sql"]},
+  {title:"Web Developer",skills:["react","javascript"]},
+  {title:"ML Intern",skills:["ml","python"]}
 ];
 
-// LOGIN
+// LOGIN (simple demo)
 function login(){
-  let u=document.getElementById("user").value;
-  if(u){
-    loggedUser=u;
-    localStorage.setItem("user",u);
-    document.getElementById("loginStatus").innerText="Logged in as "+u;
-  }
+  alert("Login success (demo mode)");
 }
 
-// ADD SKILL
-function addSkill(s){
-  let i=document.getElementById("skills");
-  i.value += (i.value?",":"")+s;
-}
-
-// SAVE PROFILE
+// SAVE PROFILE (local DB)
 function saveProfile(){
   let data={
     name:document.getElementById("name").value,
@@ -222,19 +149,14 @@ function saveProfile(){
     exp:document.getElementById("exp").value
   };
 
-  localStorage.setItem("profile_"+loggedUser,JSON.stringify(data));
-  alert("Profile Saved ✅");
+  localStorage.setItem("profile",JSON.stringify(data));
+  alert("Profile saved in system");
 }
 
 // AI ENGINE
 function generateAI(){
 
   let skills=document.getElementById("skills").value.toLowerCase().split(",");
-  let exp=document.getElementById("exp").value.toLowerCase();
-
-  document.getElementById("rname").innerText=document.getElementById("name").value;
-  document.getElementById("rskills").innerText=skills.join(",");
-  document.getElementById("rexp").innerText=exp;
 
   let results=[];
 
@@ -245,9 +167,9 @@ function generateAI(){
       if(skills.map(x=>x.trim()).includes(s)) score+=50;
     });
 
-    if(exp.includes(j.level)) score+=20;
-
-    results.push({...j,score});
+    if(score>0){
+      results.push({...j,score});
+    }
   });
 
   results.sort((a,b)=>b.score-a.score);
@@ -274,20 +196,10 @@ function generateAI(){
   document.getElementById("results").innerHTML=html;
 }
 
-// UNLOCK PREMIUM
-function unlock(){
-  alert("Redirecting to UPI Payment...");
+// PAYMENT
+function pay(){
   window.location.href =
-    "upi://pay?pa=9975076459@mbk&pn=AOV%20AI%20Jobs&am=200&cu=INR";
-}
-
-// AUTO LOAD USER
-window.onload=function(){
-  let u=localStorage.getItem("user");
-  if(u){
-    loggedUser=u;
-    document.getElementById("loginStatus").innerText="Logged in as "+u;
-  }
+    "upi://pay?pa=9975076459@mbk&pn=AOV&am=200&cu=INR";
 }
 
 </script>
