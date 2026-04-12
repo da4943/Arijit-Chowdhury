@@ -47,13 +47,16 @@
     .btn {
       background: #38bdf8;
       color: black;
-      padding: 12px;
+      padding: 10px;
       border-radius: 10px;
       font-weight: bold;
       cursor: pointer;
       border: none;
       margin-top: 10px;
       width: 100%;
+      display: block;
+      text-decoration: none;
+      text-align: center;
     }
 
     .skill-box {
@@ -82,9 +85,12 @@
       font-weight: bold;
     }
 
-    .qr {
-      width: 180px;
-      margin-top: 10px;
+    .job-card{
+      margin-top:10px;
+      padding:12px;
+      background:#0f172a;
+      border-radius:12px;
+      border:1px solid #334155;
     }
   </style>
 </head>
@@ -102,79 +108,72 @@
   <div class="card">
     <h2>📄 Your AI Profile</h2>
 
-    <input id="name" class="search" placeholder="Full Name">
     <input id="skills" class="search" placeholder="Skills (AI Python ML)">
-    <input id="exp" class="search" placeholder="Experience (Fresher / Junior / Senior)">
-    <input id="education" class="search" placeholder="Education">
+    <input id="exp" class="search" placeholder="Experience (fresher / junior / senior)">
 
     <button class="btn" onclick="generateAI()">Generate AI Matches</button>
   </div>
 
-  <!-- SKILLS LIBRARY -->
+  <!-- SKILLS -->
   <div class="card">
-    <h2>🔥 All Skills Library</h2>
+    <h2>🔥 Skills Library</h2>
 
     <div class="skill-box">
       <div class="skill" onclick="selectSkill('ai')">AI</div>
       <div class="skill" onclick="selectSkill('python')">Python</div>
-      <div class="skill" onclick="selectSkill('machine learning')">Machine Learning</div>
-      <div class="skill" onclick="selectSkill('deep learning')">Deep Learning</div>
-      <div class="skill" onclick="selectSkill('data')">Data Science</div>
+      <div class="skill" onclick="selectSkill('machine learning')">ML</div>
+      <div class="skill" onclick="selectSkill('data')">Data</div>
       <div class="skill" onclick="selectSkill('sql')">SQL</div>
-      <div class="skill" onclick="selectSkill('excel')">Excel</div>
       <div class="skill" onclick="selectSkill('javascript')">JavaScript</div>
       <div class="skill" onclick="selectSkill('react')">React</div>
-      <div class="skill" onclick="selectSkill('node')">Node.js</div>
-      <div class="skill" onclick="selectSkill('web')">Web Dev</div>
+      <div class="skill" onclick="selectSkill('web')">Web</div>
       <div class="skill" onclick="selectSkill('chatbot')">Chatbot</div>
       <div class="skill" onclick="selectSkill('marketing')">Marketing</div>
-      <div class="skill" onclick="selectSkill('seo')">SEO</div>
-      <div class="skill" onclick="selectSkill('freelance')">Freelancing</div>
     </div>
   </div>
 
   <!-- RESULTS -->
   <div id="results"></div>
 
-  <!-- PAYMENT -->
-  <div class="card">
-    <h2>💳 Premium Resume Service</h2>
-
-    <img class="qr"
-      src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=upi://pay?pa=9975076459@mbk&pn=AOV%20AI%20Jobs&am=49&cu=INR">
-
-    <button class="btn" onclick="payNow()">Pay ₹49 & Unlock AI Resume</button>
-  </div>
-
 </div>
 
 <script>
 const jobs = [
-  { title: "AI Developer", skills: ["ai","python","ml"], level: "senior" },
-  { title: "ML Intern", skills: ["ml","python"], level: "fresher" },
-  { title: "Data Analyst", skills: ["excel","data","sql"], level: "junior" },
-  { title: "Chatbot Developer", skills: ["ai","chatbot","javascript"], level: "junior" },
-  { title: "Web Developer", skills: ["web","javascript","react"], level: "junior" }
+  {
+    title:"AI Developer",
+    skills:["ai","python","ml"],
+    level:"senior"
+  },
+  {
+    title:"ML Intern",
+    skills:["ml","python"],
+    level:"fresher"
+  },
+  {
+    title:"Data Analyst",
+    skills:["data","sql"],
+    level:"junior"
+  },
+  {
+    title:"Web Developer",
+    skills:["web","javascript","react"],
+    level:"junior"
+  }
 ];
 
-// SELECT SKILL
 function selectSkill(skill){
   document.getElementById("skills").value = skill;
   generateAI();
 }
 
-// AI MATCH ENGINE
 function generateAI(){
 
-  let skillsText = document.getElementById("skills").value.toLowerCase().trim();
-  let exp = document.getElementById("exp").value.toLowerCase().trim();
-
-  let skills = skillsText.split(/[\s,]+/).filter(Boolean);
+  let skills = document.getElementById("skills").value.toLowerCase().split(/[\s,]+/);
+  let exp = document.getElementById("exp").value.toLowerCase();
 
   let results = [];
 
-  jobs.forEach(job => {
-
+  jobs.forEach(job=>{
     let score = 0;
 
     job.skills.forEach(s=>{
@@ -183,34 +182,43 @@ function generateAI(){
 
     if(exp.includes(job.level)) score += 20;
 
-    if(score > 0){
+    if(score>0){
       results.push({...job, score});
     }
   });
 
   results.sort((a,b)=>b.score-a.score);
 
-  let html = "<div class='card'><h2>🎯 AI Job Matches</h2>";
+  let html = "<div class='card'><h2>🎯 AI Results</h2>";
 
-  if(results.length === 0){
-    html += "<p>No match found. Try more skills.</p>";
+  if(results.length===0){
+    html += "<p>No jobs found</p>";
   } else {
-    results.forEach(r=>{
+
+    results.forEach(j=>{
       html += `
-        <p>💼 <b>${r.title}</b> - <span class="score">${r.score}% match</span></p>
+        <div class="job-card">
+          <h3>${j.title}</h3>
+          <p class="score">${j.score}% match</p>
+
+          <a class="btn" target="_blank"
+            href="https://www.linkedin.com/jobs/search/?keywords=${j.title}">
+            LinkedIn Jobs
+          </a>
+
+          <a class="btn" target="_blank"
+            href="https://www.google.com/search?q=${j.title}+jobs">
+            Google Jobs
+          </a>
+        </div>
       `;
     });
+
   }
 
   html += "</div>";
 
   document.getElementById("results").innerHTML = html;
-}
-
-// PAYMENT
-function payNow(){
-  window.location.href =
-    "upi://pay?pa=9975076459@mbk&pn=AOV%20AI%20Jobs&am=49&cu=INR";
 }
 </script>
 
