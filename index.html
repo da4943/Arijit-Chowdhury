@@ -1,157 +1,144 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>AOV AI Jobs - Startup AI System</title>
+  <title>AOV AI Jobs - Level 2 Startup</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <style>
     body {
-      font-family: 'Segoe UI', Arial, sans-serif;
-      margin: 0;
-      background: linear-gradient(135deg, #0f172a, #111827);
-      color: white;
+      font-family: Arial;
+      margin:0;
+      background: linear-gradient(135deg,#0f172a,#111827);
+      color:white;
     }
 
-    header {
-      padding: 50px 20px;
-      text-align: center;
+    header{
+      text-align:center;
+      padding:40px;
     }
 
-    h1 {
-      font-size: 42px;
-      color: #38bdf8;
+    h1{color:#38bdf8;font-size:40px;}
+
+    .container{
+      max-width:900px;
+      margin:auto;
+      padding:20px;
     }
 
-    .container {
-      padding: 20px;
-      max-width: 900px;
-      margin: auto;
+    .card{
+      background:#1f2937;
+      padding:15px;
+      border-radius:12px;
+      margin-bottom:15px;
     }
 
-    .card {
-      background: rgba(30, 41, 59, 0.85);
-      padding: 18px;
-      border-radius: 16px;
-      margin-bottom: 15px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+    input{
+      width:100%;
+      padding:10px;
+      margin:5px 0;
+      border-radius:8px;
+      border:none;
     }
 
-    .search {
-      width: 100%;
-      padding: 12px;
-      margin: 6px 0;
-      border-radius: 10px;
-      border: none;
+    .btn{
+      background:#38bdf8;
+      color:black;
+      padding:10px;
+      border:none;
+      width:100%;
+      border-radius:8px;
+      font-weight:bold;
+      cursor:pointer;
+      margin-top:10px;
     }
 
-    .btn {
-      background: #38bdf8;
-      color: black;
-      padding: 10px;
-      border-radius: 10px;
-      font-weight: bold;
-      cursor: pointer;
-      border: none;
-      margin-top: 10px;
-      width: 100%;
-      display: block;
-      text-align: center;
-      text-decoration: none;
+    .job{
+      background:#0f172a;
+      padding:10px;
+      border-radius:10px;
+      margin-top:10px;
+      border:1px solid #334155;
     }
 
-    .skill-box {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-top: 10px;
+    .score{
+      color:#22c55e;
     }
 
-    .skill {
-      background: #1f2937;
-      padding: 8px 12px;
-      border-radius: 20px;
-      cursor: pointer;
-      font-size: 13px;
-      border: 1px solid #334155;
-    }
-
-    .skill:hover {
-      background: #38bdf8;
-      color: black;
-    }
-
-    .score {
-      color: #22c55e;
-      font-weight: bold;
-    }
-
-    .job-card {
-      margin-top: 12px;
-      padding: 14px;
-      background: #0f172a;
-      border-radius: 12px;
-      border: 1px solid #334155;
-    }
   </style>
 </head>
 
 <body>
 
 <header>
-  <h1>🤖 AOV AI Jobs</h1>
-  <p>Startup AI Job Matching System</p>
+  <h1>🤖 AOV AI Startup System</h1>
+  <p>Level 2 AI Job + Resume Platform</p>
 </header>
 
 <div class="container">
 
   <!-- PROFILE -->
   <div class="card">
-    <h2>📄 Your AI Profile</h2>
+    <h2>Create Profile</h2>
 
-    <input id="skills" class="search" placeholder="Skills (AI Python ML)">
-    <input id="exp" class="search" placeholder="Experience (fresher / junior / senior)">
+    <input id="name" placeholder="Full Name">
+    <input id="skills" placeholder="Skills (AI Python ML)">
+    <input id="exp" placeholder="Experience (fresher/junior/senior)">
 
-    <button class="btn" onclick="generateAI()">Generate AI Matches</button>
+    <button class="btn" onclick="saveProfile()">Save Profile</button>
   </div>
 
-  <!-- SKILLS -->
+  <!-- AI MATCH -->
   <div class="card">
-    <h2>🔥 Skills Library</h2>
+    <h2>AI Job Matching</h2>
+    <button class="btn" onclick="generateAI()">Find Jobs</button>
 
-    <div class="skill-box">
-      <div class="skill" onclick="selectSkill('ai')">AI</div>
-      <div class="skill" onclick="selectSkill('python')">Python</div>
-      <div class="skill" onclick="selectSkill('machine learning')">ML</div>
-      <div class="skill" onclick="selectSkill('data')">Data</div>
-      <div class="skill" onclick="selectSkill('sql')">SQL</div>
-      <div class="skill" onclick="selectSkill('javascript')">JavaScript</div>
-      <div class="skill" onclick="selectSkill('react')">React</div>
-      <div class="skill" onclick="selectSkill('web')">Web</div>
-      <div class="skill" onclick="selectSkill('chatbot')">Chatbot</div>
-      <div class="skill" onclick="selectSkill('marketing')">Marketing</div>
-    </div>
+    <div id="results"></div>
   </div>
 
-  <!-- RESULTS -->
-  <div id="results"></div>
+  <!-- RESUME -->
+  <div class="card">
+    <h2>Auto Resume Preview</h2>
+    <div id="resume"></div>
+  </div>
+
+  <!-- PAYMENT -->
+  <div class="card">
+    <h2>Premium Upgrade</h2>
+    <p>Unlock AI Resume PDF + Priority Jobs</p>
+
+    <a class="btn" href="upi://pay?pa=9975076459@mbk&pn=AOV%20AI%20Jobs&am=49&cu=INR">
+      Pay ₹49 via UPI
+    </a>
+  </div>
 
 </div>
 
 <script>
+
 const jobs = [
-  { title:"AI Developer", skills:["ai","python","ml"], level:"senior" },
-  { title:"ML Intern", skills:["ml","python"], level:"fresher" },
-  { title:"Data Analyst", skills:["data","sql"], level:"junior" },
-  { title:"Web Developer", skills:["web","javascript","react"], level:"junior" },
-  { title:"Chatbot Engineer", skills:["chatbot","ai","javascript"], level:"junior" },
-  { title:"Marketing Executive", skills:["marketing"], level:"fresher" }
+  {title:"AI Engineer",skills:["ai","python","ml"],level:"senior"},
+  {title:"ML Intern",skills:["ml","python"],level:"fresher"},
+  {title:"Data Analyst",skills:["data","sql"],level:"junior"},
+  {title:"Web Developer",skills:["web","javascript"],level:"junior"},
+  {title:"Marketing Executive",skills:["marketing"],level:"fresher"}
 ];
 
-function selectSkill(skill){
-  document.getElementById("skills").value = skill;
-  generateAI();
+// SAVE PROFILE (STARTUP FEATURE)
+function saveProfile(){
+
+  let user = {
+    name:document.getElementById("name").value,
+    skills:document.getElementById("skills").value,
+    exp:document.getElementById("exp").value
+  };
+
+  localStorage.setItem("userProfile", JSON.stringify(user));
+
+  alert("Profile Saved (Startup DB Ready)");
+  showResume();
 }
 
+// AI MATCH ENGINE
 function generateAI(){
 
   let skills = document.getElementById("skills").value.toLowerCase().split(/[\s,]+/);
@@ -168,43 +155,54 @@ function generateAI(){
 
     if(exp.includes(job.level)) score += 20;
 
-    if(score > 0){
-      results.push({...job, score});
+    if(score>0){
+      results.push({...job,score});
     }
   });
 
   results.sort((a,b)=>b.score-a.score);
 
-  let html = `<div class="card"><h2>🎯 AI Job Matches</h2>`;
+  let html="";
 
-  if(results.length === 0){
-    html += `<p>No jobs found. Try more skills.</p>`;
-  } else {
+  results.forEach(j=>{
+    html+=`
+      <div class="job">
+        <h3>${j.title}</h3>
+        <p class="score">${j.score}% match</p>
 
-    results.forEach(j=>{
-      html += `
-        <div class="job-card">
-          <h3>${j.title}</h3>
-          <p class="score">${j.score}% Match</p>
+        <a class="btn" target="_blank"
+        href="https://www.linkedin.com/jobs/search/?keywords=${j.title}">
+        LinkedIn
+        </a>
 
-          <a class="btn" target="_blank"
-            href="https://www.linkedin.com/jobs/search/?keywords=${j.title}">
-            Apply on LinkedIn
-          </a>
-
-          <a class="btn" target="_blank"
-            href="https://www.google.com/search?q=${j.title}+jobs">
-            Search on Google
-          </a>
-        </div>
-      `;
-    });
-  }
-
-  html += `</div>`;
+        <a class="btn" target="_blank"
+        href="https://www.google.com/search?q=${j.title}+jobs">
+        Google
+        </a>
+      </div>
+    `;
+  });
 
   document.getElementById("results").innerHTML = html;
 }
+
+// RESUME BUILDER
+function showResume(){
+
+  let user = JSON.parse(localStorage.getItem("userProfile"));
+
+  if(!user) return;
+
+  document.getElementById("resume").innerHTML = `
+    <p><b>Name:</b> ${user.name}</p>
+    <p><b>Skills:</b> ${user.skills}</p>
+    <p><b>Experience:</b> ${user.exp}</p>
+  `;
+}
+
+// LOAD
+showResume();
+
 </script>
 
 </body>
