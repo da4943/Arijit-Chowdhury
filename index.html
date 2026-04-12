@@ -64,7 +64,7 @@
 
   <input id="jobSearch" class="search" type="text" placeholder="Search jobs..." onkeyup="searchJobs()">
 
-  <!-- RESULT SHOWS HERE -->
+  <!-- RESULT -->
   <div class="container" id="jobContainer"></div>
 
   <input id="userSkill" class="search" type="text" placeholder="Enter your skill">
@@ -73,6 +73,28 @@
 
   <a class="btn" onclick="matchJobs()">Find Best Jobs</a>
 </header>
+
+<!-- ✅ RESUME FORM ADDED -->
+<div class="container">
+  <div class="card">
+    <h2>📄 Create Your AI Resume</h2>
+
+    <input id="name" class="search" type="text" placeholder="Your Name"><br><br>
+
+    <input id="email" class="search" type="text" placeholder="Your Email"><br><br>
+
+    <input id="skills" class="search" type="text" placeholder="Your Skills"><br><br>
+
+    <select id="exp" class="search">
+      <option value="">Select Experience</option>
+      <option>Fresher</option>
+      <option>1-2 Years</option>
+      <option>3+ Years</option>
+    </select><br><br>
+
+    <a class="btn" onclick="submitForm()">Create Resume</a>
+  </div>
+</div>
 
 <script>
 const jobs = [
@@ -114,7 +136,7 @@ function displayJobs(list) {
   });
 }
 
-// SEARCH
+// search
 function searchJobs() {
   let input = document.getElementById("jobSearch").value.toLowerCase().trim();
   let container = document.getElementById("jobContainer");
@@ -148,7 +170,6 @@ function searchJobs() {
     container.innerHTML = `
       <div class="card">
         <h2>No result found</h2>
-        <p>Search on external platforms</p>
 
         <a class="btn" target="_blank" href="https://www.google.com/search?q=${input}+jobs">
           Google Search
@@ -164,7 +185,7 @@ function searchJobs() {
   }
 }
 
-// AI MATCH
+// match
 function matchJobs() {
   let skill = document.getElementById("userSkill").value.toLowerCase();
 
@@ -184,7 +205,31 @@ function matchJobs() {
   }
 }
 
-// load default
+// ✅ FORM FUNCTION
+function submitForm() {
+  let name = document.getElementById("name").value;
+  let email = document.getElementById("email").value;
+  let skills = document.getElementById("skills").value;
+  let exp = document.getElementById("exp").value;
+
+  if (name === "" || email === "" || skills === "") {
+    alert("Please fill all details");
+    return;
+  }
+
+  let message = `
+Name: ${name}
+Email: ${email}
+Skills: ${skills}
+Experience: ${exp}
+  `;
+
+  alert("Resume request submitted!");
+
+  console.log(message);
+}
+
+// load
 displayJobs(jobs);
 </script>
 
