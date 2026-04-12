@@ -13,7 +13,7 @@
     }
 
     header {
-      padding: 60px 20px;
+      padding: 50px 20px;
       text-align: center;
     }
 
@@ -22,55 +22,81 @@
       color: #38bdf8;
     }
 
-    .search {
-      margin-top: 10px;
-      padding: 14px;
-      width: 80%;
-      border-radius: 12px;
-      border: none;
-      font-size: 16px;
-    }
-
-    .btn {
-      background: #38bdf8;
-      color: black;
-      padding: 12px 20px;
-      border-radius: 10px;
-      text-decoration: none;
-      display: inline-block;
-      margin-top: 10px;
-      font-weight: bold;
-      cursor: pointer;
-    }
-
     .container {
       padding: 20px;
     }
 
     .card {
-      background: rgba(30, 41, 59, 0.8);
+      background: rgba(30, 41, 59, 0.85);
       padding: 20px;
-      border-radius: 15px;
+      border-radius: 16px;
       margin-bottom: 15px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.3);
     }
 
-    /* QR BOX */
-    .qr-box {
-      margin-top: 15px;
-      text-align: center;
-      background: #0f172a;
-      padding: 15px;
-      border-radius: 12px;
-    }
-
-    .qr-box img {
-      width: 200px;
+    .btn {
+      background: #38bdf8;
+      color: black;
+      padding: 12px 18px;
       border-radius: 10px;
+      text-decoration: none;
+      display: inline-block;
+      font-weight: bold;
+      cursor: pointer;
+      margin-top: 10px;
+      border: none;
     }
 
-    .small-text {
+    .btn:hover {
+      background: #0ea5e9;
+    }
+
+    .qr {
+      width: 220px;
+      border-radius: 12px;
+      margin-top: 10px;
+    }
+
+    .small {
       font-size: 12px;
       color: #94a3b8;
+    }
+
+    /* POPUP */
+    .popup {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.7);
+      justify-content: center;
+      align-items: center;
+    }
+
+    .popup-content {
+      background: #1e293b;
+      padding: 20px;
+      border-radius: 12px;
+      text-align: center;
+      width: 80%;
+      max-width: 300px;
+    }
+
+    .loader {
+      border: 4px solid #ccc;
+      border-top: 4px solid #38bdf8;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      margin: 15px auto;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
     }
   </style>
 </head>
@@ -79,144 +105,67 @@
 
 <header>
   <h1>AOV AI Jobs</h1>
-  <p>AI-powered job + Resume platform</p>
-
-  <input id="jobSearch" class="search" type="text" placeholder="Search jobs..." onkeyup="searchJobs()">
-
-  <div class="container" id="jobContainer"></div>
-
-  <input id="userSkill" class="search" type="text" placeholder="Enter your skill">
-
-  <br>
-
-  <a class="btn" onclick="matchJobs()">Find Best Jobs</a>
+  <p>AI Resume + Job Matching Platform</p>
 </header>
 
-<!-- ✅ RESUME FORM -->
 <div class="container">
+
+  <!-- RESUME FORM -->
   <div class="card">
-    <h2>📄 Create Your AI Resume</h2>
+    <h2>📄 Create Resume</h2>
 
-    <input id="name" class="search" type="text" placeholder="Full Name"><br><br>
-    <input id="father" class="search" type="text" placeholder="Father Name"><br><br>
-    <input id="email" class="search" type="email" placeholder="Email"><br><br>
-    <input id="phone" class="search" type="text" placeholder="Phone"><br><br>
-    <input id="age" class="search" type="number" placeholder="Age"><br><br>
-    <input id="dob" class="search" type="date"><br><br>
-    <input id="skills" class="search" type="text" placeholder="Skills"><br><br>
+    <input id="name" class="btn" style="width:90%; text-align:left;" placeholder="Full Name"><br><br>
+    <input id="email" class="btn" style="width:90%; text-align:left;" placeholder="Email"><br><br>
+    <input id="skills" class="btn" style="width:90%; text-align:left;" placeholder="Skills"><br><br>
 
-    <select id="exp" class="search">
-      <option value="">Experience</option>
-      <option>Fresher</option>
-      <option>1-2 Years</option>
-      <option>3-5 Years</option>
-    </select><br><br>
+    <button class="btn" onclick="openPayment()">Pay ₹49 & Generate Resume</button>
+  </div>
 
-    <input id="education" class="search" type="text" placeholder="Education"><br><br>
+  <!-- PAYMENT CARD -->
+  <div class="card">
+    <h2>💳 Secure Payment</h2>
+    <p>Scan QR or click pay button</p>
 
-    <!-- PAY BUTTON -->
-    <a class="btn" id="payBtn">Pay ₹49 & Create Resume</a>
+    <!-- QR (UPI HIDDEN INSIDE) -->
+    <img class="qr"
+      src="https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=upi://pay?pa=9975076459@mbk&pn=AOV%20AI%20Jobs&am=49&cu=INR">
 
-    <!-- ✅ UPI QR CODE -->
-    <div class="qr-box">
-      <h3>📲 Scan & Pay via UPI</h3>
+    <p class="small">Scan using Google Pay / PhonePe / Paytm</p>
 
-      <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=upi://pay?pa=9975076459@mbk&pn=AOV%20AI%20Jobs&am=49&cu=INR" />
+    <button class="btn" onclick="openPayment()">Pay Now</button>
+  </div>
 
-      <p class="small-text">Scan with Google Pay / PhonePe / Paytm</p>
-    </div>
+</div>
 
+<!-- POPUP -->
+<div class="popup" id="popup">
+  <div class="popup-content">
+    <h3>Processing Payment</h3>
+    <div class="loader"></div>
+    <p>Please complete payment in UPI app</p>
   </div>
 </div>
 
 <script>
-const jobs = [
-  {
-    title: "AI Developer",
-    description: "Work on AI models",
-    link: "https://www.linkedin.com/jobs/search/?keywords=ai%20developer"
-  },
-  {
-    title: "Machine Learning Intern",
-    description: "Assist ML projects",
-    link: "https://www.linkedin.com/jobs/search/?keywords=machine%20learning%20intern"
-  },
-  {
-    title: "Chatbot Developer",
-    description: "Build chatbot systems",
-    link: "https://www.google.com/search?q=chatbot+developer+jobs"
-  }
-];
-
-function displayJobs(list) {
-  let container = document.getElementById("jobContainer");
-  container.innerHTML = "";
-
-  list.forEach(job => {
-    container.innerHTML += `
-      <div class="card">
-        <h2>${job.title}</h2>
-        <p>${job.description}</p>
-        <a class="btn" target="_blank" href="${job.link}">Apply</a>
-      </div>
-    `;
-  });
-}
-
-function searchJobs() {
-  let input = document.getElementById("jobSearch").value.toLowerCase().trim();
-
-  let filtered = jobs.filter(job =>
-    job.title.toLowerCase().includes(input)
-  );
-
-  if (filtered.length > 0) {
-    displayJobs(filtered);
-  } else {
-    document.getElementById("jobContainer").innerHTML = `
-      <div class="card">
-        <h2>No result found</h2>
-        <a class="btn" target="_blank"
-        href="https://www.google.com/search?q=${input}+jobs">
-        Search on Google
-        </a>
-      </div>
-    `;
-  }
-}
-
-function matchJobs() {
-  let skill = document.getElementById("userSkill").value.toLowerCase();
-  let result = jobs.filter(job =>
-    job.title.toLowerCase().includes(skill)
-  );
-
-  displayJobs(result);
-}
-
-// PAYMENT BUTTON
-document.getElementById("payBtn").addEventListener("click", function () {
-
+function openPayment() {
   let name = document.getElementById("name").value;
   let email = document.getElementById("email").value;
   let skills = document.getElementById("skills").value;
 
-  if (name === "" || email === "" || skills === "") {
-    alert("Please fill required details first");
+  if (!name || !email || !skills) {
+    alert("Please fill all details first");
     return;
   }
 
-  localStorage.setItem("resumeData", JSON.stringify({
-    name, email, skills
-  }));
+  // show popup
+  document.getElementById("popup").style.display = "flex";
 
-  alert("Opening UPI app...");
-
-  window.location.href =
-    "upi://pay?pa=9975076459@mbk&pn=AOV%20AI%20Jobs&am=49&cu=INR";
-});
-
-displayJobs(jobs);
+  // UPI redirect after 2 sec
+  setTimeout(() => {
+    window.location.href =
+      "upi://pay?pa=9975076459@mbk&pn=AOV%20AI%20Jobs&am=49&cu=INR";
+  }, 2000);
+}
 </script>
 
 </body>
