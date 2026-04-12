@@ -1,74 +1,78 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>AOV AI Jobs - Level 3 Clean UI</title>
+  <title>AOV AI Jobs - SaaS Level 4</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <style>
     body{
       margin:0;
       font-family:Arial;
-      background:linear-gradient(135deg,#ff9933,#ffffff,#138808);
-      color:#0f172a;
+      background:#0b1220;
+      color:white;
     }
 
-    header{
-      text-align:center;
-      padding:20px;
-      background:rgba(255,255,255,0.9);
-      border-bottom:3px solid #138808;
+    /* TOP NAV */
+    .nav{
+      position:sticky;
+      top:0;
+      background:#111827;
+      padding:12px;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      border-bottom:1px solid #334155;
+      z-index:10;
     }
 
-    h1{
-      margin:0;
-      font-size:32px;
+    .logo{
+      font-weight:bold;
+      color:#38bdf8;
     }
 
     .container{
-      max-width:900px;
+      max-width:1000px;
       margin:auto;
       padding:15px;
     }
 
-    .card{
-      background:white;
-      padding:18px;
-      border-radius:12px;
-      box-shadow:0 6px 18px rgba(0,0,0,0.12);
-      margin-bottom:15px;
-    }
-
-    /* ✅ PROPER ALIGNMENT FIX */
-    .form-grid{
+    .grid{
       display:grid;
       grid-template-columns:1fr 1fr;
-      gap:10px;
+      gap:15px;
     }
 
-    @media(max-width:700px){
-      .form-grid{
-        grid-template-columns:1fr;
-      }
+    @media(max-width:800px){
+      .grid{grid-template-columns:1fr;}
+    }
+
+    .card{
+      background:#111827;
+      border:1px solid #334155;
+      padding:15px;
+      border-radius:12px;
     }
 
     input{
       width:100%;
       padding:12px;
+      margin-top:8px;
       border-radius:8px;
-      border:1px solid #ccc;
-      box-sizing:border-box;
+      border:1px solid #334155;
+      background:#0b1220;
+      color:white;
     }
 
     .btn{
       width:100%;
       padding:12px;
-      background:#138808;
-      color:white;
+      margin-top:10px;
+      background:#38bdf8;
       border:none;
       border-radius:8px;
       font-weight:bold;
       cursor:pointer;
-      margin-top:10px;
+      color:black;
     }
 
     .skill-box{
@@ -80,61 +84,60 @@
 
     .skill{
       padding:6px 10px;
-      background:#f1f5f9;
+      border:1px solid #334155;
       border-radius:20px;
       cursor:pointer;
-      font-size:13px;
-      border:1px solid #cbd5e1;
+      font-size:12px;
     }
 
     .skill:hover{
-      background:#ff9933;
-      color:white;
+      background:#38bdf8;
+      color:black;
     }
 
     .job{
-      border:1px solid #e2e8f0;
       padding:12px;
+      border:1px solid #334155;
       border-radius:10px;
       margin-top:10px;
+      background:#0b1220;
     }
 
     .score{
+      color:#22c55e;
       font-weight:bold;
-      color:#16a34a;
+    }
+
+    .qr{
+      width:160px;
     }
 
     .center{
       text-align:center;
     }
 
-    .qr{
-      width:160px;
-      margin-top:10px;
-    }
   </style>
 </head>
 
 <body>
 
-<header>
-  <h1>AI JOBS SYSTEM</h1>
-  <p>Clean Level 3 Startup Interface</p>
-</header>
+<!-- NAV -->
+<div class="nav">
+  <div class="logo">🤖 AOV AI SaaS</div>
+  <div>Level 4 System</div>
+</div>
 
-<div class="container">
+<div class="container grid">
 
   <!-- PROFILE -->
   <div class="card">
-    <h2>📄 AI Profile</h2>
+    <h2>📄 AI Profile Builder</h2>
 
-    <div class="form-grid">
-      <input id="name" placeholder="Full Name">
-      <input id="exp" placeholder="Experience (fresher/junior/senior)">
-    </div>
+    <input id="name" placeholder="Full Name">
+    <input id="skills" placeholder="Skills (ai, python, ml)">
+    <input id="exp" placeholder="Experience (fresher/junior/senior)">
 
-    <input id="skills" placeholder="Skills (AI, Python, ML)">
-
+    <button class="btn" onclick="saveProfile()">Save Profile</button>
     <button class="btn" onclick="generateAI()">Find AI Jobs</button>
   </div>
 
@@ -149,7 +152,7 @@
       <div class="skill" onclick="addSkill('data')">Data</div>
       <div class="skill" onclick="addSkill('sql')">SQL</div>
       <div class="skill" onclick="addSkill('react')">React</div>
-      <div class="skill" onclick="addSkill('javascript')">JavaScript</div>
+      <div class="skill" onclick="addSkill('javascript')">JS</div>
       <div class="skill" onclick="addSkill('chatbot')">Chatbot</div>
       <div class="skill" onclick="addSkill('marketing')">Marketing</div>
     </div>
@@ -163,16 +166,16 @@
 
   <!-- RESUME -->
   <div class="card">
-    <h2>📄 Resume Preview</h2>
+    <h2>📄 Live Resume Preview</h2>
     <div id="resume"></div>
   </div>
 
   <!-- PAYMENT -->
   <div class="card center">
-    <h2>💳 Premium Access</h2>
+    <h2>💳 Premium Unlock</h2>
 
-    <p><b>AI Resume + Job Boost</b></p>
-    <p><b>₹200 Premium</b></p>
+    <p>AI Resume + Job Boost</p>
+    <p><b>₹200 Lifetime Access</b></p>
 
     <img class="qr"
       src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=upi://pay?pa=9975076459@mbk&pn=AOV%20AI%20Jobs&am=200&cu=INR">
@@ -184,7 +187,7 @@
 
 <script>
 
-const jobs = [
+const jobs=[
   {title:"AI Engineer",skills:["ai","python","ml"],level:"senior"},
   {title:"ML Intern",skills:["ml","python"],level:"fresher"},
   {title:"Data Analyst",skills:["data","sql"],level:"junior"},
@@ -192,10 +195,22 @@ const jobs = [
   {title:"Chatbot Developer",skills:["chatbot","ai"],level:"junior"}
 ];
 
-// add skill
-function addSkill(skill){
-  let input=document.getElementById("skills");
-  input.value += (input.value ? "," : "") + skill;
+// ADD SKILL
+function addSkill(s){
+  let i=document.getElementById("skills");
+  i.value += (i.value?",":"")+s;
+}
+
+// SAVE PROFILE (local storage)
+function saveProfile(){
+  let data={
+    name:document.getElementById("name").value,
+    skills:document.getElementById("skills").value,
+    exp:document.getElementById("exp").value
+  };
+
+  localStorage.setItem("profile",JSON.stringify(data));
+  alert("Profile Saved ✅");
 }
 
 // AI ENGINE
@@ -206,43 +221,44 @@ function generateAI(){
 
   let results=[];
 
-  jobs.forEach(job=>{
+  jobs.forEach(j=>{
     let score=0;
 
-    job.skills.forEach(s=>{
+    j.skills.forEach(s=>{
       if(skills.map(x=>x.trim()).includes(s)) score+=50;
     });
 
-    if(exp.includes(job.level)) score+=20;
+    if(exp.includes(j.level)) score+=20;
 
-    results.push({...job,score});
+    if(score>0){
+      results.push({...j,score});
+    }
   });
 
   results.sort((a,b)=>b.score-a.score);
 
   let html="";
 
-  results.forEach(j=>{
+  results.forEach(r=>{
     html+=`
       <div class="job">
-        <h3>${j.title}</h3>
-        <p class="score">${j.score}% Match</p>
+        <h3>${r.title}</h3>
+        <p class="score">${r.score}% Match</p>
 
         <a class="btn" target="_blank"
-          href="https://www.linkedin.com/jobs/search/?keywords=${j.title}">
-          LinkedIn Jobs
-        </a>
+        href="https://www.linkedin.com/jobs/search/?keywords=${r.title}">
+        LinkedIn</a>
 
         <a class="btn" target="_blank"
-          href="https://www.google.com/search?q=${j.title}+jobs">
-          Google Jobs
-        </a>
+        href="https://www.google.com/search?q=${r.title}+jobs">
+        Google</a>
       </div>
     `;
   });
 
   document.getElementById("results").innerHTML=html;
 
+  // resume preview
   document.getElementById("resume").innerHTML=`
     <p><b>Name:</b> ${document.getElementById("name").value}</p>
     <p><b>Skills:</b> ${document.getElementById("skills").value}</p>
