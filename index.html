@@ -1,25 +1,27 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>AOV AI Jobs - Startup System</title>
+  <title>AOV AI Jobs - India Startup System</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <style>
     body{
       margin:0;
       font-family:Arial;
-      background:linear-gradient(135deg,#0f172a,#111827);
-      color:white;
+      background:linear-gradient(135deg,#ff9933,#ffffff,#138808);
+      color:#0f172a;
     }
 
     header{
       text-align:center;
       padding:25px;
+      background:rgba(255,255,255,0.8);
+      backdrop-filter:blur(6px);
     }
 
     h1{
       font-size:38px;
-      color:#38bdf8;
+      color:#0f172a;
     }
 
     .container{
@@ -29,10 +31,11 @@
     }
 
     .card{
-      background:#1f2937;
+      background:rgba(255,255,255,0.9);
       padding:18px;
       border-radius:12px;
       margin-bottom:15px;
+      box-shadow:0 8px 20px rgba(0,0,0,0.15);
     }
 
     input{
@@ -40,13 +43,13 @@
       padding:12px;
       margin:6px 0;
       border-radius:8px;
-      border:none;
+      border:1px solid #ccc;
       box-sizing:border-box;
     }
 
     .btn{
-      background:#38bdf8;
-      color:black;
+      background:#138808;
+      color:white;
       padding:12px;
       border:none;
       border-radius:8px;
@@ -60,15 +63,15 @@
     }
 
     .job{
-      background:#0f172a;
+      background:#f8fafc;
       padding:12px;
       border-radius:10px;
       margin-top:10px;
-      border:1px solid #334155;
+      border:1px solid #ddd;
     }
 
     .score{
-      color:#22c55e;
+      color:#16a34a;
       font-weight:bold;
     }
 
@@ -80,17 +83,17 @@
     }
 
     .skill{
-      background:#111827;
+      background:#e2e8f0;
       padding:6px 10px;
       border-radius:20px;
       font-size:13px;
       cursor:pointer;
-      border:1px solid #334155;
+      border:1px solid #cbd5e1;
     }
 
     .skill:hover{
-      background:#38bdf8;
-      color:black;
+      background:#ff9933;
+      color:white;
     }
 
     .qr{
@@ -107,15 +110,15 @@
 <body>
 
 <header>
-  <h1>🤖 AOV AI Jobs</h1>
-  <p>Startup Level 2 AI Job + Resume System</p>
+  <h1>🇮🇳 AOV AI Jobs</h1>
+  <p>India’s AI Powered Job + Resume Startup System</p>
 </header>
 
 <div class="container">
 
   <!-- PROFILE -->
   <div class="card">
-    <h2>📄 Create Profile</h2>
+    <h2>📄 AI Profile</h2>
 
     <input id="skills" placeholder="Skills (AI Python ML)">
     <input id="exp" placeholder="Experience (fresher/junior/senior)">
@@ -147,7 +150,7 @@
     <div id="results"></div>
   </div>
 
-  <!-- RESUME FORM -->
+  <!-- RESUME -->
   <div class="card">
     <h2>📄 Resume Builder</h2>
 
@@ -161,15 +164,17 @@
     <div id="resumePreview"></div>
   </div>
 
-  <!-- PAYMENT (QR ONLY) -->
+  <!-- PAYMENT -->
   <div class="card center">
-    <h2>💳 Premium Unlock</h2>
-    <p>Scan QR to unlock AI Resume PDF</p>
+    <h2>💳 Premium Access</h2>
+
+    <p><b>AI Resume + Job Boost Access</b></p>
+    <p><b>Premium Charge: ₹200</b></p>
 
     <img class="qr"
-      src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=upi://pay?pa=9975076459@mbk&pn=AOV%20AI%20Jobs&am=49&cu=INR">
+      src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=upi://pay?pa=9975076459@mbk&pn=AOV%20AI%20Jobs&am=200&cu=INR">
 
-    <button class="btn" onclick="openUPI()">Open UPI App</button>
+    <button class="btn" onclick="pay()">Pay ₹200 via UPI</button>
   </div>
 
 </div>
@@ -181,11 +186,10 @@ const jobs = [
   {title:"ML Intern",skills:["ml","python"],level:"fresher"},
   {title:"Data Analyst",skills:["data","sql"],level:"junior"},
   {title:"Web Developer",skills:["web","javascript","react"],level:"junior"},
-  {title:"Chatbot Developer",skills:["chatbot","ai"],level:"junior"},
-  {title:"Marketing Executive",skills:["marketing"],level:"fresher"}
+  {title:"Chatbot Developer",skills:["chatbot","ai"],level:"junior"}
 ];
 
-// SKILL CLICK
+// skill click
 function setSkill(skill){
   document.getElementById("skills").value = skill;
   generateAI();
@@ -197,70 +201,62 @@ function generateAI(){
   let skills = document.getElementById("skills").value.toLowerCase().split(/[\s,]+/);
   let exp = document.getElementById("exp").value.toLowerCase();
 
-  let results = [];
+  let html="";
 
   jobs.forEach(job=>{
-    let score = 0;
+    let score=0;
 
     job.skills.forEach(s=>{
-      if(skills.includes(s)) score += 50;
+      if(skills.includes(s)) score+=50;
     });
 
-    if(exp.includes(job.level)) score += 20;
+    if(exp.includes(job.level)) score+=20;
 
-    if(score === 0) score = 10;
+    if(score===0) score=10;
 
-    results.push({...job,score});
-  });
-
-  results.sort((a,b)=>b.score-a.score);
-
-  let html = "";
-
-  results.forEach(j=>{
-    html += `
+    html+=`
       <div class="job">
-        <h3>${j.title}</h3>
-        <p class="score">${j.score}% Match</p>
+        <h3>${job.title}</h3>
+        <p class="score">${score}% Match</p>
 
         <a class="btn" target="_blank"
-          href="https://www.linkedin.com/jobs/search/?keywords=${j.title}">
+          href="https://www.linkedin.com/jobs/search/?keywords=${job.title}">
           LinkedIn Jobs
         </a>
 
         <a class="btn" target="_blank"
-          href="https://www.google.com/search?q=${j.title}+jobs">
+          href="https://www.google.com/search?q=${job.title}+jobs">
           Google Jobs
         </a>
       </div>
     `;
   });
 
-  document.getElementById("results").innerHTML = html;
+  document.getElementById("results").innerHTML=html;
 }
 
-// SAVE RESUME
+// resume save
 function saveResume(){
-  let name = document.getElementById("name").value;
-  let email = document.getElementById("email").value;
-  let phone = document.getElementById("phone").value;
-  let education = document.getElementById("education").value;
+  let name=document.getElementById("name").value;
+  let email=document.getElementById("email").value;
+  let phone=document.getElementById("phone").value;
+  let edu=document.getElementById("education").value;
 
-  document.getElementById("resumePreview").innerHTML = `
+  document.getElementById("resumePreview").innerHTML=`
     <div class="job">
       <h3>📄 Resume Preview</h3>
       <p>Name: ${name}</p>
       <p>Email: ${email}</p>
       <p>Phone: ${phone}</p>
-      <p>Education: ${education}</p>
+      <p>Education: ${edu}</p>
     </div>
   `;
 }
 
-// UPI OPEN
-function openUPI(){
+// UPI PAY
+function pay(){
   window.location.href =
-    "upi://pay?pa=9975076459@mbk&pn=AOV%20AI%20Jobs&am=49&cu=INR";
+    "upi://pay?pa=9975076459@mbk&pn=AOV%20AI%20Jobs&am=200&cu=INR";
 }
 
 </script>
