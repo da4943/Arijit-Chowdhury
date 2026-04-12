@@ -64,46 +64,37 @@
 
   <input id="jobSearch" class="search" type="text" placeholder="Search jobs..." onkeyup="searchJobs()">
 
-  <!-- RESULT -->
   <div class="container" id="jobContainer"></div>
 
-  <input id="userSkill" class="search" type="text" placeholder="Enter your skill">
-
-  <br>
+  <input id="userSkill" class="search" type="text" placeholder="Enter your skill"><br>
 
   <a class="btn" onclick="matchJobs()">Find Best Jobs</a>
 </header>
 
-<!-- ✅ FULL FORM -->
 <div class="container">
   <div class="card">
     <h2>📄 Create Your AI Resume</h2>
 
     <input id="name" class="search" type="text" placeholder="Full Name"><br><br>
-
     <input id="father" class="search" type="text" placeholder="Father's Name"><br><br>
-
-    <input id="email" class="search" type="email" placeholder="Email Address"><br><br>
-
-    <input id="phone" class="search" type="text" placeholder="Phone Number"><br><br>
-
+    <input id="email" class="search" type="email" placeholder="Email"><br><br>
+    <input id="phone" class="search" type="text" placeholder="Phone"><br><br>
     <input id="age" class="search" type="number" placeholder="Age"><br><br>
-
     <input id="dob" class="search" type="date"><br><br>
-
-    <input id="skills" class="search" type="text" placeholder="Skills (AI, Python, Marketing...)"><br><br>
+    <input id="skills" class="search" type="text" placeholder="Skills"><br><br>
 
     <select id="exp" class="search">
-      <option value="">Select Experience</option>
+      <option value="">Experience</option>
       <option>Fresher</option>
       <option>1-2 Years</option>
       <option>3-5 Years</option>
-      <option>5+ Years</option>
     </select><br><br>
 
-    <input id="education" class="search" type="text" placeholder="Education (B.Com, MBA...)"><br><br>
+    <input id="education" class="search" type="text" placeholder="Education"><br><br>
 
-    <a class="btn" onclick="submitForm()">Create Resume</a>
+    <!-- ✅ PAYMENT BUTTON -->
+    <a class="btn" onclick="payAndSubmit()">Pay ₹49 & Create Resume</a>
+
   </div>
 </div>
 
@@ -123,15 +114,9 @@ const jobs = [
     title: "Chatbot Developer",
     description: "Build chatbot systems",
     link: "https://www.google.com/search?q=chatbot+developer+jobs"
-  },
-  {
-    title: "Data Analyst",
-    description: "Analyze data",
-    link: "https://www.linkedin.com/jobs/search/?keywords=data%20analyst"
   }
 ];
 
-// show jobs
 function displayJobs(list) {
   let container = document.getElementById("jobContainer");
   container.innerHTML = "";
@@ -147,110 +132,60 @@ function displayJobs(list) {
   });
 }
 
-// search
 function searchJobs() {
-  let input = document.getElementById("jobSearch").value.toLowerCase().trim();
+  let input = document.getElementById("jobSearch").value.toLowerCase();
   let container = document.getElementById("jobContainer");
 
-  if (input === "") {
-    displayJobs(jobs);
-    return;
-  }
+  let filtered = jobs.filter(job =>
+    job.title.toLowerCase().includes(input)
+  );
 
-  let found = false;
-  let resultHTML = "";
-
-  jobs.forEach(job => {
-    let text = (job.title + job.description).toLowerCase();
-
-    if (text.includes(input)) {
-      found = true;
-      resultHTML += `
-        <div class="card">
-          <h2>${job.title}</h2>
-          <p>${job.description}</p>
-          <a class="btn" target="_blank" href="${job.link}">Apply</a>
-        </div>
-      `;
-    }
-  });
-
-  if (found) {
-    container.innerHTML = resultHTML;
+  if (filtered.length > 0) {
+    displayJobs(filtered);
   } else {
     container.innerHTML = `
       <div class="card">
-        <h2>No result found</h2>
-
+        <h2>No result</h2>
         <a class="btn" target="_blank" href="https://www.google.com/search?q=${input}+jobs">
-          Google Search
-        </a><br>
-
-        <a class="btn" target="_blank" href="https://www.linkedin.com/jobs/search/?keywords=${input}">
-          LinkedIn Search
+          Search on Google
         </a>
       </div>
     `;
   }
 }
 
-// match
 function matchJobs() {
   let skill = document.getElementById("userSkill").value.toLowerCase();
 
-  let result = jobs.filter(job =>
-    job.title.toLowerCase().includes(skill) ||
-    job.description.toLowerCase().includes(skill)
+  let filtered = jobs.filter(job =>
+    job.title.toLowerCase().includes(skill)
   );
 
-  if (result.length > 0) {
-    displayJobs(result);
-  } else {
-    document.getElementById("jobContainer").innerHTML = `
-      <div class="card">
-        <h2>No match found</h2>
-      </div>
-    `;
-  }
+  displayJobs(filtered);
 }
 
-// ✅ FORM FUNCTION UPDATED
-function submitForm() {
+// ✅ PAYMENT + FORM
+function payAndSubmit() {
   let name = document.getElementById("name").value;
-  let father = document.getElementById("father").value;
   let email = document.getElementById("email").value;
-  let phone = document.getElementById("phone").value;
-  let age = document.getElementById("age").value;
-  let dob = document.getElementById("dob").value;
   let skills = document.getElementById("skills").value;
-  let exp = document.getElementById("exp").value;
-  let education = document.getElementById("education").value;
 
   if (name === "" || email === "" || skills === "") {
-    alert("Please fill required details");
+    alert("Fill required details");
     return;
   }
 
-  let message = `
-===== NEW RESUME REQUEST =====
-Name: ${name}
-Father Name: ${father}
-Email: ${email}
-Phone: ${phone}
-Age: ${age}
-DOB: ${dob}
-Skills: ${skills}
-Experience: ${exp}
-Education: ${education}
-==============================
-  `;
+  // save data
+  localStorage.setItem("userData", JSON.stringify({
+    name, email, skills
+  }));
 
-  alert("✅ Resume request submitted successfully!");
+  alert("Redirecting to payment...");
 
-  console.log(message);
+  // 👉 PUT YOUR RAZORPAY LINK HERE
+  window.open("https://rzp.io/l/YOUR_LINK", "_blank");
 }
 
-// load
 displayJobs(jobs);
 </script>
 
