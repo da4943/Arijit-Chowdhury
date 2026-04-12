@@ -145,9 +145,15 @@ function displayJobs(list) {
   });
 }
 
-// Search function
+// Search function (FIXED)
 function searchJobs() {
-  let input = document.getElementById("jobSearch").value.toLowerCase();
+  let input = document.getElementById("jobSearch").value.toLowerCase().trim();
+  const container = document.getElementById("jobContainer");
+
+  if (input === "") {
+    displayJobs(jobs);
+    return;
+  }
 
   let filtered = jobs.filter(job =>
     job.title.toLowerCase().includes(input) ||
@@ -157,9 +163,10 @@ function searchJobs() {
   if (filtered.length > 0) {
     displayJobs(filtered);
   } else {
-    document.getElementById("jobContainer").innerHTML = `
+    container.innerHTML = `
       <div class="card">
-        <h2>No results</h2>
+        <h2>No results found</h2>
+        <p>Search more jobs online</p>
         <a class="btn" target="_blank" href="https://www.google.com/search?q=${input}+jobs">
           Search "${input}" jobs on Google
         </a>
@@ -170,7 +177,7 @@ function searchJobs() {
 
 // AI Matching
 function matchJobs() {
-  let skill = document.getElementById("userSkill").value.toLowerCase();
+  let skill = document.getElementById("userSkill").value.toLowerCase().trim();
   let exp = document.getElementById("experience").value;
 
   let filtered = jobs.filter(job =>
