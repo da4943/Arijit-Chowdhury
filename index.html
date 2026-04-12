@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>AOV AI Jobs - Startup Level 2 FIX</title>
+  <title>AOV AI Jobs - Startup System</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <style>
@@ -14,39 +14,33 @@
 
     header{
       text-align:center;
-      padding:30px;
+      padding:25px;
     }
 
     h1{
+      font-size:38px;
       color:#38bdf8;
-      font-size:40px;
     }
 
     .container{
       max-width:900px;
       margin:auto;
-      padding:20px;
+      padding:15px;
     }
 
     .card{
       background:#1f2937;
-      padding:20px;
+      padding:18px;
       border-radius:12px;
       margin-bottom:15px;
     }
 
-    /* FIX ALIGNMENT */
-    .form-grid{
-      display:flex;
-      flex-direction:column;
-      gap:10px;
-    }
-
     input{
+      width:100%;
       padding:12px;
+      margin:6px 0;
       border-radius:8px;
       border:none;
-      width:100%;
       box-sizing:border-box;
     }
 
@@ -60,11 +54,14 @@
       cursor:pointer;
       width:100%;
       margin-top:10px;
+      display:block;
+      text-align:center;
+      text-decoration:none;
     }
 
     .job{
       background:#0f172a;
-      padding:15px;
+      padding:12px;
       border-radius:10px;
       margin-top:10px;
       border:1px solid #334155;
@@ -75,26 +72,35 @@
       font-weight:bold;
     }
 
-    .link-btn{
-      display:block;
+    .skill-box{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      margin-top:10px;
+    }
+
+    .skill{
+      background:#111827;
+      padding:6px 10px;
+      border-radius:20px;
+      font-size:13px;
+      cursor:pointer;
+      border:1px solid #334155;
+    }
+
+    .skill:hover{
+      background:#38bdf8;
+      color:black;
+    }
+
+    .qr{
+      width:180px;
+      margin-top:10px;
+    }
+
+    .center{
       text-align:center;
-      padding:10px;
-      margin-top:8px;
-      border-radius:8px;
-      text-decoration:none;
-      font-weight:bold;
     }
-
-    .linkedin{
-      background:#0a66c2;
-      color:white;
-    }
-
-    .google{
-      background:#db4437;
-      color:white;
-    }
-
   </style>
 </head>
 
@@ -102,7 +108,7 @@
 
 <header>
   <h1>🤖 AOV AI Jobs</h1>
-  <p>Startup Level 2 AI System (FIXED)</p>
+  <p>Startup Level 2 AI Job + Resume System</p>
 </header>
 
 <div class="container">
@@ -111,19 +117,59 @@
   <div class="card">
     <h2>📄 Create Profile</h2>
 
-    <div class="form-grid">
-      <input id="name" placeholder="Full Name">
-      <input id="skills" placeholder="Skills (AI Python ML)">
-      <input id="exp" placeholder="Experience (fresher/junior/senior)">
-    </div>
+    <input id="skills" placeholder="Skills (AI Python ML)">
+    <input id="exp" placeholder="Experience (fresher/junior/senior)">
 
-    <button class="btn" onclick="generateAI()">Find Jobs</button>
+    <button class="btn" onclick="generateAI()">Find AI Jobs</button>
+  </div>
+
+  <!-- SKILLS -->
+  <div class="card">
+    <h2>🔥 Skills Library</h2>
+
+    <div class="skill-box">
+      <div class="skill" onclick="setSkill('ai')">AI</div>
+      <div class="skill" onclick="setSkill('python')">Python</div>
+      <div class="skill" onclick="setSkill('machine learning')">ML</div>
+      <div class="skill" onclick="setSkill('data')">Data</div>
+      <div class="skill" onclick="setSkill('sql')">SQL</div>
+      <div class="skill" onclick="setSkill('javascript')">JavaScript</div>
+      <div class="skill" onclick="setSkill('react')">React</div>
+      <div class="skill" onclick="setSkill('web')">Web</div>
+      <div class="skill" onclick="setSkill('chatbot')">Chatbot</div>
+      <div class="skill" onclick="setSkill('marketing')">Marketing</div>
+    </div>
   </div>
 
   <!-- RESULTS -->
   <div class="card">
     <h2>🎯 AI Job Results</h2>
     <div id="results"></div>
+  </div>
+
+  <!-- RESUME FORM -->
+  <div class="card">
+    <h2>📄 Resume Builder</h2>
+
+    <input id="name" placeholder="Full Name">
+    <input id="email" placeholder="Email">
+    <input id="phone" placeholder="Phone">
+    <input id="education" placeholder="Education">
+
+    <button class="btn" onclick="saveResume()">Save Resume</button>
+
+    <div id="resumePreview"></div>
+  </div>
+
+  <!-- PAYMENT (QR ONLY) -->
+  <div class="card center">
+    <h2>💳 Premium Unlock</h2>
+    <p>Scan QR to unlock AI Resume PDF</p>
+
+    <img class="qr"
+      src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=upi://pay?pa=9975076459@mbk&pn=AOV%20AI%20Jobs&am=49&cu=INR">
+
+    <button class="btn" onclick="openUPI()">Open UPI App</button>
   </div>
 
 </div>
@@ -134,11 +180,18 @@ const jobs = [
   {title:"AI Engineer",skills:["ai","python","ml"],level:"senior"},
   {title:"ML Intern",skills:["ml","python"],level:"fresher"},
   {title:"Data Analyst",skills:["data","sql"],level:"junior"},
-  {title:"Web Developer",skills:["web","javascript"],level:"junior"},
-  {title:"Marketing Executive",skills:["marketing"],level:"fresher"},
-  {title:"Chatbot Developer",skills:["chatbot","ai"],level:"junior"}
+  {title:"Web Developer",skills:["web","javascript","react"],level:"junior"},
+  {title:"Chatbot Developer",skills:["chatbot","ai"],level:"junior"},
+  {title:"Marketing Executive",skills:["marketing"],level:"fresher"}
 ];
 
+// SKILL CLICK
+function setSkill(skill){
+  document.getElementById("skills").value = skill;
+  generateAI();
+}
+
+// AI ENGINE
 function generateAI(){
 
   let skills = document.getElementById("skills").value.toLowerCase().split(/[\s,]+/);
@@ -155,7 +208,6 @@ function generateAI(){
 
     if(exp.includes(job.level)) score += 20;
 
-    // SHOW EVEN LOW MATCH (FIX NO RESULT PROBLEM)
     if(score === 0) score = 10;
 
     results.push({...job,score});
@@ -169,22 +221,46 @@ function generateAI(){
     html += `
       <div class="job">
         <h3>${j.title}</h3>
-        <p class="score">${j.score}% match</p>
+        <p class="score">${j.score}% Match</p>
 
-        <a class="link-btn linkedin" target="_blank"
+        <a class="btn" target="_blank"
           href="https://www.linkedin.com/jobs/search/?keywords=${j.title}">
-          View on LinkedIn
+          LinkedIn Jobs
         </a>
 
-        <a class="link-btn google" target="_blank"
+        <a class="btn" target="_blank"
           href="https://www.google.com/search?q=${j.title}+jobs">
-          Search on Google
+          Google Jobs
         </a>
       </div>
     `;
   });
 
   document.getElementById("results").innerHTML = html;
+}
+
+// SAVE RESUME
+function saveResume(){
+  let name = document.getElementById("name").value;
+  let email = document.getElementById("email").value;
+  let phone = document.getElementById("phone").value;
+  let education = document.getElementById("education").value;
+
+  document.getElementById("resumePreview").innerHTML = `
+    <div class="job">
+      <h3>📄 Resume Preview</h3>
+      <p>Name: ${name}</p>
+      <p>Email: ${email}</p>
+      <p>Phone: ${phone}</p>
+      <p>Education: ${education}</p>
+    </div>
+  `;
+}
+
+// UPI OPEN
+function openUPI(){
+  window.location.href =
+    "upi://pay?pa=9975076459@mbk&pn=AOV%20AI%20Jobs&am=49&cu=INR";
 }
 
 </script>
