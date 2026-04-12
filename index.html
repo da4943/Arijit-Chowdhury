@@ -13,7 +13,7 @@
     }
 
     header {
-      padding: 80px 20px;
+      padding: 60px 20px;
       text-align: center;
     }
 
@@ -25,7 +25,7 @@
     .search {
       margin-top: 10px;
       padding: 14px;
-      width: 60%;
+      width: 80%;
       border-radius: 12px;
       border: none;
       font-size: 16px;
@@ -44,7 +44,7 @@
     }
 
     .container {
-      padding: 30px;
+      padding: 20px;
     }
 
     .card {
@@ -64,23 +64,38 @@
 
   <input id="jobSearch" class="search" type="text" placeholder="Search jobs..." onkeyup="searchJobs()">
 
-  <br><br>
+  <!-- RESULT SHOWS HERE -->
+  <div class="container" id="jobContainer"></div>
 
   <input id="userSkill" class="search" type="text" placeholder="Enter your skill">
 
-  <br><br>
+  <br>
 
   <a class="btn" onclick="matchJobs()">Find Best Jobs</a>
 </header>
 
-<div class="container" id="jobContainer"></div>
-
 <script>
 const jobs = [
-  { title: "AI Developer", description: "AI automation work" },
-  { title: "ML Intern", description: "Machine learning work" },
-  { title: "Chatbot Builder", description: "Freelance chatbot" },
-  { title: "Data Analyst", description: "Data analysis job" }
+  {
+    title: "AI Developer",
+    description: "Work on AI models",
+    link: "https://www.linkedin.com/jobs/search/?keywords=ai%20developer"
+  },
+  {
+    title: "Machine Learning Intern",
+    description: "Assist ML projects",
+    link: "https://www.linkedin.com/jobs/search/?keywords=machine%20learning%20intern"
+  },
+  {
+    title: "Chatbot Developer",
+    description: "Build chatbot systems",
+    link: "https://www.google.com/search?q=chatbot+developer+jobs"
+  },
+  {
+    title: "Data Analyst",
+    description: "Analyze data",
+    link: "https://www.linkedin.com/jobs/search/?keywords=data%20analyst"
+  }
 ];
 
 // show jobs
@@ -88,18 +103,18 @@ function displayJobs(list) {
   let container = document.getElementById("jobContainer");
   container.innerHTML = "";
 
-  for (let i = 0; i < list.length; i++) {
+  list.forEach(job => {
     container.innerHTML += `
       <div class="card">
-        <h2>${list[i].title}</h2>
-        <p>${list[i].description}</p>
-        <a class="btn">Apply</a>
+        <h2>${job.title}</h2>
+        <p>${job.description}</p>
+        <a class="btn" target="_blank" href="${job.link}">Apply</a>
       </div>
     `;
-  }
+  });
 }
 
-// SEARCH (FINAL)
+// SEARCH
 function searchJobs() {
   let input = document.getElementById("jobSearch").value.toLowerCase().trim();
   let container = document.getElementById("jobContainer");
@@ -112,20 +127,20 @@ function searchJobs() {
   let found = false;
   let resultHTML = "";
 
-  for (let i = 0; i < jobs.length; i++) {
-    let text = (jobs[i].title + jobs[i].description).toLowerCase();
+  jobs.forEach(job => {
+    let text = (job.title + job.description).toLowerCase();
 
     if (text.includes(input)) {
       found = true;
       resultHTML += `
         <div class="card">
-          <h2>${jobs[i].title}</h2>
-          <p>${jobs[i].description}</p>
-          <a class="btn">Apply</a>
+          <h2>${job.title}</h2>
+          <p>${job.description}</p>
+          <a class="btn" target="_blank" href="${job.link}">Apply</a>
         </div>
       `;
     }
-  }
+  });
 
   if (found) {
     container.innerHTML = resultHTML;
@@ -133,25 +148,23 @@ function searchJobs() {
     container.innerHTML = `
       <div class="card">
         <h2>No result found</h2>
-        <p>Search jobs on external platforms</p>
+        <p>Search on external platforms</p>
 
         <a class="btn" target="_blank" href="https://www.google.com/search?q=${input}+jobs">
-          Search on Google
+          Google Search
         </a>
 
         <br>
 
         <a class="btn" target="_blank" href="https://www.linkedin.com/jobs/search/?keywords=${input}">
-          Search on LinkedIn
+          LinkedIn Search
         </a>
       </div>
     `;
   }
-
-  window.scrollTo(0, 300);
 }
 
-// AI match
+// AI MATCH
 function matchJobs() {
   let skill = document.getElementById("userSkill").value.toLowerCase();
 
@@ -165,15 +178,13 @@ function matchJobs() {
   } else {
     document.getElementById("jobContainer").innerHTML = `
       <div class="card">
-        <h2>No match</h2>
+        <h2>No match found</h2>
       </div>
     `;
   }
-
-  window.scrollTo(0, 300);
 }
 
-// load
+// load default
 displayJobs(jobs);
 </script>
 
