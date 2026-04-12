@@ -27,12 +27,16 @@
     }
 
     .search {
-      margin-top: 20px;
+      margin-top: 10px;
       padding: 14px;
       width: 60%;
       border-radius: 12px;
       border: none;
       font-size: 16px;
+    }
+
+    select.search {
+      width: 62%;
     }
 
     .btn {
@@ -42,8 +46,9 @@
       border-radius: 10px;
       text-decoration: none;
       display: inline-block;
-      margin-top: 10px;
+      margin-top: 15px;
       font-weight: bold;
+      cursor: pointer;
     }
 
     .container {
@@ -64,10 +69,6 @@
       transform: translateY(-5px);
     }
 
-    .job-title {
-      margin: 0;
-    }
-
     .job-type {
       font-size: 14px;
       color: #94a3b8;
@@ -79,49 +80,63 @@
 
 <header>
   <h1>AOV AI Jobs</h1>
-  <p>AI-powered job discovery platform for everyone</p>
+  <p>AI-powered job discovery platform</p>
 
-  <input id="jobSearch" class="search" type="text" placeholder="Search AI jobs..." onkeyup="searchJobs()">
+  <input id="jobSearch" class="search" type="text" placeholder="Search jobs..." onkeyup="searchJobs()">
 
-  <br>
-  <a class="btn" href="#">Get Started</a>
+  <br><br>
+
+  <input id="userSkill" class="search" type="text" placeholder="Enter your skill (AI, Python, Marketing...)">
+
+  <br><br>
+
+  <select id="experience" class="search">
+    <option value="">Select Experience</option>
+    <option value="intern">Fresher / Intern</option>
+    <option value="junior">1-2 Years</option>
+    <option value="senior">3+ Years</option>
+  </select>
+
+  <br><br>
+
+  <a class="btn" onclick="matchJobs()">Find Best Jobs</a>
 </header>
 
-<div class="container" id="jobContainer">
-</div>
+<div class="container" id="jobContainer"></div>
 
 <script>
 const jobs = [
   {
     title: "AI Developer",
     description: "Work on AI models and automation",
-    type: "Remote - Full Time"
-  },
-  {
-    title: "Freelance Chatbot Builder",
-    description: "Build chatbots for clients",
-    type: "Freelance"
-  },
-  {
-    title: "AI Data Analyst",
-    description: "Analyze AI datasets and trends",
-    type: "Remote"
+    type: "senior"
   },
   {
     title: "Machine Learning Intern",
-    description: "Learn and assist ML projects",
-    type: "Internship"
+    description: "Assist ML projects",
+    type: "intern"
+  },
+  {
+    title: "Freelance Chatbot Builder",
+    description: "Build bots for clients",
+    type: "junior"
+  },
+  {
+    title: "Data Analyst",
+    description: "Analyze data and trends",
+    type: "junior"
   }
 ];
 
-function displayJobs(filteredJobs) {
+// Display jobs
+function displayJobs(list) {
   const container = document.getElementById("jobContainer");
   container.innerHTML = "";
 
-  filteredJobs.forEach(job => {
+  list.forEach(job => {
     container.innerHTML += `
       <div class="card">
-        <h2 class="job-title">${job.title}</h2>
+        <h2>${job.title}</h2>
         <p>${job.description}</p>
         <p class="job-type">${job.type}</p>
         <a class="btn" href="#">Apply</a>
@@ -130,6 +145,7 @@ function displayJobs(filteredJobs) {
   });
 }
 
+// Search function
 function searchJobs() {
   let input = document.getElementById("jobSearch").value.toLowerCase();
 
@@ -138,10 +154,44 @@ function searchJobs() {
     job.description.toLowerCase().includes(input)
   );
 
-  displayJobs(filtered);
+  if (filtered.length > 0) {
+    displayJobs(filtered);
+  } else {
+    document.getElementById("jobContainer").innerHTML = `
+      <div class="card">
+        <h2>No results</h2>
+        <a class="btn" target="_blank" href="https://www.google.com/search?q=${input}+jobs">
+          Search "${input}" jobs on Google
+        </a>
+      </div>
+    `;
+  }
 }
 
-// Load all jobs initially
+// AI Matching
+function matchJobs() {
+  let skill = document.getElementById("userSkill").value.toLowerCase();
+  let exp = document.getElementById("experience").value;
+
+  let filtered = jobs.filter(job =>
+    (job.title.toLowerCase().includes(skill) ||
+     job.description.toLowerCase().includes(skill)) &&
+    (exp === "" || job.type === exp)
+  );
+
+  if (filtered.length > 0) {
+    displayJobs(filtered);
+  } else {
+    document.getElementById("jobContainer").innerHTML = `
+      <div class="card">
+        <h2>No perfect match</h2>
+        <p>Try different skill or search online</p>
+      </div>
+    `;
+  }
+}
+
+// Load default jobs
 displayJobs(jobs);
 </script>
 
