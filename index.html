@@ -1,219 +1,37 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>AOV AI Jobs - SaaS System</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
-
-  <style>
-    body{
-      margin:0;
-      font-family:Arial;
-      background:#0b1220;
-      color:white;
-    }
-
-    .container{
-      max-width:900px;
-      margin:auto;
-      padding:15px;
-    }
-
-    .card{
-      background:#111827;
-      border:1px solid #334155;
-      padding:15px;
-      border-radius:12px;
-      margin-bottom:15px;
-    }
-
-    input{
-      width:100%;
-      padding:10px;
-      margin-top:8px;
-      border-radius:8px;
-      border:1px solid #334155;
-      background:#0b1220;
-      color:white;
-      box-sizing:border-box;
-    }
-
-    button{
-      width:100%;
-      padding:10px;
-      margin-top:10px;
-      background:#38bdf8;
-      border:none;
-      border-radius:8px;
-      font-weight:bold;
-      cursor:pointer;
-    }
-
-    .job{
-      padding:12px;
-      border:1px solid #334155;
-      margin-top:10px;
-      border-radius:10px;
-      background:#0f172a;
-    }
-
-    .links a{
-      display:inline-block;
-      margin-right:10px;
-      color:#38bdf8;
-      text-decoration:none;
-      font-weight:bold;
-    }
-
-    .premium{
-      border:2px solid gold;
-    }
-
-    .title{
-      text-align:center;
-      font-size:26px;
-      color:#38bdf8;
-      margin:15px 0;
-    }
-
-  </style>
+  <title>AI Resume System</title>
 </head>
 
 <body>
 
-<div class="container">
+<h2>AI Resume Generator</h2>
 
-  <div class="title">🤖 AOV AI JOBS - STARTUP SYSTEM</div>
+<input id="name" placeholder="Name"><br><br>
+<input id="skills" placeholder="Skills"><br><br>
 
-  <!-- LOGIN -->
-  <div class="card">
-    <h3>🔐 Login System</h3>
-    <input id="email" placeholder="Email">
-    <input id="password" placeholder="Password">
-    <button onclick="login()">Login</button>
-  </div>
+<button onclick="generate()">Generate Resume</button>
 
-  <!-- RESUME -->
-  <div class="card">
-    <h3>📄 Resume Builder</h3>
-
-    <input id="name" placeholder="Full Name">
-    <input id="skills" placeholder="Skills (ai, python, ml)">
-    <input id="exp" placeholder="Experience (fresher/junior/senior)">
-
-    <button onclick="saveProfile()">Save Resume</button>
-    <button onclick="generateAI()">Find Jobs</button>
-  </div>
-
-  <!-- JOB RESULTS -->
-  <div class="card">
-    <h3>🎯 AI Job Matches</h3>
-    <div id="results"></div>
-  </div>
-
-  <!-- PREMIUM -->
-  <div class="card premium">
-    <h3>💎 Premium Unlock ₹200</h3>
-
-    <img width="160"
-      src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=upi://pay?pa=9975076459@mbk&pn=AOV&am=200&cu=INR">
-
-    <button onclick="pay()">Unlock Premium</button>
-  </div>
-
-</div>
+<h3>Result:</h3>
+<div id="result"></div>
 
 <script>
 
-// Firebase config (replace later if needed)
-const firebaseConfig = {
-  apiKey: "YOUR_KEY",
-  authDomain: "YOUR_DOMAIN",
-  projectId: "YOUR_PROJECT"
-};
+async function generate(){
 
-firebase.initializeApp(firebaseConfig);
-const auth = firebase.auth();
-const db = firebase.firestore();
+  let name = document.getElementById("name").value;
+  let skills = document.getElementById("skills").value;
 
-const jobs = [
-  {title:"AI Engineer",skills:["ai","python","ml"]},
-  {title:"Data Analyst",skills:["data","sql"]},
-  {title:"Web Developer",skills:["react","javascript"]},
-  {title:"ML Intern",skills:["ml","python"]}
-];
-
-// LOGIN
-function login(){
-  let email=document.getElementById("email").value;
-  let pass=document.getElementById("password").value;
-
-  auth.signInWithEmailAndPassword(email,pass)
-  .then(()=>alert("Login Success"))
-  .catch(()=>alert("Check credentials or create account"));
-}
-
-// SAVE PROFILE
-function saveProfile(){
-  let user = auth.currentUser;
-  if(!user){
-    alert("Please login first");
-    return;
-  }
-
-  db.collection("profiles").doc(user.uid).set({
-    name:document.getElementById("name").value,
-    skills:document.getElementById("skills").value,
-    exp:document.getElementById("exp").value
+  let res = await fetch("http://localhost:3000/ai", {
+    method:"POST",
+    headers: {"Content-Type":"application/json"},
+    body: JSON.stringify({name, skills})
   });
 
-  alert("Resume saved successfully");
-}
+  let data = await res.json();
 
-// AI MATCH
-function generateAI(){
-
-  let skills = document.getElementById("skills").value.toLowerCase().split(",");
-
-  let html = "";
-
-  jobs.forEach(j=>{
-    let score = 0;
-
-    j.skills.forEach(s=>{
-      if(skills.map(x=>x.trim()).includes(s)) score += 50;
-    });
-
-    if(score > 0){
-      html += `
-        <div class="job">
-          <h3>${j.title}</h3>
-          <p><b>Match:</b> ${score}%</p>
-
-          <div class="links">
-            <a target="_blank" href="https://www.linkedin.com/jobs/search/?keywords=${j.title}">
-              LinkedIn
-            </a>
-
-            <a target="_blank" href="https://www.google.com/search?q=${j.title}+jobs">
-              Google
-            </a>
-          </div>
-        </div>
-      `;
-    }
-  });
-
-  document.getElementById("results").innerHTML = html;
-}
-
-// PAYMENT
-function pay(){
-  window.location.href =
-    "upi://pay?pa=9975076459@mbk&pn=AOV&am=200&cu=INR";
+  document.getElementById("result").innerText = data.text;
 }
 
 </script>
