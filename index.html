@@ -60,23 +60,26 @@
 
 <header>
   <h1>AOV AI Jobs</h1>
-  <p>AI-powered job discovery platform</p>
+  <p>AI-powered job + Resume platform</p>
 
   <input id="jobSearch" class="search" type="text" placeholder="Search jobs..." onkeyup="searchJobs()">
 
   <div class="container" id="jobContainer"></div>
 
-  <input id="userSkill" class="search" type="text" placeholder="Enter your skill"><br>
+  <input id="userSkill" class="search" type="text" placeholder="Enter your skill">
+
+  <br>
 
   <a class="btn" onclick="matchJobs()">Find Best Jobs</a>
 </header>
 
+<!-- ✅ RESUME FORM -->
 <div class="container">
   <div class="card">
     <h2>📄 Create Your AI Resume</h2>
 
     <input id="name" class="search" type="text" placeholder="Full Name"><br><br>
-    <input id="father" class="search" type="text" placeholder="Father's Name"><br><br>
+    <input id="father" class="search" type="text" placeholder="Father Name"><br><br>
     <input id="email" class="search" type="email" placeholder="Email"><br><br>
     <input id="phone" class="search" type="text" placeholder="Phone"><br><br>
     <input id="age" class="search" type="number" placeholder="Age"><br><br>
@@ -92,8 +95,8 @@
 
     <input id="education" class="search" type="text" placeholder="Education"><br><br>
 
-    <!-- ✅ PAYMENT BUTTON -->
-    <a class="btn" onclick="payAndSubmit()">Pay ₹49 & Create Resume</a>
+    <!-- ✅ UPI PAYMENT BUTTON -->
+    <a class="btn" id="payBtn">Pay ₹49 & Create Resume</a>
 
   </div>
 </div>
@@ -117,6 +120,7 @@ const jobs = [
   }
 ];
 
+// show jobs
 function displayJobs(list) {
   let container = document.getElementById("jobContainer");
   container.innerHTML = "";
@@ -132,9 +136,9 @@ function displayJobs(list) {
   });
 }
 
+// search
 function searchJobs() {
-  let input = document.getElementById("jobSearch").value.toLowerCase();
-  let container = document.getElementById("jobContainer");
+  let input = document.getElementById("jobSearch").value.toLowerCase().trim();
 
   let filtered = jobs.filter(job =>
     job.title.toLowerCase().includes(input)
@@ -143,49 +147,54 @@ function searchJobs() {
   if (filtered.length > 0) {
     displayJobs(filtered);
   } else {
-    container.innerHTML = `
+    document.getElementById("jobContainer").innerHTML = `
       <div class="card">
-        <h2>No result</h2>
-        <a class="btn" target="_blank" href="https://www.google.com/search?q=${input}+jobs">
-          Search on Google
+        <h2>No result found</h2>
+        <a class="btn" target="_blank"
+        href="https://www.google.com/search?q=${input}+jobs">
+        Search on Google
         </a>
       </div>
     `;
   }
 }
 
+// match jobs
 function matchJobs() {
   let skill = document.getElementById("userSkill").value.toLowerCase();
 
-  let filtered = jobs.filter(job =>
+  let result = jobs.filter(job =>
     job.title.toLowerCase().includes(skill)
   );
 
-  displayJobs(filtered);
+  displayJobs(result);
 }
 
-// ✅ PAYMENT + FORM
-function payAndSubmit() {
+// ✅ UPI PAYMENT
+document.getElementById("payBtn").addEventListener("click", function () {
+
   let name = document.getElementById("name").value;
   let email = document.getElementById("email").value;
   let skills = document.getElementById("skills").value;
 
   if (name === "" || email === "" || skills === "") {
-    alert("Fill required details");
+    alert("Please fill required details first");
     return;
   }
 
   // save data
-  localStorage.setItem("userData", JSON.stringify({
+  localStorage.setItem("resumeData", JSON.stringify({
     name, email, skills
   }));
 
-  alert("Redirecting to payment...");
+  alert("Opening UPI app...");
 
-  // 👉 PUT YOUR RAZORPAY LINK HERE
-  window.open("https://rzp.io/l/YOUR_LINK", "_blank");
-}
+  // 👉 CHANGE YOUR UPI ID HERE
+  window.location.href =
+    "upi://pay?pa=YOUR_UPI_ID&pn=AOV%20AI%20Jobs&am=49&cu=INR";
+});
 
+// load jobs
 displayJobs(jobs);
 </script>
 
