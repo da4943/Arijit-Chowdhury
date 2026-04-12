@@ -20,7 +20,6 @@
     h1 {
       font-size: 42px;
       color: #38bdf8;
-      margin-bottom: 10px;
     }
 
     p {
@@ -33,7 +32,6 @@
       width: 60%;
       border-radius: 12px;
       border: none;
-      outline: none;
       font-size: 16px;
     }
 
@@ -44,12 +42,8 @@
       border-radius: 10px;
       text-decoration: none;
       display: inline-block;
-      margin-top: 20px;
+      margin-top: 10px;
       font-weight: bold;
-    }
-
-    .btn:hover {
-      background: #0ea5e9;
     }
 
     .container {
@@ -68,11 +62,15 @@
 
     .card:hover {
       transform: translateY(-5px);
-      box-shadow: 0 10px 25px rgba(0,0,0,0.4);
     }
 
-    h2 {
-      margin-top: 0;
+    .job-title {
+      margin: 0;
+    }
+
+    .job-type {
+      font-size: 14px;
+      color: #94a3b8;
     }
   </style>
 </head>
@@ -86,53 +84,65 @@
   <input id="jobSearch" class="search" type="text" placeholder="Search AI jobs..." onkeyup="searchJobs()">
 
   <br>
-
   <a class="btn" href="#">Get Started</a>
 </header>
 
-<div class="container">
-
-  <div class="card">
-    <h2>🔍 AI Job Search</h2>
-    <p>Find the best AI jobs matched for you instantly.</p>
-    <a class="btn" href="#">Search Jobs</a>
-  </div>
-
-  <div class="card">
-    <h2>💼 Freelance AI Projects</h2>
-    <p>Get AI automation and freelance opportunities.</p>
-    <a class="btn" href="#">Start Working</a>
-  </div>
-
-  <div class="card">
-    <h2>📈 Career Growth</h2>
-    <p>Learn AI skills and improve your career path.</p>
-    <a class="btn" href="#">Learn More</a>
-  </div>
-
-  <div class="card">
-    <h2>💰 Premium Plan</h2>
-    <p>Get early job alerts and premium AI tools.</p>
-    <a class="btn" href="#">Subscribe</a>
-  </div>
-
+<div class="container" id="jobContainer">
 </div>
 
 <script>
+const jobs = [
+  {
+    title: "AI Developer",
+    description: "Work on AI models and automation",
+    type: "Remote - Full Time"
+  },
+  {
+    title: "Freelance Chatbot Builder",
+    description: "Build chatbots for clients",
+    type: "Freelance"
+  },
+  {
+    title: "AI Data Analyst",
+    description: "Analyze AI datasets and trends",
+    type: "Remote"
+  },
+  {
+    title: "Machine Learning Intern",
+    description: "Learn and assist ML projects",
+    type: "Internship"
+  }
+];
+
+function displayJobs(filteredJobs) {
+  const container = document.getElementById("jobContainer");
+  container.innerHTML = "";
+
+  filteredJobs.forEach(job => {
+    container.innerHTML += `
+      <div class="card">
+        <h2 class="job-title">${job.title}</h2>
+        <p>${job.description}</p>
+        <p class="job-type">${job.type}</p>
+        <a class="btn" href="#">Apply</a>
+      </div>
+    `;
+  });
+}
+
 function searchJobs() {
   let input = document.getElementById("jobSearch").value.toLowerCase();
-  let cards = document.getElementsByClassName("card");
 
-  for (let i = 0; i < cards.length; i++) {
-    let text = cards[i].innerText.toLowerCase();
+  let filtered = jobs.filter(job =>
+    job.title.toLowerCase().includes(input) ||
+    job.description.toLowerCase().includes(input)
+  );
 
-    if (text.includes(input)) {
-      cards[i].style.display = "block";
-    } else {
-      cards[i].style.display = "none";
-    }
-  }
+  displayJobs(filtered);
 }
+
+// Load all jobs initially
+displayJobs(jobs);
 </script>
 
 </body>
