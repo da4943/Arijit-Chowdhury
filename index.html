@@ -53,6 +53,25 @@
       border-radius: 15px;
       margin-bottom: 15px;
     }
+
+    /* QR BOX */
+    .qr-box {
+      margin-top: 15px;
+      text-align: center;
+      background: #0f172a;
+      padding: 15px;
+      border-radius: 12px;
+    }
+
+    .qr-box img {
+      width: 200px;
+      border-radius: 10px;
+    }
+
+    .small-text {
+      font-size: 12px;
+      color: #94a3b8;
+    }
   </style>
 </head>
 
@@ -95,8 +114,17 @@
 
     <input id="education" class="search" type="text" placeholder="Education"><br><br>
 
-    <!-- ✅ UPI PAYMENT BUTTON -->
+    <!-- PAY BUTTON -->
     <a class="btn" id="payBtn">Pay ₹49 & Create Resume</a>
+
+    <!-- ✅ UPI QR CODE -->
+    <div class="qr-box">
+      <h3>📲 Scan & Pay via UPI</h3>
+
+      <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=upi://pay?pa=9975076459@mbk&pn=AOV%20AI%20Jobs&am=49&cu=INR" />
+
+      <p class="small-text">Scan with Google Pay / PhonePe / Paytm</p>
+    </div>
 
   </div>
 </div>
@@ -166,7 +194,7 @@ function matchJobs() {
   displayJobs(result);
 }
 
-// ✅ YOUR UPI ID ADDED HERE
+// PAYMENT BUTTON
 document.getElementById("payBtn").addEventListener("click", function () {
 
   let name = document.getElementById("name").value;
