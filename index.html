@@ -1,27 +1,27 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>AOV AI Jobs - India Startup System</title>
+  <title>AOV AI Jobs - Global Startup System</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <style>
     body{
       margin:0;
       font-family:Arial;
-      background:linear-gradient(135deg,#ff9933,#ffffff,#138808);
-      color:#0f172a;
+      background:linear-gradient(135deg,#0f172a,#1e293b);
+      color:white;
     }
 
     header{
       text-align:center;
       padding:25px;
-      background:rgba(255,255,255,0.8);
+      background:rgba(255,255,255,0.05);
       backdrop-filter:blur(6px);
     }
 
     h1{
       font-size:38px;
-      color:#0f172a;
+      color:#38bdf8;
     }
 
     .container{
@@ -31,11 +31,11 @@
     }
 
     .card{
-      background:rgba(255,255,255,0.9);
+      background:#1f2937;
       padding:18px;
       border-radius:12px;
       margin-bottom:15px;
-      box-shadow:0 8px 20px rgba(0,0,0,0.15);
+      box-shadow:0 8px 20px rgba(0,0,0,0.3);
     }
 
     input{
@@ -43,13 +43,13 @@
       padding:12px;
       margin:6px 0;
       border-radius:8px;
-      border:1px solid #ccc;
+      border:none;
       box-sizing:border-box;
     }
 
     .btn{
-      background:#138808;
-      color:white;
+      background:#38bdf8;
+      color:black;
       padding:12px;
       border:none;
       border-radius:8px;
@@ -63,15 +63,15 @@
     }
 
     .job{
-      background:#f8fafc;
+      background:#0f172a;
       padding:12px;
       border-radius:10px;
       margin-top:10px;
-      border:1px solid #ddd;
+      border:1px solid #334155;
     }
 
     .score{
-      color:#16a34a;
+      color:#22c55e;
       font-weight:bold;
     }
 
@@ -83,17 +83,17 @@
     }
 
     .skill{
-      background:#e2e8f0;
+      background:#111827;
       padding:6px 10px;
       border-radius:20px;
       font-size:13px;
       cursor:pointer;
-      border:1px solid #cbd5e1;
+      border:1px solid #334155;
     }
 
     .skill:hover{
-      background:#ff9933;
-      color:white;
+      background:#38bdf8;
+      color:black;
     }
 
     .qr{
@@ -110,8 +110,8 @@
 <body>
 
 <header>
-  <h1>🇮🇳 AOV AI Jobs</h1>
-  <p>India’s AI Powered Job + Resume Startup System</p>
+  <h1>🌍 AOV AI Jobs</h1>
+  <p>Global AI Powered Job + Resume Startup System</p>
 </header>
 
 <div class="container">
@@ -133,7 +133,7 @@
     <div class="skill-box">
       <div class="skill" onclick="setSkill('ai')">AI</div>
       <div class="skill" onclick="setSkill('python')">Python</div>
-      <div class="skill" onclick="setSkill('machine learning')">ML</div>
+      <div class="skill" onclick="setSkill('machine learning')">Machine Learning</div>
       <div class="skill" onclick="setSkill('data')">Data</div>
       <div class="skill" onclick="setSkill('sql')">SQL</div>
       <div class="skill" onclick="setSkill('javascript')">JavaScript</div>
@@ -168,11 +168,11 @@
   <div class="card center">
     <h2>💳 Premium Access</h2>
 
-    <p><b>AI Resume + Job Boost Access</b></p>
+    <p><b>AI Resume + Global Job Boost</b></p>
     <p><b>Premium Charge: ₹200</b></p>
 
     <img class="qr"
-      src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=upi://pay?pa=9975076459@mbk&pn=AOV%20AI%20Jobs&am=200&cu=INR">
+      src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=upi://pay?pa=9975076459@mbk&pn=AOV%20AI%20Jobs%20Global&am=200&cu=INR">
 
     <button class="btn" onclick="pay()">Pay ₹200 via UPI</button>
   </div>
@@ -186,10 +186,11 @@ const jobs = [
   {title:"ML Intern",skills:["ml","python"],level:"fresher"},
   {title:"Data Analyst",skills:["data","sql"],level:"junior"},
   {title:"Web Developer",skills:["web","javascript","react"],level:"junior"},
-  {title:"Chatbot Developer",skills:["chatbot","ai"],level:"junior"}
+  {title:"Chatbot Developer",skills:["chatbot","ai"],level:"junior"},
+  {title:"Marketing Executive",skills:["marketing"],level:"fresher"}
 ];
 
-// skill click
+// skill select
 function setSkill(skill){
   document.getElementById("skills").value = skill;
   generateAI();
@@ -253,10 +254,10 @@ function saveResume(){
   `;
 }
 
-// UPI PAY
+// payment
 function pay(){
   window.location.href =
-    "upi://pay?pa=9975076459@mbk&pn=AOV%20AI%20Jobs&am=200&cu=INR";
+    "upi://pay?pa=9975076459@mbk&pn=AOV%20AI%20Jobs%20Global&am=200&cu=INR";
 }
 
 </script>
