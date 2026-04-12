@@ -106,26 +106,10 @@
 
 <script>
 const jobs = [
-  {
-    title: "AI Developer",
-    description: "Work on AI models and automation",
-    type: "senior"
-  },
-  {
-    title: "Machine Learning Intern",
-    description: "Assist ML projects",
-    type: "intern"
-  },
-  {
-    title: "Freelance Chatbot Builder",
-    description: "Build bots for clients",
-    type: "junior"
-  },
-  {
-    title: "Data Analyst",
-    description: "Analyze data and trends",
-    type: "junior"
-  }
+  { title: "AI Developer", description: "Work on AI models and automation", type: "senior" },
+  { title: "Machine Learning Intern", description: "Assist ML projects", type: "intern" },
+  { title: "Freelance Chatbot Builder", description: "Build bots for clients", type: "junior" },
+  { title: "Data Analyst", description: "Analyze data and trends", type: "junior" }
 ];
 
 // Display jobs
@@ -145,20 +129,25 @@ function displayJobs(list) {
   });
 }
 
-// Search function (FIXED)
+// ✅ STRONG SEARCH FIX
 function searchJobs() {
   let input = document.getElementById("jobSearch").value.toLowerCase().trim();
-  const container = document.getElementById("jobContainer");
+  let container = document.getElementById("jobContainer");
 
   if (input === "") {
     displayJobs(jobs);
     return;
   }
 
-  let filtered = jobs.filter(job =>
-    job.title.toLowerCase().includes(input) ||
-    job.description.toLowerCase().includes(input)
-  );
+  let filtered = [];
+
+  for (let i = 0; i < jobs.length; i++) {
+    let text = (jobs[i].title + " " + jobs[i].description).toLowerCase();
+
+    if (text.includes(input)) {
+      filtered.push(jobs[i]);
+    }
+  }
 
   if (filtered.length > 0) {
     displayJobs(filtered);
@@ -166,7 +155,7 @@ function searchJobs() {
     container.innerHTML = `
       <div class="card">
         <h2>No results found</h2>
-        <p>Search more jobs online</p>
+        <p>Click below to search on Google</p>
         <a class="btn" target="_blank" href="https://www.google.com/search?q=${input}+jobs">
           Search "${input}" jobs on Google
         </a>
