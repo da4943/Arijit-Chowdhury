@@ -82,14 +82,14 @@
     <h2>📄 Your AI Profile</h2>
 
     <input id="name" class="search" placeholder="Full Name">
-    <input id="skills" class="search" placeholder="Skills (AI, Python, Marketing)">
-    <input id="exp" class="search" placeholder="Experience (Fresher / 2 years / 5 years)">
+    <input id="skills" class="search" placeholder="Skills (AI Python ML)">
+    <input id="exp" class="search" placeholder="Experience (Fresher / Junior / Senior)">
     <input id="education" class="search" placeholder="Education">
 
     <button class="btn" onclick="generateAI()">Generate AI Matches</button>
   </div>
 
-  <!-- JOB RESULTS -->
+  <!-- RESULTS -->
   <div id="results"></div>
 
   <!-- PAYMENT -->
@@ -112,12 +112,14 @@ const jobs = [
   { title: "Chatbot Developer", skills: ["ai","chatbot","javascript"], level: "junior" }
 ];
 
-// AI MATCHING ENGINE
+// ✅ FIXED AI ENGINE
 function generateAI(){
 
-  let name = document.getElementById("name").value.toLowerCase();
-  let skills = document.getElementById("skills").value.toLowerCase().split(",");
-  let exp = document.getElementById("exp").value.toLowerCase();
+  let skillsText = document.getElementById("skills").value.toLowerCase().trim();
+  let exp = document.getElementById("exp").value.toLowerCase().trim();
+
+  // split properly (space OR comma)
+  let skills = skillsText.split(/[\s,]+/).filter(s => s !== "");
 
   let results = [];
 
@@ -127,11 +129,15 @@ function generateAI(){
 
     // skill match
     job.skills.forEach(s=>{
-      if(skills.includes(s.trim())) matchScore += 40;
+      if(skills.includes(s)) {
+        matchScore += 50;
+      }
     });
 
     // experience match
-    if(exp.includes(job.level)) matchScore += 30;
+    if(exp.includes(job.level)) {
+      matchScore += 30;
+    }
 
     if(matchScore > 0){
       results.push({
@@ -141,12 +147,13 @@ function generateAI(){
     }
   });
 
+  // sort best match first
   results.sort((a,b)=>b.score-a.score);
 
   let html = "<div class='card'><h2>🎯 AI Job Matches</h2>";
 
   if(results.length === 0){
-    html += "<p>No strong match found</p>";
+    html += "<p>No match found. Try adding more skills.</p>";
   } else {
     results.forEach(r=>{
       html += `
