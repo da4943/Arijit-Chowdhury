@@ -74,23 +74,34 @@
   <a class="btn" onclick="matchJobs()">Find Best Jobs</a>
 </header>
 
-<!-- ✅ RESUME FORM ADDED -->
+<!-- ✅ FULL FORM -->
 <div class="container">
   <div class="card">
     <h2>📄 Create Your AI Resume</h2>
 
-    <input id="name" class="search" type="text" placeholder="Your Name"><br><br>
+    <input id="name" class="search" type="text" placeholder="Full Name"><br><br>
 
-    <input id="email" class="search" type="text" placeholder="Your Email"><br><br>
+    <input id="father" class="search" type="text" placeholder="Father's Name"><br><br>
 
-    <input id="skills" class="search" type="text" placeholder="Your Skills"><br><br>
+    <input id="email" class="search" type="email" placeholder="Email Address"><br><br>
+
+    <input id="phone" class="search" type="text" placeholder="Phone Number"><br><br>
+
+    <input id="age" class="search" type="number" placeholder="Age"><br><br>
+
+    <input id="dob" class="search" type="date"><br><br>
+
+    <input id="skills" class="search" type="text" placeholder="Skills (AI, Python, Marketing...)"><br><br>
 
     <select id="exp" class="search">
       <option value="">Select Experience</option>
       <option>Fresher</option>
       <option>1-2 Years</option>
-      <option>3+ Years</option>
+      <option>3-5 Years</option>
+      <option>5+ Years</option>
     </select><br><br>
+
+    <input id="education" class="search" type="text" placeholder="Education (B.Com, MBA...)"><br><br>
 
     <a class="btn" onclick="submitForm()">Create Resume</a>
   </div>
@@ -173,9 +184,7 @@ function searchJobs() {
 
         <a class="btn" target="_blank" href="https://www.google.com/search?q=${input}+jobs">
           Google Search
-        </a>
-
-        <br>
+        </a><br>
 
         <a class="btn" target="_blank" href="https://www.linkedin.com/jobs/search/?keywords=${input}">
           LinkedIn Search
@@ -205,26 +214,38 @@ function matchJobs() {
   }
 }
 
-// ✅ FORM FUNCTION
+// ✅ FORM FUNCTION UPDATED
 function submitForm() {
   let name = document.getElementById("name").value;
+  let father = document.getElementById("father").value;
   let email = document.getElementById("email").value;
+  let phone = document.getElementById("phone").value;
+  let age = document.getElementById("age").value;
+  let dob = document.getElementById("dob").value;
   let skills = document.getElementById("skills").value;
   let exp = document.getElementById("exp").value;
+  let education = document.getElementById("education").value;
 
   if (name === "" || email === "" || skills === "") {
-    alert("Please fill all details");
+    alert("Please fill required details");
     return;
   }
 
   let message = `
+===== NEW RESUME REQUEST =====
 Name: ${name}
+Father Name: ${father}
 Email: ${email}
+Phone: ${phone}
+Age: ${age}
+DOB: ${dob}
 Skills: ${skills}
 Experience: ${exp}
+Education: ${education}
+==============================
   `;
 
-  alert("Resume request submitted!");
+  alert("✅ Resume request submitted successfully!");
 
   console.log(message);
 }
