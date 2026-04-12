@@ -1,23 +1,26 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>AOV AI Jobs - Level 2 Startup</title>
+  <title>AOV AI Jobs - Startup Level 2 FIX</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <style>
-    body {
-      font-family: Arial;
+    body{
       margin:0;
-      background: linear-gradient(135deg,#0f172a,#111827);
+      font-family:Arial;
+      background:linear-gradient(135deg,#0f172a,#111827);
       color:white;
     }
 
     header{
       text-align:center;
-      padding:40px;
+      padding:30px;
     }
 
-    h1{color:#38bdf8;font-size:40px;}
+    h1{
+      color:#38bdf8;
+      font-size:40px;
+    }
 
     .container{
       max-width:900px;
@@ -27,34 +30,41 @@
 
     .card{
       background:#1f2937;
-      padding:15px;
+      padding:20px;
       border-radius:12px;
       margin-bottom:15px;
     }
 
+    /* FIX ALIGNMENT */
+    .form-grid{
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+    }
+
     input{
-      width:100%;
-      padding:10px;
-      margin:5px 0;
+      padding:12px;
       border-radius:8px;
       border:none;
+      width:100%;
+      box-sizing:border-box;
     }
 
     .btn{
       background:#38bdf8;
       color:black;
-      padding:10px;
+      padding:12px;
       border:none;
-      width:100%;
       border-radius:8px;
       font-weight:bold;
       cursor:pointer;
+      width:100%;
       margin-top:10px;
     }
 
     .job{
       background:#0f172a;
-      padding:10px;
+      padding:15px;
       border-radius:10px;
       margin-top:10px;
       border:1px solid #334155;
@@ -62,6 +72,27 @@
 
     .score{
       color:#22c55e;
+      font-weight:bold;
+    }
+
+    .link-btn{
+      display:block;
+      text-align:center;
+      padding:10px;
+      margin-top:8px;
+      border-radius:8px;
+      text-decoration:none;
+      font-weight:bold;
+    }
+
+    .linkedin{
+      background:#0a66c2;
+      color:white;
+    }
+
+    .google{
+      background:#db4437;
+      color:white;
     }
 
   </style>
@@ -70,45 +101,29 @@
 <body>
 
 <header>
-  <h1>🤖 AOV AI Startup System</h1>
-  <p>Level 2 AI Job + Resume Platform</p>
+  <h1>🤖 AOV AI Jobs</h1>
+  <p>Startup Level 2 AI System (FIXED)</p>
 </header>
 
 <div class="container">
 
   <!-- PROFILE -->
   <div class="card">
-    <h2>Create Profile</h2>
+    <h2>📄 Create Profile</h2>
 
-    <input id="name" placeholder="Full Name">
-    <input id="skills" placeholder="Skills (AI Python ML)">
-    <input id="exp" placeholder="Experience (fresher/junior/senior)">
+    <div class="form-grid">
+      <input id="name" placeholder="Full Name">
+      <input id="skills" placeholder="Skills (AI Python ML)">
+      <input id="exp" placeholder="Experience (fresher/junior/senior)">
+    </div>
 
-    <button class="btn" onclick="saveProfile()">Save Profile</button>
-  </div>
-
-  <!-- AI MATCH -->
-  <div class="card">
-    <h2>AI Job Matching</h2>
     <button class="btn" onclick="generateAI()">Find Jobs</button>
+  </div>
 
+  <!-- RESULTS -->
+  <div class="card">
+    <h2>🎯 AI Job Results</h2>
     <div id="results"></div>
-  </div>
-
-  <!-- RESUME -->
-  <div class="card">
-    <h2>Auto Resume Preview</h2>
-    <div id="resume"></div>
-  </div>
-
-  <!-- PAYMENT -->
-  <div class="card">
-    <h2>Premium Upgrade</h2>
-    <p>Unlock AI Resume PDF + Priority Jobs</p>
-
-    <a class="btn" href="upi://pay?pa=9975076459@mbk&pn=AOV%20AI%20Jobs&am=49&cu=INR">
-      Pay ₹49 via UPI
-    </a>
   </div>
 
 </div>
@@ -120,25 +135,10 @@ const jobs = [
   {title:"ML Intern",skills:["ml","python"],level:"fresher"},
   {title:"Data Analyst",skills:["data","sql"],level:"junior"},
   {title:"Web Developer",skills:["web","javascript"],level:"junior"},
-  {title:"Marketing Executive",skills:["marketing"],level:"fresher"}
+  {title:"Marketing Executive",skills:["marketing"],level:"fresher"},
+  {title:"Chatbot Developer",skills:["chatbot","ai"],level:"junior"}
 ];
 
-// SAVE PROFILE (STARTUP FEATURE)
-function saveProfile(){
-
-  let user = {
-    name:document.getElementById("name").value,
-    skills:document.getElementById("skills").value,
-    exp:document.getElementById("exp").value
-  };
-
-  localStorage.setItem("userProfile", JSON.stringify(user));
-
-  alert("Profile Saved (Startup DB Ready)");
-  showResume();
-}
-
-// AI MATCH ENGINE
 function generateAI(){
 
   let skills = document.getElementById("skills").value.toLowerCase().split(/[\s,]+/);
@@ -155,29 +155,30 @@ function generateAI(){
 
     if(exp.includes(job.level)) score += 20;
 
-    if(score>0){
-      results.push({...job,score});
-    }
+    // SHOW EVEN LOW MATCH (FIX NO RESULT PROBLEM)
+    if(score === 0) score = 10;
+
+    results.push({...job,score});
   });
 
   results.sort((a,b)=>b.score-a.score);
 
-  let html="";
+  let html = "";
 
   results.forEach(j=>{
-    html+=`
+    html += `
       <div class="job">
         <h3>${j.title}</h3>
         <p class="score">${j.score}% match</p>
 
-        <a class="btn" target="_blank"
-        href="https://www.linkedin.com/jobs/search/?keywords=${j.title}">
-        LinkedIn
+        <a class="link-btn linkedin" target="_blank"
+          href="https://www.linkedin.com/jobs/search/?keywords=${j.title}">
+          View on LinkedIn
         </a>
 
-        <a class="btn" target="_blank"
-        href="https://www.google.com/search?q=${j.title}+jobs">
-        Google
+        <a class="link-btn google" target="_blank"
+          href="https://www.google.com/search?q=${j.title}+jobs">
+          Search on Google
         </a>
       </div>
     `;
@@ -185,23 +186,6 @@ function generateAI(){
 
   document.getElementById("results").innerHTML = html;
 }
-
-// RESUME BUILDER
-function showResume(){
-
-  let user = JSON.parse(localStorage.getItem("userProfile"));
-
-  if(!user) return;
-
-  document.getElementById("resume").innerHTML = `
-    <p><b>Name:</b> ${user.name}</p>
-    <p><b>Skills:</b> ${user.skills}</p>
-    <p><b>Experience:</b> ${user.exp}</p>
-  `;
-}
-
-// LOAD
-showResume();
 
 </script>
 
