@@ -56,6 +56,27 @@
       width: 100%;
     }
 
+    .skill-box {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .skill {
+      background: #1f2937;
+      padding: 8px 12px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 13px;
+      border: 1px solid #334155;
+    }
+
+    .skill:hover {
+      background: #38bdf8;
+      color: black;
+    }
+
     .score {
       color: #22c55e;
       font-weight: bold;
@@ -77,7 +98,7 @@
 
 <div class="container">
 
-  <!-- USER PROFILE -->
+  <!-- PROFILE -->
   <div class="card">
     <h2>📄 Your AI Profile</h2>
 
@@ -87,6 +108,29 @@
     <input id="education" class="search" placeholder="Education">
 
     <button class="btn" onclick="generateAI()">Generate AI Matches</button>
+  </div>
+
+  <!-- SKILLS LIBRARY -->
+  <div class="card">
+    <h2>🔥 All Skills Library</h2>
+
+    <div class="skill-box">
+      <div class="skill" onclick="selectSkill('ai')">AI</div>
+      <div class="skill" onclick="selectSkill('python')">Python</div>
+      <div class="skill" onclick="selectSkill('machine learning')">Machine Learning</div>
+      <div class="skill" onclick="selectSkill('deep learning')">Deep Learning</div>
+      <div class="skill" onclick="selectSkill('data')">Data Science</div>
+      <div class="skill" onclick="selectSkill('sql')">SQL</div>
+      <div class="skill" onclick="selectSkill('excel')">Excel</div>
+      <div class="skill" onclick="selectSkill('javascript')">JavaScript</div>
+      <div class="skill" onclick="selectSkill('react')">React</div>
+      <div class="skill" onclick="selectSkill('node')">Node.js</div>
+      <div class="skill" onclick="selectSkill('web')">Web Dev</div>
+      <div class="skill" onclick="selectSkill('chatbot')">Chatbot</div>
+      <div class="skill" onclick="selectSkill('marketing')">Marketing</div>
+      <div class="skill" onclick="selectSkill('seo')">SEO</div>
+      <div class="skill" onclick="selectSkill('freelance')">Freelancing</div>
+    </div>
   </div>
 
   <!-- RESULTS -->
@@ -109,55 +153,51 @@ const jobs = [
   { title: "AI Developer", skills: ["ai","python","ml"], level: "senior" },
   { title: "ML Intern", skills: ["ml","python"], level: "fresher" },
   { title: "Data Analyst", skills: ["excel","data","sql"], level: "junior" },
-  { title: "Chatbot Developer", skills: ["ai","chatbot","javascript"], level: "junior" }
+  { title: "Chatbot Developer", skills: ["ai","chatbot","javascript"], level: "junior" },
+  { title: "Web Developer", skills: ["web","javascript","react"], level: "junior" }
 ];
 
-// ✅ FIXED AI ENGINE
+// SELECT SKILL
+function selectSkill(skill){
+  document.getElementById("skills").value = skill;
+  generateAI();
+}
+
+// AI MATCH ENGINE
 function generateAI(){
 
   let skillsText = document.getElementById("skills").value.toLowerCase().trim();
   let exp = document.getElementById("exp").value.toLowerCase().trim();
 
-  // split properly (space OR comma)
-  let skills = skillsText.split(/[\s,]+/).filter(s => s !== "");
+  let skills = skillsText.split(/[\s,]+/).filter(Boolean);
 
   let results = [];
 
   jobs.forEach(job => {
 
-    let matchScore = 0;
+    let score = 0;
 
-    // skill match
     job.skills.forEach(s=>{
-      if(skills.includes(s)) {
-        matchScore += 50;
-      }
+      if(skills.includes(s)) score += 50;
     });
 
-    // experience match
-    if(exp.includes(job.level)) {
-      matchScore += 30;
-    }
+    if(exp.includes(job.level)) score += 20;
 
-    if(matchScore > 0){
-      results.push({
-        title: job.title,
-        score: matchScore
-      });
+    if(score > 0){
+      results.push({...job, score});
     }
   });
 
-  // sort best match first
   results.sort((a,b)=>b.score-a.score);
 
   let html = "<div class='card'><h2>🎯 AI Job Matches</h2>";
 
   if(results.length === 0){
-    html += "<p>No match found. Try adding more skills.</p>";
+    html += "<p>No match found. Try more skills.</p>";
   } else {
     results.forEach(r=>{
       html += `
-        <p>💼 ${r.title} - <span class="score">${r.score}% match</span></p>
+        <p>💼 <b>${r.title}</b> - <span class="score">${r.score}% match</span></p>
       `;
     });
   }
@@ -169,8 +209,6 @@ function generateAI(){
 
 // PAYMENT
 function payNow(){
-  alert("Redirecting to UPI Payment...");
-
   window.location.href =
     "upi://pay?pa=9975076459@mbk&pn=AOV%20AI%20Jobs&am=49&cu=INR";
 }
