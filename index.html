@@ -120,7 +120,6 @@ const jobs = [
   }
 ];
 
-// show jobs
 function displayJobs(list) {
   let container = document.getElementById("jobContainer");
   container.innerHTML = "";
@@ -136,7 +135,6 @@ function displayJobs(list) {
   });
 }
 
-// search
 function searchJobs() {
   let input = document.getElementById("jobSearch").value.toLowerCase().trim();
 
@@ -159,10 +157,8 @@ function searchJobs() {
   }
 }
 
-// match jobs
 function matchJobs() {
   let skill = document.getElementById("userSkill").value.toLowerCase();
-
   let result = jobs.filter(job =>
     job.title.toLowerCase().includes(skill)
   );
@@ -170,7 +166,7 @@ function matchJobs() {
   displayJobs(result);
 }
 
-// ✅ UPI PAYMENT
+// ✅ YOUR UPI ID ADDED HERE
 document.getElementById("payBtn").addEventListener("click", function () {
 
   let name = document.getElementById("name").value;
@@ -182,19 +178,16 @@ document.getElementById("payBtn").addEventListener("click", function () {
     return;
   }
 
-  // save data
   localStorage.setItem("resumeData", JSON.stringify({
     name, email, skills
   }));
 
   alert("Opening UPI app...");
 
-  // 👉 CHANGE YOUR UPI ID HERE
   window.location.href =
-    "upi://pay?pa=YOUR_UPI_ID&pn=AOV%20AI%20Jobs&am=49&cu=INR";
+    "upi://pay?pa=9975076459@mbk&pn=AOV%20AI%20Jobs&am=49&cu=INR";
 });
 
-// load jobs
 displayJobs(jobs);
 </script>
 
