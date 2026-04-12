@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>AOV AI Jobs - Level 3 Startup</title>
+  <title>AOV AI Jobs - Level 3 Clean UI</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <style>
@@ -21,34 +21,42 @@
 
     h1{
       margin:0;
-      font-size:34px;
+      font-size:32px;
     }
 
     .container{
-      max-width:950px;
+      max-width:900px;
       margin:auto;
       padding:15px;
     }
 
-    .grid{
-      display:grid;
-      grid-template-columns:1fr;
-      gap:15px;
-    }
-
     .card{
       background:white;
-      padding:15px;
+      padding:18px;
       border-radius:12px;
-      box-shadow:0 8px 20px rgba(0,0,0,0.15);
+      box-shadow:0 6px 18px rgba(0,0,0,0.12);
+      margin-bottom:15px;
+    }
+
+    /* ✅ PROPER ALIGNMENT FIX */
+    .form-grid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:10px;
+    }
+
+    @media(max-width:700px){
+      .form-grid{
+        grid-template-columns:1fr;
+      }
     }
 
     input{
       width:100%;
       padding:12px;
-      margin:6px 0;
       border-radius:8px;
       border:1px solid #ccc;
+      box-sizing:border-box;
     }
 
     .btn{
@@ -67,6 +75,7 @@
       display:flex;
       flex-wrap:wrap;
       gap:8px;
+      margin-top:10px;
     }
 
     .skill{
@@ -74,8 +83,8 @@
       background:#f1f5f9;
       border-radius:20px;
       cursor:pointer;
-      border:1px solid #cbd5e1;
       font-size:13px;
+      border:1px solid #cbd5e1;
     }
 
     .skill:hover{
@@ -95,12 +104,13 @@
       color:#16a34a;
     }
 
-    .qr{
-      width:160px;
-    }
-
     .center{
       text-align:center;
+    }
+
+    .qr{
+      width:160px;
+      margin-top:10px;
     }
   </style>
 </head>
@@ -108,26 +118,29 @@
 <body>
 
 <header>
-  <h1>AI JOBS - LEVEL 3 STARTUP</h1>
-  <p>Smart AI Resume + Global Job Matching System</p>
+  <h1>AI JOBS SYSTEM</h1>
+  <p>Clean Level 3 Startup Interface</p>
 </header>
 
-<div class="container grid">
+<div class="container">
 
   <!-- PROFILE -->
   <div class="card">
-    <h2>📄 AI Profile Builder</h2>
+    <h2>📄 AI Profile</h2>
 
-    <input id="name" placeholder="Full Name">
-    <input id="skills" placeholder="Skills (comma separated)">
-    <input id="exp" placeholder="Experience (fresher/junior/senior)">
+    <div class="form-grid">
+      <input id="name" placeholder="Full Name">
+      <input id="exp" placeholder="Experience (fresher/junior/senior)">
+    </div>
 
-    <button class="btn" onclick="generateAI()">Generate AI Jobs</button>
+    <input id="skills" placeholder="Skills (AI, Python, ML)">
+
+    <button class="btn" onclick="generateAI()">Find AI Jobs</button>
   </div>
 
-  <!-- SKILLS LIBRARY -->
+  <!-- SKILLS -->
   <div class="card">
-    <h2>🔥 Quick Skills</h2>
+    <h2>🔥 Skills Library</h2>
 
     <div class="skill-box">
       <div class="skill" onclick="addSkill('ai')">AI</div>
@@ -156,10 +169,10 @@
 
   <!-- PAYMENT -->
   <div class="card center">
-    <h2>💳 Premium Unlock</h2>
+    <h2>💳 Premium Access</h2>
 
-    <p><b>AI Resume + Job Boost Access</b></p>
-    <p><b>Price: ₹200</b></p>
+    <p><b>AI Resume + Job Boost</b></p>
+    <p><b>₹200 Premium</b></p>
 
     <img class="qr"
       src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=upi://pay?pa=9975076459@mbk&pn=AOV%20AI%20Jobs&am=200&cu=INR">
@@ -176,17 +189,16 @@ const jobs = [
   {title:"ML Intern",skills:["ml","python"],level:"fresher"},
   {title:"Data Analyst",skills:["data","sql"],level:"junior"},
   {title:"Web Developer",skills:["react","javascript"],level:"junior"},
-  {title:"Chatbot Developer",skills:["chatbot","ai"],level:"junior"},
-  {title:"Marketing Executive",skills:["marketing"],level:"fresher"}
+  {title:"Chatbot Developer",skills:["chatbot","ai"],level:"junior"}
 ];
 
-// ADD SKILL
+// add skill
 function addSkill(skill){
   let input=document.getElementById("skills");
   input.value += (input.value ? "," : "") + skill;
 }
 
-// AI ENGINE (LEVEL 3)
+// AI ENGINE
 function generateAI(){
 
   let skills=document.getElementById("skills").value.toLowerCase().split(",");
@@ -203,9 +215,7 @@ function generateAI(){
 
     if(exp.includes(job.level)) score+=20;
 
-    if(score>0){
-      results.push({...job,score});
-    }
+    results.push({...job,score});
   });
 
   results.sort((a,b)=>b.score-a.score);
@@ -219,19 +229,20 @@ function generateAI(){
         <p class="score">${j.score}% Match</p>
 
         <a class="btn" target="_blank"
-        href="https://www.linkedin.com/jobs/search/?keywords=${j.title}">
-        LinkedIn Jobs</a>
+          href="https://www.linkedin.com/jobs/search/?keywords=${j.title}">
+          LinkedIn Jobs
+        </a>
 
         <a class="btn" target="_blank"
-        href="https://www.google.com/search?q=${j.title}+jobs">
-        Google Jobs</a>
+          href="https://www.google.com/search?q=${j.title}+jobs">
+          Google Jobs
+        </a>
       </div>
     `;
   });
 
   document.getElementById("results").innerHTML=html;
 
-  // resume preview auto
   document.getElementById("resume").innerHTML=`
     <p><b>Name:</b> ${document.getElementById("name").value}</p>
     <p><b>Skills:</b> ${document.getElementById("skills").value}</p>
