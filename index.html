@@ -1,8 +1,12 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>AOV AI Jobs - Level 7 SaaS</title>
+  <title>AOV AI Jobs - Production System</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js"></script>
 
   <style>
     body{
@@ -12,88 +16,65 @@
       color:white;
     }
 
-    .nav{
-      padding:12px;
-      text-align:center;
-      background:#111827;
-      color:#38bdf8;
-      font-weight:bold;
-      position:sticky;
-      top:0;
-    }
-
-    .container{
-      max-width:1000px;
+    .box{
+      max-width:900px;
       margin:auto;
-      padding:15px;
+      padding:20px;
     }
 
     .card{
       background:#111827;
-      border:1px solid #334155;
       padding:15px;
-      border-radius:12px;
-      margin-bottom:15px;
+      margin:10px 0;
+      border-radius:10px;
+      border:1px solid #334155;
     }
 
     input{
       width:100%;
-      padding:12px;
-      margin-top:8px;
+      padding:10px;
+      margin:5px 0;
       border-radius:8px;
       border:1px solid #334155;
       background:#0b1220;
       color:white;
-      box-sizing:border-box;
     }
 
-    .btn{
+    button{
       width:100%;
-      padding:12px;
+      padding:10px;
       margin-top:10px;
       background:#38bdf8;
       border:none;
       border-radius:8px;
-      font-weight:bold;
-      color:black;
       cursor:pointer;
+      font-weight:bold;
     }
 
     .job{
-      padding:12px;
+      padding:10px;
       border:1px solid #334155;
       margin-top:10px;
-      border-radius:10px;
-      background:#0b1220;
-    }
-
-    .score{
-      color:#22c55e;
-      font-weight:bold;
+      border-radius:8px;
     }
 
     .premium{
-      border:2px dashed gold;
+      border:2px solid gold;
     }
-
   </style>
 </head>
 
 <body>
 
-<div class="nav">🚀 AOV AI STARTUP - LEVEL 7 SYSTEM</div>
+<div class="box">
 
-<div class="container">
-
-  <!-- LOGIN -->
   <div class="card">
     <h2>🔐 Login</h2>
     <input id="email" placeholder="Email">
     <input id="password" placeholder="Password">
-    <button class="btn" onclick="login()">Login</button>
+    <button onclick="login()">Login</button>
   </div>
 
-  <!-- PROFILE -->
   <div class="card">
     <h2>📄 AI Resume Builder</h2>
 
@@ -101,64 +82,86 @@
     <input id="skills" placeholder="Skills (ai, python, ml)">
     <input id="exp" placeholder="Experience">
 
-    <button class="btn" onclick="saveProfile()">Save Profile</button>
-    <button class="btn" onclick="generateAI()">Find Jobs</button>
+    <button onclick="saveProfile()">Save Profile</button>
+    <button onclick="generateAI()">Find Jobs</button>
   </div>
 
-  <!-- RESULTS -->
   <div class="card">
-    <h2>🎯 AI Job Matches</h2>
+    <h2>🎯 AI Jobs</h2>
     <div id="results"></div>
   </div>
 
-  <!-- PREMIUM -->
   <div class="card premium">
-    <h2>💎 Premium System</h2>
+    <h2>💎 Premium ₹200</h2>
 
-    <p>✔ AI Resume PDF</p>
-    <p>✔ Auto Apply Jobs</p>
-    <p>✔ AI Interview Bot</p>
-
-    <img width="160"
+    <img width="150"
       src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=upi://pay?pa=9975076459@mbk&pn=AOV&am=200&cu=INR">
 
-    <button class="btn" onclick="pay()">Unlock ₹200</button>
+    <button onclick="pay()">Unlock Premium</button>
   </div>
 
 </div>
 
 <script>
 
-const jobs=[
+// 🔥 FIREBASE CONFIG (PUT YOURS HERE)
+const firebaseConfig = {
+  apiKey: "YOUR_KEY",
+  authDomain: "YOUR_DOMAIN",
+  projectId: "YOUR_PROJECT"
+};
+
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+const db = firebase.firestore();
+
+// 📌 JOBS DATABASE
+const jobs = [
   {title:"AI Engineer",skills:["ai","python","ml"]},
   {title:"Data Analyst",skills:["data","sql"]},
   {title:"Web Developer",skills:["react","javascript"]},
   {title:"ML Intern",skills:["ml","python"]}
 ];
 
-// LOGIN (simple demo)
+// 🔐 LOGIN
 function login(){
-  alert("Login success (demo mode)");
+  let email=document.getElementById("email").value;
+  let pass=document.getElementById("password").value;
+
+  auth.signInWithEmailAndPassword(email,pass)
+  .then(()=>{
+    alert("Login Success");
+  })
+  .catch(()=>{
+    auth.createUserWithEmailAndPassword(email,pass)
+    .then(()=>alert("Account Created"));
+  });
 }
 
-// SAVE PROFILE (local DB)
+// 💾 SAVE PROFILE TO CLOUD
 function saveProfile(){
-  let data={
+  let user=auth.currentUser;
+
+  if(!user){
+    alert("Login first");
+    return;
+  }
+
+  db.collection("profiles").doc(user.uid).set({
     name:document.getElementById("name").value,
     skills:document.getElementById("skills").value,
     exp:document.getElementById("exp").value
-  };
+  });
 
-  localStorage.setItem("profile",JSON.stringify(data));
-  alert("Profile saved in system");
+  alert("Saved to Cloud ☁");
 }
 
-// AI ENGINE
+// 🤖 AI MATCH ENGINE
 function generateAI(){
 
   let skills=document.getElementById("skills").value.toLowerCase().split(",");
 
-  let results=[];
+  let html="";
 
   jobs.forEach(j=>{
     let score=0;
@@ -168,35 +171,27 @@ function generateAI(){
     });
 
     if(score>0){
-      results.push({...j,score});
+      html+=`
+        <div class="job">
+          <h3>${j.title}</h3>
+          <p>Match: ${score}%</p>
+
+          <a href="https://www.linkedin.com/jobs/search/?keywords=${j.title}" target="_blank">
+            LinkedIn Jobs
+          </a><br>
+
+          <a href="https://www.google.com/search?q=${j.title}+jobs" target="_blank">
+            Google Jobs
+          </a>
+        </div>
+      `;
     }
-  });
-
-  results.sort((a,b)=>b.score-a.score);
-
-  let html="";
-
-  results.forEach(r=>{
-    html+=`
-      <div class="job">
-        <h3>${r.title}</h3>
-        <p class="score">${r.score}% Match</p>
-
-        <a class="btn" target="_blank"
-        href="https://www.linkedin.com/jobs/search/?keywords=${r.title}">
-        LinkedIn</a>
-
-        <a class="btn" target="_blank"
-        href="https://www.google.com/search?q=${r.title}+jobs">
-        Google</a>
-      </div>
-    `;
   });
 
   document.getElementById("results").innerHTML=html;
 }
 
-// PAYMENT
+// 💳 PAYMENT (UPI)
 function pay(){
   window.location.href =
     "upi://pay?pa=9975076459@mbk&pn=AOV&am=200&cu=INR";
