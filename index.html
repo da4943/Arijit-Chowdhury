@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>AOV AI Jobs</title>
+  <title>AOV AI Jobs - Advanced AI System</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <style>
@@ -22,13 +22,26 @@
       color: #38bdf8;
     }
 
+    .container {
+      padding: 20px;
+      max-width: 900px;
+      margin: auto;
+    }
+
+    .card {
+      background: rgba(30, 41, 59, 0.85);
+      padding: 18px;
+      border-radius: 16px;
+      margin-bottom: 15px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+    }
+
     .search {
-      width: 80%;
+      width: 100%;
       padding: 12px;
-      margin: 8px 0;
+      margin: 6px 0;
       border-radius: 10px;
       border: none;
-      font-size: 15px;
     }
 
     .btn {
@@ -36,40 +49,21 @@
       color: black;
       padding: 12px;
       border-radius: 10px;
-      text-decoration: none;
-      display: inline-block;
       font-weight: bold;
       cursor: pointer;
-      margin-top: 10px;
       border: none;
+      margin-top: 10px;
+      width: 100%;
     }
 
-    .container {
-      padding: 20px;
-    }
-
-    .card {
-      background: rgba(30, 41, 59, 0.85);
-      padding: 20px;
-      border-radius: 16px;
-      margin-bottom: 15px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+    .score {
+      color: #22c55e;
+      font-weight: bold;
     }
 
     .qr {
-      width: 200px;
-      border-radius: 10px;
+      width: 180px;
       margin-top: 10px;
-    }
-
-    .small {
-      font-size: 12px;
-      color: #94a3b8;
-    }
-
-    .job-type {
-      font-size: 12px;
-      color: #94a3b8;
     }
   </style>
 </head>
@@ -77,92 +71,98 @@
 <body>
 
 <header>
-  <h1>AOV AI Jobs</h1>
-  <p>AI Job + Resume + Payment System</p>
-
-  <input id="jobSearch" class="search" type="text" placeholder="Search jobs..." onkeyup="searchJobs()">
-
-  <div class="container" id="jobContainer"></div>
-
-  <input id="userSkill" class="search" type="text" placeholder="Enter your skill">
-
-  <button class="btn" onclick="matchJobs()">Find Best Jobs</button>
+  <h1>🤖 AOV AI Jobs</h1>
+  <p>Advanced AI Resume + Job Matching System</p>
 </header>
 
-<!-- JOBS + RESUME -->
 <div class="container">
 
-  <!-- RESUME FORM -->
+  <!-- USER PROFILE -->
   <div class="card">
-    <h2>📄 Create AI Resume</h2>
+    <h2>📄 Your AI Profile</h2>
 
     <input id="name" class="search" placeholder="Full Name">
-    <input id="father" class="search" placeholder="Father Name">
-    <input id="email" class="search" placeholder="Email">
-    <input id="phone" class="search" placeholder="Phone">
-    <input id="skills" class="search" placeholder="Skills">
+    <input id="skills" class="search" placeholder="Skills (AI, Python, Marketing)">
+    <input id="exp" class="search" placeholder="Experience (Fresher / 2 years / 5 years)">
     <input id="education" class="search" placeholder="Education">
 
-    <button class="btn" onclick="payNow()">Pay ₹49 & Create Resume</button>
+    <button class="btn" onclick="generateAI()">Generate AI Matches</button>
+  </div>
 
-    <!-- QR -->
+  <!-- JOB RESULTS -->
+  <div id="results"></div>
+
+  <!-- PAYMENT -->
+  <div class="card">
+    <h2>💳 Premium Resume Service</h2>
+
     <img class="qr"
       src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=upi://pay?pa=9975076459@mbk&pn=AOV%20AI%20Jobs&am=49&cu=INR">
 
-    <p class="small">Scan to Pay (Google Pay / PhonePe / Paytm)</p>
+    <button class="btn" onclick="payNow()">Pay ₹49 & Unlock AI Resume</button>
   </div>
 
 </div>
 
 <script>
 const jobs = [
-  {title:"AI Developer", description:"Work on AI models", link:"https://www.linkedin.com/jobs/search/?keywords=ai%20developer"},
-  {title:"ML Intern", description:"Assist ML projects", link:"https://www.linkedin.com/jobs/search/?keywords=ml%20intern"},
-  {title:"Chatbot Developer", description:"Build bots", link:"https://www.google.com/search?q=chatbot+jobs"}
+  { title: "AI Developer", skills: ["ai","python","ml"], level: "senior" },
+  { title: "ML Intern", skills: ["ml","python"], level: "fresher" },
+  { title: "Data Analyst", skills: ["excel","data","sql"], level: "junior" },
+  { title: "Chatbot Developer", skills: ["ai","chatbot","javascript"], level: "junior" }
 ];
 
-// show jobs
-function showJobs(list){
-  let c = document.getElementById("jobContainer");
-  c.innerHTML = "";
-  list.forEach(j=>{
-    c.innerHTML += `
-      <div class="card">
-        <h3>${j.title}</h3>
-        <p class="job-type">${j.description}</p>
-        <a class="btn" target="_blank" href="${j.link}">Apply</a>
-      </div>
-    `;
+// AI MATCHING ENGINE
+function generateAI(){
+
+  let name = document.getElementById("name").value.toLowerCase();
+  let skills = document.getElementById("skills").value.toLowerCase().split(",");
+  let exp = document.getElementById("exp").value.toLowerCase();
+
+  let results = [];
+
+  jobs.forEach(job => {
+
+    let matchScore = 0;
+
+    // skill match
+    job.skills.forEach(s=>{
+      if(skills.includes(s.trim())) matchScore += 40;
+    });
+
+    // experience match
+    if(exp.includes(job.level)) matchScore += 30;
+
+    if(matchScore > 0){
+      results.push({
+        title: job.title,
+        score: matchScore
+      });
+    }
   });
-}
-showJobs(jobs);
 
-// search
-function searchJobs(){
-  let v = document.getElementById("jobSearch").value.toLowerCase();
-  let f = jobs.filter(j => j.title.toLowerCase().includes(v));
-  showJobs(f.length ? f : jobs);
-}
+  results.sort((a,b)=>b.score-a.score);
 
-// match
-function matchJobs(){
-  let s = document.getElementById("userSkill").value.toLowerCase();
-  let f = jobs.filter(j => j.title.toLowerCase().includes(s));
-  showJobs(f);
-}
+  let html = "<div class='card'><h2>🎯 AI Job Matches</h2>";
 
-// payment
-function payNow(){
-  let name = document.getElementById("name").value;
-  let email = document.getElementById("email").value;
-  let skills = document.getElementById("skills").value;
-
-  if(!name || !email || !skills){
-    alert("Fill all required fields");
-    return;
+  if(results.length === 0){
+    html += "<p>No strong match found</p>";
+  } else {
+    results.forEach(r=>{
+      html += `
+        <p>💼 ${r.title} - <span class="score">${r.score}% match</span></p>
+      `;
+    });
   }
 
-  alert("Opening UPI payment...");
+  html += "</div>";
+
+  document.getElementById("results").innerHTML = html;
+}
+
+// PAYMENT
+function payNow(){
+  alert("Redirecting to UPI Payment...");
 
   window.location.href =
     "upi://pay?pa=9975076459@mbk&pn=AOV%20AI%20Jobs&am=49&cu=INR";
