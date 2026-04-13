@@ -133,10 +133,13 @@
   <div class="card premium">
     <h2>💎 Premium ₹200</h2>
 
+    <p style="color:gold;">Scan QR → Pay → Click "I Have Paid"</p>
+
     <img width="150"
       src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=upi://pay?pa=9975076459@mbk&pn=AOV&am=200&cu=INR">
 
-    <button onclick="pay()">Pay & Unlock Premium</button>
+    <button onclick="openUPI()">Pay Now</button>
+    <button onclick="confirmPayment()">I Have Paid ✅</button>
   </div>
 
 </div>
@@ -203,7 +206,7 @@ function generateResume(){
   `;
 }
 
-// JOB MATCH (🔒 LIMITED FOR FREE)
+// JOB MATCH
 function generateJobs(){
 
   let skills = document.getElementById("skills").value.toLowerCase().split(/[\s,]+/);
@@ -236,4 +239,49 @@ function generateJobs(){
     }
   });
 
-  if
+  if(!isPremium){
+    html += "<p style='color:gold'>🔒 Upgrade to Premium for more jobs</p>";
+  }
+
+  document.getElementById("jobs").innerHTML = html || "No jobs found";
+}
+
+// PDF LOCK
+function downloadPDF(){
+
+  if(!isPremium){
+    alert("🔒 Premium only! Please pay ₹200");
+    return;
+  }
+
+  let el = document.getElementById("resumeContent");
+
+  if(!el){
+    alert("Generate resume first");
+    return;
+  }
+
+  html2pdf().from(el).save("Resume.pdf");
+}
+
+// 💳 OPEN UPI
+function openUPI(){
+  window.location.href="upi://pay?pa=9975076459@mbk&pn=AOV&am=200&cu=INR";
+}
+
+// ✅ CONFIRM PAYMENT
+function confirmPayment(){
+
+  let ok = confirm("Have you completed payment?");
+
+  if(ok){
+    localStorage.setItem("premiumUser","true");
+    alert("✅ Premium Activated!");
+    location.reload();
+  }
+}
+
+</script>
+
+</body>
+</html>
