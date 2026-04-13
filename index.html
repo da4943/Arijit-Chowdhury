@@ -4,20 +4,91 @@
   <title>AOV AI Jobs - Cloud SaaS</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <!-- Firebase -->
-  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js"></script>
+  <!-- Firebase (CORRECT VERSION) -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
 
   <!-- PDF -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
   <style>
-    body{margin:0;font-family:Arial;background:#0f172a;color:white;}
-    .container{max-width:900px;margin:auto;padding:20px;}
-    .card{background:#111827;padding:20px;margin-bottom:15px;border-radius:10px;}
-    input{width:100%;padding:10px;margin-top:8px;border-radius:6px;border:none;}
-    button{width:100%;padding:10px;margin-top:10px;background:#38bdf8;border:none;border-radius:6px;font-weight:bold;}
-    .job{margin-top:10px;padding:10px;border:1px solid #334155;border-radius:8px;}
+    body{
+      margin:0;
+      font-family:Arial;
+      background:linear-gradient(135deg,#0f172a,#1e293b);
+      color:white;
+    }
+
+    .container{
+      max-width:900px;
+      margin:auto;
+      padding:20px;
+    }
+
+    h1{
+      text-align:center;
+      color:#38bdf8;
+      margin-bottom:5px;
+    }
+
+    .subtitle{
+      text-align:center;
+      color:#9ca3af;
+      margin-bottom:20px;
+    }
+
+    .card{
+      background:#111827;
+      padding:20px;
+      margin-bottom:15px;
+      border-radius:12px;
+      border:1px solid #334155;
+    }
+
+    input{
+      width:100%;
+      padding:12px;
+      margin-top:8px;
+      border-radius:8px;
+      border:none;
+      background:#0b1220;
+      color:white;
+    }
+
+    button{
+      width:100%;
+      padding:12px;
+      margin-top:10px;
+      background:#38bdf8;
+      border:none;
+      border-radius:8px;
+      font-weight:bold;
+      cursor:pointer;
+    }
+
+    .job{
+      margin-top:10px;
+      padding:12px;
+      border:1px solid #334155;
+      border-radius:8px;
+      background:#0b1220;
+    }
+
+    .job a{
+      display:block;
+      margin-top:5px;
+      color:#38bdf8;
+    }
+
+    .premium{
+      border:2px solid gold;
+      text-align:center;
+    }
+
+    img{
+      margin-top:10px;
+    }
+
   </style>
 </head>
 
@@ -25,63 +96,69 @@
 
 <div class="container">
 
-<h1>🚀 AOV AI Jobs</h1>
+  <h1>🚀 AOV AI Jobs</h1>
+  <p class="subtitle">AI Resume Builder + Smart Job Matching System</p>
 
-<!-- PROFILE -->
-<div class="card">
-  <h2>📄 Profile</h2>
+  <!-- PROFILE -->
+  <div class="card">
+    <h2>📄 Profile</h2>
 
-  <input id="name" placeholder="Full Name">
-  <input id="skills" placeholder="Skills (ai, python)">
-  <input id="exp" placeholder="Experience">
+    <input id="name" placeholder="Full Name">
+    <input id="skills" placeholder="Skills (ai, python, marketing)">
+    <input id="exp" placeholder="Experience">
 
-  <button onclick="generateResume()">Generate Resume</button>
-  <button onclick="generateJobs()">Find Jobs</button>
-</div>
+    <button onclick="generateResume()">Generate Resume</button>
+    <button onclick="generateJobs()">Find Jobs</button>
+  </div>
 
-<!-- RESUME -->
-<div class="card">
-  <h2>📑 Resume</h2>
-  <div id="resume"></div>
-  <button onclick="downloadPDF()">Download PDF</button>
-</div>
+  <!-- RESUME -->
+  <div class="card">
+    <h2>📑 Resume</h2>
+    <div id="resume"></div>
+    <button onclick="downloadPDF()">Download PDF</button>
+  </div>
 
-<!-- JOBS -->
-<div class="card">
-  <h2>🎯 Jobs</h2>
-  <div id="jobs"></div>
-</div>
+  <!-- JOBS -->
+  <div class="card">
+    <h2>🎯 AI Job Matches</h2>
+    <div id="jobs"></div>
+  </div>
 
-<!-- PAYMENT -->
-<div class="card">
-  <h2>💎 Premium ₹200</h2>
+  <!-- PAYMENT -->
+  <div class="card premium">
+    <h2>💎 Premium ₹200</h2>
 
-  <img width="150"
-  src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=upi://pay?pa=9975076459@mbk&pn=AOV&am=200&cu=INR">
+    <p>Scan QR to pay</p>
 
-  <input id="utr" placeholder="Enter UTR">
-  <button onclick="submitPayment()">Submit Payment</button>
-</div>
+    <img width="150"
+    src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=upi://pay?pa=9975076459@mbk&pn=AOV&am=200&cu=INR">
 
-<!-- ADMIN -->
-<div class="card">
-  <h2>👑 Admin Panel</h2>
+    <input id="utr" placeholder="Enter UTR Number">
+    <button onclick="submitPayment()">Submit Payment</button>
+  </div>
 
-  <input id="adminPass" placeholder="Password">
-  <button onclick="loginAdmin()">Login</button>
+  <!-- ADMIN -->
+  <div class="card">
+    <h2>👑 Admin Panel</h2>
 
-  <div id="adminData"></div>
-</div>
+    <input id="adminPass" placeholder="Password">
+    <button onclick="loginAdmin()">Login</button>
+
+    <div id="adminData"></div>
+  </div>
 
 </div>
 
 <script>
 
-// 🔥 FIREBASE CONFIG (PUT YOURS)
+// ✅ YOUR REAL FIREBASE CONFIG
 const firebaseConfig = {
-  apiKey: "YOUR_KEY",
-  authDomain: "YOUR_DOMAIN",
-  projectId: "YOUR_PROJECT"
+  apiKey: "AIzaSyC-HL4tCUEscc3zYX-505wwlxJZocejMD4",
+  authDomain: "aov-ai-jobs.firebaseapp.com",
+  projectId: "aov-ai-jobs",
+  storageBucket: "aov-ai-jobs.firebasestorage.app",
+  messagingSenderId: "109315377636",
+  appId: "1:109315377636:web:7b1e8ca0536186a74adff1"
 };
 
 firebase.initializeApp(firebaseConfig);
@@ -96,13 +173,15 @@ const jobs = [
 
 // RESUME
 function generateResume(){
+
   let name = document.getElementById("name").value;
   let skills = document.getElementById("skills").value;
   let exp = document.getElementById("exp").value;
 
   document.getElementById("resume").innerHTML = `
-    <div id="resumeContent" style="background:white;color:black;padding:20px;">
-      <h2>${name}</h2>
+    <div id="resumeContent" style="background:white;color:black;padding:20px;border-radius:10px;">
+      <h2 style="text-align:center">${name}</h2>
+      <hr>
       <p><b>Skills:</b> ${skills}</p>
       <p><b>Experience:</b> ${exp}</p>
     </div>
@@ -111,32 +190,50 @@ function generateResume(){
 
 // JOB MATCH
 function generateJobs(){
-  let skills = document.getElementById("skills").value.toLowerCase().split(",");
+
+  let skills = document.getElementById("skills").value.toLowerCase().split(/[\s,]+/);
 
   let html="";
 
   jobs.forEach(j=>{
-    let match = j.skills.some(s=>skills.includes(s));
 
-    if(match){
+    let score = j.skills.filter(s => skills.includes(s)).length * 50;
+
+    if(score>0){
       html+=`
         <div class="job">
           <h3>${j.title}</h3>
-          <a target="_blank" href="https://www.linkedin.com/jobs/search/?keywords=${j.title}">LinkedIn</a>
+          <p>Match: ${score}%</p>
+
+          <a target="_blank" href="https://www.linkedin.com/jobs/search/?keywords=${j.title}">
+          🔗 LinkedIn Jobs</a>
+
+          <a target="_blank" href="https://www.google.com/search?q=${j.title}+jobs">
+          🌐 Google Jobs</a>
         </div>
       `;
     }
   });
+
+  if(html==="") html="<p>No jobs found. Try more skills.</p>";
 
   document.getElementById("jobs").innerHTML = html;
 }
 
 // PDF
 function downloadPDF(){
-  html2pdf().from(document.getElementById("resumeContent")).save();
+
+  let el = document.getElementById("resumeContent");
+
+  if(!el){
+    alert("Generate resume first");
+    return;
+  }
+
+  html2pdf().from(el).save("Resume.pdf");
 }
 
-// PAYMENT SUBMIT (CLOUD)
+// PAYMENT
 function submitPayment(){
 
   let utr = document.getElementById("utr").value;
@@ -151,7 +248,7 @@ function submitPayment(){
     status: "pending"
   });
 
-  alert("Submitted! Wait for approval");
+  alert("Payment submitted. Wait for approval.");
 }
 
 // ADMIN LOGIN
@@ -167,7 +264,7 @@ function loginAdmin(){
   loadPayments();
 }
 
-// LOAD PAYMENTS FROM CLOUD
+// LOAD PAYMENTS
 function loadPayments(){
 
   db.collection("payments").get().then(snapshot=>{
@@ -179,7 +276,7 @@ function loadPayments(){
 
       html+=`
         <div class="job">
-          <p>UTR: ${data.utr}</p>
+          <p><b>UTR:</b> ${data.utr}</p>
           <p>Status: ${data.status}</p>
           <button onclick="approve('${doc.id}')">Approve</button>
         </div>
@@ -190,7 +287,7 @@ function loadPayments(){
   });
 }
 
-// APPROVE USER
+// APPROVE
 function approve(id){
 
   db.collection("payments").doc(id).update({
