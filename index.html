@@ -1,24 +1,29 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>AOV AI Resume System</title>
+  <title>AOV AI Jobs - Corporate Resume System</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <!-- PDF LIBRARY -->
+  <!-- PDF -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
   <style>
     body{
       margin:0;
       font-family:Arial;
-      background:#0b1220;
+      background:linear-gradient(135deg,#0f172a,#1e293b);
       color:white;
     }
 
     .container{
-      max-width:900px;
+      max-width:1000px;
       margin:auto;
       padding:15px;
+    }
+
+    h1{
+      text-align:center;
+      color:#38bdf8;
     }
 
     .card{
@@ -47,6 +52,7 @@
       border:none;
       border-radius:8px;
       font-weight:bold;
+      cursor:pointer;
     }
 
     .resume{
@@ -54,12 +60,18 @@
       color:black;
       padding:25px;
       border-radius:10px;
-      line-height:1.6;
     }
 
-    h1{
-      text-align:center;
-      color:#38bdf8;
+    .job{
+      background:#0b1220;
+      padding:10px;
+      margin-top:10px;
+      border-radius:8px;
+      border:1px solid #334155;
+    }
+
+    .premium{
+      border:2px solid gold;
     }
 
     .signature{
@@ -73,41 +85,69 @@
 
 <div class="container">
 
-  <h1>📄 AI Resume Builder</h1>
+  <h1>🚀 AOV AI Jobs System</h1>
 
-  <!-- FORM -->
+  <!-- PROFILE -->
   <div class="card">
+    <h2>📄 Create Profile</h2>
 
     <input id="name" placeholder="Full Name">
+    <input id="headline" placeholder="Resume Headline (AI Developer, MBA Graduate)">
     <input id="father" placeholder="Father Name">
     <input id="age" placeholder="Age">
     <input id="address" placeholder="Address">
-    <input id="mobile" placeholder="Mobile Number">
+    <input id="mobile" placeholder="Mobile">
     <input id="email" placeholder="Email">
-    <input id="skills" placeholder="Skills (AI, Python, Marketing)">
+    <input id="skills" placeholder="Skills (ai, python, marketing)">
     <input id="exp" placeholder="Experience">
-    <input id="qualification" placeholder="Qualification (B.Com, MBA...)">
-    <input id="edu" placeholder="Education Details">
-    <input id="hobbies" placeholder="Hobbies (Reading, Traveling...)">
+    <input id="qualification" placeholder="Qualification">
+    <input id="edu" placeholder="Education">
+    <input id="hobbies" placeholder="Hobbies">
 
     <button onclick="generateResume()">Generate Resume</button>
-
+    <button onclick="generateJobs()">Find Jobs</button>
   </div>
 
   <!-- RESUME -->
   <div class="card">
+    <h2>📑 Corporate Resume</h2>
     <div id="resume"></div>
-
     <button onclick="downloadPDF()">Download PDF</button>
+  </div>
+
+  <!-- JOBS -->
+  <div class="card">
+    <h2>🎯 AI Job Matches</h2>
+    <div id="jobs"></div>
+  </div>
+
+  <!-- PREMIUM -->
+  <div class="card premium">
+    <h2>💎 Premium ₹200</h2>
+
+    <img width="150"
+      src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=upi://pay?pa=9975076459@mbk&pn=AOV&am=200&cu=INR">
+
+    <button onclick="pay()">Pay & Unlock Premium</button>
   </div>
 
 </div>
 
 <script>
 
+// JOB DATA
+const jobs = [
+  {title:"AI Developer",skills:["ai","python","ml"]},
+  {title:"Data Analyst",skills:["data","sql","excel"]},
+  {title:"Web Developer",skills:["javascript","react","web"]},
+  {title:"Marketing Executive",skills:["marketing","seo"]}
+];
+
+// RESUME GENERATE
 function generateResume(){
 
   let name = document.getElementById("name").value;
+  let headline = document.getElementById("headline").value;
   let father = document.getElementById("father").value;
   let age = document.getElementById("age").value;
   let address = document.getElementById("address").value;
@@ -119,27 +159,26 @@ function generateResume(){
   let edu = document.getElementById("edu").value;
   let hobbies = document.getElementById("hobbies").value;
 
-  // current date auto
-  let today = new Date().toLocaleDateString();
+  let date = new Date().toLocaleDateString();
 
-  let html = `
+  document.getElementById("resume").innerHTML = `
     <div class="resume" id="resumeContent">
 
       <h2 style="text-align:center">${name}</h2>
+      <p style="text-align:center"><b>${headline}</b></p>
 
-      <p><b>Father Name:</b> ${father}</p>
+      <hr>
+
+      <p><b>Father:</b> ${father}</p>
       <p><b>Age:</b> ${age}</p>
       <p><b>Address:</b> ${address}</p>
       <p><b>Mobile:</b> ${mobile}</p>
       <p><b>Email:</b> ${email}</p>
 
-      <hr>
-
       <h3>Profile Summary</h3>
       <p>
-        A highly motivated professional with qualification in ${qualification}.
-        Skilled in ${skills} with experience in ${exp}.
-        Looking for opportunities to grow and contribute effectively.
+      Qualified in ${qualification} with experience in ${exp}.
+      Skilled in ${skills}. Passionate to grow professionally.
       </p>
 
       <h3>Skills</h3>
@@ -148,40 +187,65 @@ function generateResume(){
       <h3>Experience</h3>
       <p>${exp}</p>
 
-      <h3>Qualification</h3>
-      <p>${qualification}</p>
-
       <h3>Education</h3>
       <p>${edu}</p>
 
-      <h3>Hobbies / Interests</h3>
+      <h3>Hobbies</h3>
       <p>${hobbies}</p>
 
-      <!-- SIGNATURE SECTION -->
       <div class="signature">
-        <p>Date: ${today}</p>
-        <p>Yours faithfully,</p>
+        <p>Date: ${date}</p>
+        <p>Yours faithfully</p>
         <br><br>
         <p><b>${name}</b></p>
       </div>
 
     </div>
   `;
-
-  document.getElementById("resume").innerHTML = html;
 }
 
-// PDF DOWNLOAD
+// JOB MATCH
+function generateJobs(){
+
+  let skills = document.getElementById("skills").value.toLowerCase().split(/[\s,]+/);
+
+  let html = "";
+
+  jobs.forEach(j=>{
+    let score = 0;
+
+    j.skills.forEach(s=>{
+      if(skills.includes(s)) score+=50;
+    });
+
+    if(score>0){
+      html+=`
+        <div class="job">
+          <h3>${j.title}</h3>
+          <p>Match: ${score}%</p>
+
+          <a href="https://www.linkedin.com/jobs/search/?keywords=${j.title}" target="_blank">LinkedIn</a><br>
+          <a href="https://www.google.com/search?q=${j.title}+jobs" target="_blank">Google Jobs</a>
+        </div>
+      `;
+    }
+  });
+
+  if(html==="") html="No jobs found";
+
+  document.getElementById("jobs").innerHTML = html;
+}
+
+// PDF
 function downloadPDF(){
+  let el = document.getElementById("resumeContent");
+  if(!el){ alert("Generate resume first"); return; }
+  html2pdf().from(el).save("Resume.pdf");
+}
 
-  let element = document.getElementById("resumeContent");
-
-  if(!element){
-    alert("Generate resume first");
-    return;
-  }
-
-  html2pdf().from(element).save("My_Resume.pdf");
+// PAYMENT
+function pay(){
+  window.location.href="upi://pay?pa=9975076459@mbk&pn=AOV&am=200&cu=INR";
 }
 
 </script>
