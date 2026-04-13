@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>AOV AI Jobs - Corporate Resume System</title>
+  <title>AOV AI Jobs - SaaS System</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <!-- PDF -->
@@ -16,34 +16,41 @@
     }
 
     .container{
-      max-width:1000px;
+      max-width:900px;
       margin:auto;
-      padding:15px;
+      padding:20px;
     }
 
     h1{
       text-align:center;
       color:#38bdf8;
+      margin-bottom:5px;
     }
 
     .status{
       text-align:center;
       color:gold;
-      margin-bottom:10px;
+      margin-bottom:15px;
+      font-weight:bold;
     }
 
     .card{
       background:#111827;
-      padding:15px;
-      margin-bottom:15px;
+      padding:20px;
+      margin-bottom:20px;
       border-radius:12px;
       border:1px solid #334155;
+    }
+
+    .card h2{
+      margin-bottom:10px;
+      color:#38bdf8;
     }
 
     input{
       width:100%;
       padding:12px;
-      margin-top:8px;
+      margin-top:10px;
       border-radius:8px;
       border:none;
       background:#0b1220;
@@ -53,7 +60,7 @@
     button{
       width:100%;
       padding:12px;
-      margin-top:10px;
+      margin-top:12px;
       background:#38bdf8;
       border:none;
       border-radius:8px;
@@ -66,18 +73,26 @@
       color:black;
       padding:25px;
       border-radius:10px;
+      line-height:1.6;
     }
 
     .job{
       background:#0b1220;
-      padding:10px;
-      margin-top:10px;
-      border-radius:8px;
+      padding:15px;
+      margin-top:12px;
+      border-radius:10px;
       border:1px solid #334155;
+    }
+
+    .job a{
+      display:block;
+      margin-top:5px;
+      color:#38bdf8;
     }
 
     .premium{
       border:2px solid gold;
+      text-align:center;
     }
 
     .signature{
@@ -91,8 +106,7 @@
 
 <div class="container">
 
-  <h1>🚀 AOV AI Jobs System</h1>
-
+  <h1>🚀 AOV AI Jobs</h1>
   <div class="status" id="status"></div>
 
   <!-- PROFILE -->
@@ -133,22 +147,30 @@
   <div class="card premium">
     <h2>💎 Premium ₹200</h2>
 
-    <p style="color:gold;">Scan QR → Pay → Click "I Have Paid"</p>
+    <p>1️⃣ Scan & Pay</p>
 
-    <img width="150"
+    <img width="160"
       src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=upi://pay?pa=9975076459@mbk&pn=AOV&am=200&cu=INR">
 
-    <button onclick="openUPI()">Pay Now</button>
-    <button onclick="confirmPayment()">I Have Paid ✅</button>
+    <p>2️⃣ Enter UPI Transaction ID (UTR)</p>
+
+    <input id="utr" placeholder="Enter UTR Number">
+
+    <button onclick="submitPayment()">Submit Payment</button>
+
+    <p style="font-size:12px;color:gray;">
+      Your payment will be verified manually.
+    </p>
   </div>
 
 </div>
 
 <script>
 
-// 🔒 PREMIUM STATUS
+// STATUS
 let isPremium = localStorage.getItem("premiumUser") === "true";
-document.getElementById("status").innerText = isPremium ? "💎 Premium User" : "🆓 Free User";
+document.getElementById("status").innerText =
+  isPremium ? "💎 Premium Activated" : "🆓 Free User";
 
 // JOB DATA
 const jobs = [
@@ -163,54 +185,32 @@ function generateResume(){
 
   let name = document.getElementById("name").value;
   let headline = document.getElementById("headline").value;
-  let father = document.getElementById("father").value;
-  let age = document.getElementById("age").value;
-  let address = document.getElementById("address").value;
-  let mobile = document.getElementById("mobile").value;
-  let email = document.getElementById("email").value;
-  let skills = document.getElementById("skills").value;
-  let exp = document.getElementById("exp").value;
-  let qualification = document.getElementById("qualification").value;
-  let edu = document.getElementById("edu").value;
-  let hobbies = document.getElementById("hobbies").value;
 
-  let date = new Date().toLocaleDateString();
+  let html = `
+  <div class="resume" id="resumeContent">
+    <h2 style="text-align:center">${name}</h2>
+    <p style="text-align:center"><b>${headline}</b></p>
+    <hr>
+    <p><b>Skills:</b> ${skills.value}</p>
+    <p><b>Experience:</b> ${exp.value}</p>
+    <p><b>Education:</b> ${edu.value}</p>
+    <p><b>Hobbies:</b> ${hobbies.value}</p>
 
-  document.getElementById("resume").innerHTML = `
-    <div class="resume" id="resumeContent">
-      <h2 style="text-align:center">${name}</h2>
-      <p style="text-align:center"><b>${headline}</b></p>
-      <hr>
-
-      <p><b>Father:</b> ${father}</p>
-      <p><b>Age:</b> ${age}</p>
-      <p><b>Address:</b> ${address}</p>
-      <p><b>Mobile:</b> ${mobile}</p>
-      <p><b>Email:</b> ${email}</p>
-
-      <h3>Profile Summary</h3>
-      <p>Qualified in ${qualification}, experienced in ${exp}, skilled in ${skills}.</p>
-
-      <h3>Skills</h3><p>${skills}</p>
-      <h3>Experience</h3><p>${exp}</p>
-      <h3>Education</h3><p>${edu}</p>
-      <h3>Hobbies</h3><p>${hobbies}</p>
-
-      <div class="signature">
-        <p>Date: ${date}</p>
-        <p>Yours faithfully</p>
-        <br><br>
-        <p><b>${name}</b></p>
-      </div>
+    <div class="signature">
+      <p>Date: ${new Date().toLocaleDateString()}</p>
+      <p>Yours faithfully</p>
+      <p><b>${name}</b></p>
     </div>
+  </div>
   `;
+
+  document.getElementById("resume").innerHTML = html;
 }
 
-// JOB MATCH
+// JOBS
 function generateJobs(){
 
   let skills = document.getElementById("skills").value.toLowerCase().split(/[\s,]+/);
-
   let html = "";
   let count = 0;
 
@@ -225,14 +225,13 @@ function generateJobs(){
 
       count++;
 
-      if(!isPremium && count > 2) return;
+      if(!isPremium && count>2) return;
 
       html+=`
         <div class="job">
           <h3>${j.title}</h3>
-          <p>Match: ${score}%</p>
-
-          <a href="https://www.linkedin.com/jobs/search/?keywords=${j.title}" target="_blank">LinkedIn</a><br>
+          <p>${score}% match</p>
+          <a href="https://www.linkedin.com/jobs/search/?keywords=${j.title}" target="_blank">LinkedIn Jobs</a>
           <a href="https://www.google.com/search?q=${j.title}+jobs" target="_blank">Google Jobs</a>
         </div>
       `;
@@ -240,7 +239,7 @@ function generateJobs(){
   });
 
   if(!isPremium){
-    html += "<p style='color:gold'>🔒 Upgrade to Premium for more jobs</p>";
+    html += "<p style='color:gold'>🔒 Upgrade to Premium for full jobs</p>";
   }
 
   document.getElementById("jobs").innerHTML = html || "No jobs found";
@@ -248,37 +247,28 @@ function generateJobs(){
 
 // PDF LOCK
 function downloadPDF(){
-
   if(!isPremium){
-    alert("🔒 Premium only! Please pay ₹200");
+    alert("🔒 Premium required");
+    return;
+  }
+  html2pdf().from(document.getElementById("resumeContent")).save();
+}
+
+// PAYMENT VERIFY
+function submitPayment(){
+
+  let utr = document.getElementById("utr").value;
+
+  if(utr.length < 6){
+    alert("Enter valid UTR number");
     return;
   }
 
-  let el = document.getElementById("resumeContent");
+  alert("Payment submitted. Admin will verify.");
 
-  if(!el){
-    alert("Generate resume first");
-    return;
-  }
-
-  html2pdf().from(el).save("Resume.pdf");
-}
-
-// 💳 OPEN UPI
-function openUPI(){
-  window.location.href="upi://pay?pa=9975076459@mbk&pn=AOV&am=200&cu=INR";
-}
-
-// ✅ CONFIRM PAYMENT
-function confirmPayment(){
-
-  let ok = confirm("Have you completed payment?");
-
-  if(ok){
-    localStorage.setItem("premiumUser","true");
-    alert("✅ Premium Activated!");
-    location.reload();
-  }
+  // TEMP unlock (you can remove later)
+  localStorage.setItem("premiumUser","true");
+  location.reload();
 }
 
 </script>
