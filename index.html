@@ -1,12 +1,8 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>AOV AI Jobs - SaaS System</title>
+  <title>AOV AI Jobs</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
 
   <style>
     body{
@@ -24,61 +20,88 @@
 
     .card{
       background:#111827;
-      border:1px solid #334155;
       padding:15px;
-      border-radius:12px;
       margin-bottom:15px;
+      border-radius:12px;
+      border:1px solid #334155;
     }
 
     input{
       width:100%;
-      padding:10px;
+      padding:12px;
       margin-top:8px;
       border-radius:8px;
-      border:1px solid #334155;
+      border:none;
       background:#0b1220;
       color:white;
-      box-sizing:border-box;
     }
 
     button{
       width:100%;
-      padding:10px;
+      padding:12px;
       margin-top:10px;
       background:#38bdf8;
       border:none;
       border-radius:8px;
       font-weight:bold;
-      cursor:pointer;
     }
 
     .job{
-      padding:12px;
-      border:1px solid #334155;
-      margin-top:10px;
-      border-radius:10px;
       background:#0f172a;
+      padding:12px;
+      border-radius:10px;
+      margin-top:10px;
+      border:1px solid #334155;
     }
 
     .links a{
       display:inline-block;
       margin-right:10px;
+      margin-top:5px;
       color:#38bdf8;
       text-decoration:none;
       font-weight:bold;
     }
 
-    .premium{
-      border:2px solid gold;
-    }
-
     .title{
       text-align:center;
-      font-size:26px;
       color:#38bdf8;
-      margin:15px 0;
+      font-size:26px;
+      margin-bottom:10px;
     }
 
+    .premium{
+      border:2px solid gold;
+      text-align:center;
+    }
+
+    .skill-box{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      margin-top:10px;
+    }
+
+    .skill{
+      background:#1f2937;
+      padding:8px 12px;
+      border-radius:20px;
+      cursor:pointer;
+      font-size:13px;
+    }
+
+    .skill:hover{
+      background:#38bdf8;
+      color:black;
+    }
+
+    .resume{
+      background:#020617;
+      padding:12px;
+      border-radius:10px;
+      margin-top:10px;
+      white-space:pre-line;
+    }
   </style>
 </head>
 
@@ -86,112 +109,115 @@
 
 <div class="container">
 
-  <div class="title">🤖 AOV AI JOBS - STARTUP SYSTEM</div>
+  <div class="title">🤖 AOV AI JOBS</div>
 
-  <!-- LOGIN -->
+  <!-- FORM -->
   <div class="card">
-    <h3>🔐 Login System</h3>
-    <input id="email" placeholder="Email">
-    <input id="password" placeholder="Password">
-    <button onclick="login()">Login</button>
+    <h3>📄 Create Profile</h3>
+
+    <input id="name" placeholder="Full Name">
+    <input id="skills" placeholder="Skills (ai python ml)">
+    <input id="exp" placeholder="Experience (fresher/junior/senior)">
+
+    <button onclick="generateAI()">Generate AI Resume + Jobs</button>
+  </div>
+
+  <!-- SKILLS -->
+  <div class="card">
+    <h3>🔥 Skills (Click)</h3>
+
+    <div class="skill-box">
+      <div class="skill" onclick="addSkill('ai')">AI</div>
+      <div class="skill" onclick="addSkill('python')">Python</div>
+      <div class="skill" onclick="addSkill('ml')">ML</div>
+      <div class="skill" onclick="addSkill('data')">Data</div>
+      <div class="skill" onclick="addSkill('sql')">SQL</div>
+      <div class="skill" onclick="addSkill('javascript')">JavaScript</div>
+      <div class="skill" onclick="addSkill('react')">React</div>
+      <div class="skill" onclick="addSkill('marketing')">Marketing</div>
+    </div>
   </div>
 
   <!-- RESUME -->
   <div class="card">
-    <h3>📄 Resume Builder</h3>
-
-    <input id="name" placeholder="Full Name">
-    <input id="skills" placeholder="Skills (ai, python, ml)">
-    <input id="exp" placeholder="Experience (fresher/junior/senior)">
-
-    <button onclick="saveProfile()">Save Resume</button>
-    <button onclick="generateAI()">Find Jobs</button>
+    <h3>📄 AI Resume</h3>
+    <div id="resume"></div>
   </div>
 
-  <!-- JOB RESULTS -->
+  <!-- JOBS -->
   <div class="card">
-    <h3>🎯 AI Job Matches</h3>
-    <div id="results"></div>
+    <h3>🎯 Job Matches</h3>
+    <div id="jobs"></div>
   </div>
 
-  <!-- PREMIUM -->
+  <!-- PAYMENT -->
   <div class="card premium">
-    <h3>💎 Premium Unlock ₹200</h3>
+    <h3>💎 Premium ₹200</h3>
 
     <img width="160"
-      src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=upi://pay?pa=9975076459@mbk&pn=AOV&am=200&cu=INR">
+    src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=upi://pay?pa=9975076459@mbk&pn=AOV&am=200&cu=INR">
 
-    <button onclick="pay()">Unlock Premium</button>
+    <button onclick="pay()">Pay Now</button>
   </div>
 
 </div>
 
 <script>
 
-// Firebase config (replace later if needed)
-const firebaseConfig = {
-  apiKey: "YOUR_KEY",
-  authDomain: "YOUR_DOMAIN",
-  projectId: "YOUR_PROJECT"
-};
-
-firebase.initializeApp(firebaseConfig);
-const auth = firebase.auth();
-const db = firebase.firestore();
-
 const jobs = [
   {title:"AI Engineer",skills:["ai","python","ml"]},
   {title:"Data Analyst",skills:["data","sql"]},
   {title:"Web Developer",skills:["react","javascript"]},
-  {title:"ML Intern",skills:["ml","python"]}
+  {title:"ML Intern",skills:["ml","python"]},
+  {title:"Digital Marketing",skills:["marketing"]},
 ];
 
-// LOGIN
-function login(){
-  let email=document.getElementById("email").value;
-  let pass=document.getElementById("password").value;
-
-  auth.signInWithEmailAndPassword(email,pass)
-  .then(()=>alert("Login Success"))
-  .catch(()=>alert("Check credentials or create account"));
+// ADD SKILL
+function addSkill(s){
+  let input = document.getElementById("skills");
+  input.value += " " + s;
 }
 
-// SAVE PROFILE
-function saveProfile(){
-  let user = auth.currentUser;
-  if(!user){
-    alert("Please login first");
-    return;
-  }
-
-  db.collection("profiles").doc(user.uid).set({
-    name:document.getElementById("name").value,
-    skills:document.getElementById("skills").value,
-    exp:document.getElementById("exp").value
-  });
-
-  alert("Resume saved successfully");
-}
-
-// AI MATCH
+// MAIN AI
 function generateAI(){
 
-  let skills = document.getElementById("skills").value.toLowerCase().split(",");
+  let name = document.getElementById("name").value;
+  let skillsText = document.getElementById("skills").value.toLowerCase();
+  let exp = document.getElementById("exp").value;
 
+  let skills = skillsText.split(/[\s,]+/);
+
+  // RESUME
+  let resume = `
+Name: ${name}
+
+Skills: ${skills.join(", ")}
+
+Experience: ${exp}
+
+Profile Summary:
+A motivated candidate with strong skills in ${skills.join(", ")}.
+Ready to work in real-world projects and grow professionally.
+`;
+
+  document.getElementById("resume").innerHTML =
+    `<div class="resume">${resume}</div>`;
+
+  // JOB MATCH
   let html = "";
 
   jobs.forEach(j=>{
     let score = 0;
 
     j.skills.forEach(s=>{
-      if(skills.map(x=>x.trim()).includes(s)) score += 50;
+      if(skills.includes(s)) score += 50;
     });
 
     if(score > 0){
       html += `
         <div class="job">
           <h3>${j.title}</h3>
-          <p><b>Match:</b> ${score}%</p>
+          <p>Match: ${score}%</p>
 
           <div class="links">
             <a target="_blank" href="https://www.linkedin.com/jobs/search/?keywords=${j.title}">
@@ -207,7 +233,11 @@ function generateAI(){
     }
   });
 
-  document.getElementById("results").innerHTML = html;
+  if(html === ""){
+    html = "<p>No match found. Try more skills.</p>";
+  }
+
+  document.getElementById("jobs").innerHTML = html;
 }
 
 // PAYMENT
