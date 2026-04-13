@@ -1,104 +1,23 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>AOV AI Jobs - SaaS System</title>
+  <title>AOV AI Jobs - Cloud SaaS</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js"></script>
 
   <!-- PDF -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
   <style>
-    body{
-      margin:0;
-      font-family:Arial;
-      background:linear-gradient(135deg,#0f172a,#1e293b);
-      color:white;
-    }
-
-    .container{
-      max-width:900px;
-      margin:auto;
-      padding:20px;
-    }
-
-    h1{
-      text-align:center;
-      color:#38bdf8;
-      margin-bottom:5px;
-    }
-
-    .status{
-      text-align:center;
-      color:gold;
-      margin-bottom:15px;
-      font-weight:bold;
-    }
-
-    .card{
-      background:#111827;
-      padding:20px;
-      margin-bottom:20px;
-      border-radius:12px;
-      border:1px solid #334155;
-    }
-
-    .card h2{
-      margin-bottom:10px;
-      color:#38bdf8;
-    }
-
-    input{
-      width:100%;
-      padding:12px;
-      margin-top:10px;
-      border-radius:8px;
-      border:none;
-      background:#0b1220;
-      color:white;
-    }
-
-    button{
-      width:100%;
-      padding:12px;
-      margin-top:12px;
-      background:#38bdf8;
-      border:none;
-      border-radius:8px;
-      font-weight:bold;
-      cursor:pointer;
-    }
-
-    .resume{
-      background:white;
-      color:black;
-      padding:25px;
-      border-radius:10px;
-      line-height:1.6;
-    }
-
-    .job{
-      background:#0b1220;
-      padding:15px;
-      margin-top:12px;
-      border-radius:10px;
-      border:1px solid #334155;
-    }
-
-    .job a{
-      display:block;
-      margin-top:5px;
-      color:#38bdf8;
-    }
-
-    .premium{
-      border:2px solid gold;
-      text-align:center;
-    }
-
-    .signature{
-      margin-top:40px;
-      text-align:right;
-    }
+    body{margin:0;font-family:Arial;background:#0f172a;color:white;}
+    .container{max-width:900px;margin:auto;padding:20px;}
+    .card{background:#111827;padding:20px;margin-bottom:15px;border-radius:10px;}
+    input{width:100%;padding:10px;margin-top:8px;border-radius:6px;border:none;}
+    button{width:100%;padding:10px;margin-top:10px;background:#38bdf8;border:none;border-radius:6px;font-weight:bold;}
+    .job{margin-top:10px;padding:10px;border:1px solid #334155;border-radius:8px;}
   </style>
 </head>
 
@@ -106,169 +25,180 @@
 
 <div class="container">
 
-  <h1>🚀 AOV AI Jobs</h1>
-  <div class="status" id="status"></div>
+<h1>🚀 AOV AI Jobs</h1>
 
-  <!-- PROFILE -->
-  <div class="card">
-    <h2>📄 Create Profile</h2>
+<!-- PROFILE -->
+<div class="card">
+  <h2>📄 Profile</h2>
 
-    <input id="name" placeholder="Full Name">
-    <input id="headline" placeholder="Resume Headline">
-    <input id="father" placeholder="Father Name">
-    <input id="age" placeholder="Age">
-    <input id="address" placeholder="Address">
-    <input id="mobile" placeholder="Mobile">
-    <input id="email" placeholder="Email">
-    <input id="skills" placeholder="Skills (ai, python, marketing)">
-    <input id="exp" placeholder="Experience">
-    <input id="qualification" placeholder="Qualification">
-    <input id="edu" placeholder="Education">
-    <input id="hobbies" placeholder="Hobbies">
+  <input id="name" placeholder="Full Name">
+  <input id="skills" placeholder="Skills (ai, python)">
+  <input id="exp" placeholder="Experience">
 
-    <button onclick="generateResume()">Generate Resume</button>
-    <button onclick="generateJobs()">Find Jobs</button>
-  </div>
+  <button onclick="generateResume()">Generate Resume</button>
+  <button onclick="generateJobs()">Find Jobs</button>
+</div>
 
-  <!-- RESUME -->
-  <div class="card">
-    <h2>📑 Corporate Resume</h2>
-    <div id="resume"></div>
-    <button onclick="downloadPDF()">Download PDF</button>
-  </div>
+<!-- RESUME -->
+<div class="card">
+  <h2>📑 Resume</h2>
+  <div id="resume"></div>
+  <button onclick="downloadPDF()">Download PDF</button>
+</div>
 
-  <!-- JOBS -->
-  <div class="card">
-    <h2>🎯 AI Job Matches</h2>
-    <div id="jobs"></div>
-  </div>
+<!-- JOBS -->
+<div class="card">
+  <h2>🎯 Jobs</h2>
+  <div id="jobs"></div>
+</div>
 
-  <!-- PREMIUM -->
-  <div class="card premium">
-    <h2>💎 Premium ₹200</h2>
+<!-- PAYMENT -->
+<div class="card">
+  <h2>💎 Premium ₹200</h2>
 
-    <p>1️⃣ Scan & Pay</p>
+  <img width="150"
+  src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=upi://pay?pa=9975076459@mbk&pn=AOV&am=200&cu=INR">
 
-    <img width="160"
-      src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=upi://pay?pa=9975076459@mbk&pn=AOV&am=200&cu=INR">
+  <input id="utr" placeholder="Enter UTR">
+  <button onclick="submitPayment()">Submit Payment</button>
+</div>
 
-    <p>2️⃣ Enter UPI Transaction ID (UTR)</p>
+<!-- ADMIN -->
+<div class="card">
+  <h2>👑 Admin Panel</h2>
 
-    <input id="utr" placeholder="Enter UTR Number">
+  <input id="adminPass" placeholder="Password">
+  <button onclick="loginAdmin()">Login</button>
 
-    <button onclick="submitPayment()">Submit Payment</button>
-
-    <p style="font-size:12px;color:gray;">
-      Your payment will be verified manually.
-    </p>
-  </div>
+  <div id="adminData"></div>
+</div>
 
 </div>
 
 <script>
 
-// STATUS
-let isPremium = localStorage.getItem("premiumUser") === "true";
-document.getElementById("status").innerText =
-  isPremium ? "💎 Premium Activated" : "🆓 Free User";
+// 🔥 FIREBASE CONFIG (PUT YOURS)
+const firebaseConfig = {
+  apiKey: "YOUR_KEY",
+  authDomain: "YOUR_DOMAIN",
+  projectId: "YOUR_PROJECT"
+};
+
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
 
 // JOB DATA
 const jobs = [
-  {title:"AI Developer",skills:["ai","python","ml"]},
-  {title:"Data Analyst",skills:["data","sql","excel"]},
-  {title:"Web Developer",skills:["javascript","react","web"]},
-  {title:"Marketing Executive",skills:["marketing","seo"]}
+  {title:"AI Developer",skills:["ai","python"]},
+  {title:"Data Analyst",skills:["data","sql"]},
+  {title:"Web Developer",skills:["javascript","react"]}
 ];
 
 // RESUME
 function generateResume(){
-
   let name = document.getElementById("name").value;
-  let headline = document.getElementById("headline").value;
+  let skills = document.getElementById("skills").value;
+  let exp = document.getElementById("exp").value;
 
-  let html = `
-  <div class="resume" id="resumeContent">
-    <h2 style="text-align:center">${name}</h2>
-    <p style="text-align:center"><b>${headline}</b></p>
-    <hr>
-    <p><b>Skills:</b> ${skills.value}</p>
-    <p><b>Experience:</b> ${exp.value}</p>
-    <p><b>Education:</b> ${edu.value}</p>
-    <p><b>Hobbies:</b> ${hobbies.value}</p>
-
-    <div class="signature">
-      <p>Date: ${new Date().toLocaleDateString()}</p>
-      <p>Yours faithfully</p>
-      <p><b>${name}</b></p>
+  document.getElementById("resume").innerHTML = `
+    <div id="resumeContent" style="background:white;color:black;padding:20px;">
+      <h2>${name}</h2>
+      <p><b>Skills:</b> ${skills}</p>
+      <p><b>Experience:</b> ${exp}</p>
     </div>
-  </div>
   `;
-
-  document.getElementById("resume").innerHTML = html;
 }
 
-// JOBS
+// JOB MATCH
 function generateJobs(){
+  let skills = document.getElementById("skills").value.toLowerCase().split(",");
 
-  let skills = document.getElementById("skills").value.toLowerCase().split(/[\s,]+/);
-  let html = "";
-  let count = 0;
+  let html="";
 
   jobs.forEach(j=>{
-    let score = 0;
+    let match = j.skills.some(s=>skills.includes(s));
 
-    j.skills.forEach(s=>{
-      if(skills.includes(s)) score+=50;
-    });
-
-    if(score>0){
-
-      count++;
-
-      if(!isPremium && count>2) return;
-
+    if(match){
       html+=`
         <div class="job">
           <h3>${j.title}</h3>
-          <p>${score}% match</p>
-          <a href="https://www.linkedin.com/jobs/search/?keywords=${j.title}" target="_blank">LinkedIn Jobs</a>
-          <a href="https://www.google.com/search?q=${j.title}+jobs" target="_blank">Google Jobs</a>
+          <a target="_blank" href="https://www.linkedin.com/jobs/search/?keywords=${j.title}">LinkedIn</a>
         </div>
       `;
     }
   });
 
-  if(!isPremium){
-    html += "<p style='color:gold'>🔒 Upgrade to Premium for full jobs</p>";
-  }
-
-  document.getElementById("jobs").innerHTML = html || "No jobs found";
+  document.getElementById("jobs").innerHTML = html;
 }
 
-// PDF LOCK
+// PDF
 function downloadPDF(){
-  if(!isPremium){
-    alert("🔒 Premium required");
-    return;
-  }
   html2pdf().from(document.getElementById("resumeContent")).save();
 }
 
-// PAYMENT VERIFY
+// PAYMENT SUBMIT (CLOUD)
 function submitPayment(){
 
   let utr = document.getElementById("utr").value;
 
   if(utr.length < 6){
-    alert("Enter valid UTR number");
+    alert("Enter valid UTR");
     return;
   }
 
-  alert("Payment submitted. Admin will verify.");
+  db.collection("payments").add({
+    utr: utr,
+    status: "pending"
+  });
 
-  // TEMP unlock (you can remove later)
-  localStorage.setItem("premiumUser","true");
-  location.reload();
+  alert("Submitted! Wait for approval");
+}
+
+// ADMIN LOGIN
+function loginAdmin(){
+
+  let pass = document.getElementById("adminPass").value;
+
+  if(pass !== "admin123"){
+    alert("Wrong password");
+    return;
+  }
+
+  loadPayments();
+}
+
+// LOAD PAYMENTS FROM CLOUD
+function loadPayments(){
+
+  db.collection("payments").get().then(snapshot=>{
+
+    let html="";
+
+    snapshot.forEach(doc=>{
+      let data = doc.data();
+
+      html+=`
+        <div class="job">
+          <p>UTR: ${data.utr}</p>
+          <p>Status: ${data.status}</p>
+          <button onclick="approve('${doc.id}')">Approve</button>
+        </div>
+      `;
+    });
+
+    document.getElementById("adminData").innerHTML = html;
+  });
+}
+
+// APPROVE USER
+function approve(id){
+
+  db.collection("payments").doc(id).update({
+    status: "approved"
+  });
+
+  alert("Approved ✅");
+  loadPayments();
 }
 
 </script>
