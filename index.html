@@ -26,6 +26,12 @@
       color:#38bdf8;
     }
 
+    .status{
+      text-align:center;
+      color:gold;
+      margin-bottom:10px;
+    }
+
     .card{
       background:#111827;
       padding:15px;
@@ -87,12 +93,14 @@
 
   <h1>🚀 AOV AI Jobs System</h1>
 
+  <div class="status" id="status"></div>
+
   <!-- PROFILE -->
   <div class="card">
     <h2>📄 Create Profile</h2>
 
     <input id="name" placeholder="Full Name">
-    <input id="headline" placeholder="Resume Headline (AI Developer, MBA Graduate)">
+    <input id="headline" placeholder="Resume Headline">
     <input id="father" placeholder="Father Name">
     <input id="age" placeholder="Age">
     <input id="address" placeholder="Address">
@@ -135,6 +143,10 @@
 
 <script>
 
+// 🔒 PREMIUM STATUS
+let isPremium = localStorage.getItem("premiumUser") === "true";
+document.getElementById("status").innerText = isPremium ? "💎 Premium User" : "🆓 Free User";
+
 // JOB DATA
 const jobs = [
   {title:"AI Developer",skills:["ai","python","ml"]},
@@ -143,7 +155,7 @@ const jobs = [
   {title:"Marketing Executive",skills:["marketing","seo"]}
 ];
 
-// RESUME GENERATE
+// RESUME
 function generateResume(){
 
   let name = document.getElementById("name").value;
@@ -163,10 +175,8 @@ function generateResume(){
 
   document.getElementById("resume").innerHTML = `
     <div class="resume" id="resumeContent">
-
       <h2 style="text-align:center">${name}</h2>
       <p style="text-align:center"><b>${headline}</b></p>
-
       <hr>
 
       <p><b>Father:</b> ${father}</p>
@@ -176,22 +186,12 @@ function generateResume(){
       <p><b>Email:</b> ${email}</p>
 
       <h3>Profile Summary</h3>
-      <p>
-      Qualified in ${qualification} with experience in ${exp}.
-      Skilled in ${skills}. Passionate to grow professionally.
-      </p>
+      <p>Qualified in ${qualification}, experienced in ${exp}, skilled in ${skills}.</p>
 
-      <h3>Skills</h3>
-      <p>${skills}</p>
-
-      <h3>Experience</h3>
-      <p>${exp}</p>
-
-      <h3>Education</h3>
-      <p>${edu}</p>
-
-      <h3>Hobbies</h3>
-      <p>${hobbies}</p>
+      <h3>Skills</h3><p>${skills}</p>
+      <h3>Experience</h3><p>${exp}</p>
+      <h3>Education</h3><p>${edu}</p>
+      <h3>Hobbies</h3><p>${hobbies}</p>
 
       <div class="signature">
         <p>Date: ${date}</p>
@@ -199,17 +199,17 @@ function generateResume(){
         <br><br>
         <p><b>${name}</b></p>
       </div>
-
     </div>
   `;
 }
 
-// JOB MATCH
+// JOB MATCH (🔒 LIMITED FOR FREE)
 function generateJobs(){
 
   let skills = document.getElementById("skills").value.toLowerCase().split(/[\s,]+/);
 
   let html = "";
+  let count = 0;
 
   jobs.forEach(j=>{
     let score = 0;
@@ -219,6 +219,11 @@ function generateJobs(){
     });
 
     if(score>0){
+
+      count++;
+
+      if(!isPremium && count > 2) return;
+
       html+=`
         <div class="job">
           <h3>${j.title}</h3>
@@ -231,24 +236,4 @@ function generateJobs(){
     }
   });
 
-  if(html==="") html="No jobs found";
-
-  document.getElementById("jobs").innerHTML = html;
-}
-
-// PDF
-function downloadPDF(){
-  let el = document.getElementById("resumeContent");
-  if(!el){ alert("Generate resume first"); return; }
-  html2pdf().from(el).save("Resume.pdf");
-}
-
-// PAYMENT
-function pay(){
-  window.location.href="upi://pay?pa=9975076459@mbk&pn=AOV&am=200&cu=INR";
-}
-
-</script>
-
-</body>
-</html>
+  if
