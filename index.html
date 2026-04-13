@@ -1,8 +1,11 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>AOV AI Jobs</title>
+  <title>AOV AI Resume System</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- PDF LIBRARY -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
   <style>
     body{
@@ -46,61 +49,22 @@
       font-weight:bold;
     }
 
-    .job{
-      background:#0f172a;
-      padding:12px;
-      border-radius:10px;
-      margin-top:10px;
-      border:1px solid #334155;
-    }
-
-    .links a{
-      display:inline-block;
-      margin-right:10px;
-      margin-top:5px;
-      color:#38bdf8;
-      text-decoration:none;
-      font-weight:bold;
-    }
-
-    .title{
-      text-align:center;
-      color:#38bdf8;
-      font-size:26px;
-      margin-bottom:10px;
-    }
-
-    .premium{
-      border:2px solid gold;
-      text-align:center;
-    }
-
-    .skill-box{
-      display:flex;
-      flex-wrap:wrap;
-      gap:8px;
-      margin-top:10px;
-    }
-
-    .skill{
-      background:#1f2937;
-      padding:8px 12px;
-      border-radius:20px;
-      cursor:pointer;
-      font-size:13px;
-    }
-
-    .skill:hover{
-      background:#38bdf8;
-      color:black;
-    }
-
     .resume{
-      background:#020617;
-      padding:12px;
+      background:white;
+      color:black;
+      padding:25px;
       border-radius:10px;
-      margin-top:10px;
-      white-space:pre-line;
+      line-height:1.6;
+    }
+
+    h1{
+      text-align:center;
+      color:#38bdf8;
+    }
+
+    .signature{
+      margin-top:40px;
+      text-align:right;
     }
   </style>
 </head>
@@ -109,141 +73,115 @@
 
 <div class="container">
 
-  <div class="title">🤖 AOV AI JOBS</div>
+  <h1>📄 AI Resume Builder</h1>
 
   <!-- FORM -->
   <div class="card">
-    <h3>📄 Create Profile</h3>
 
     <input id="name" placeholder="Full Name">
-    <input id="skills" placeholder="Skills (ai python ml)">
-    <input id="exp" placeholder="Experience (fresher/junior/senior)">
+    <input id="father" placeholder="Father Name">
+    <input id="age" placeholder="Age">
+    <input id="address" placeholder="Address">
+    <input id="mobile" placeholder="Mobile Number">
+    <input id="email" placeholder="Email">
+    <input id="skills" placeholder="Skills (AI, Python, Marketing)">
+    <input id="exp" placeholder="Experience">
+    <input id="qualification" placeholder="Qualification (B.Com, MBA...)">
+    <input id="edu" placeholder="Education Details">
+    <input id="hobbies" placeholder="Hobbies (Reading, Traveling...)">
 
-    <button onclick="generateAI()">Generate AI Resume + Jobs</button>
-  </div>
+    <button onclick="generateResume()">Generate Resume</button>
 
-  <!-- SKILLS -->
-  <div class="card">
-    <h3>🔥 Skills (Click)</h3>
-
-    <div class="skill-box">
-      <div class="skill" onclick="addSkill('ai')">AI</div>
-      <div class="skill" onclick="addSkill('python')">Python</div>
-      <div class="skill" onclick="addSkill('ml')">ML</div>
-      <div class="skill" onclick="addSkill('data')">Data</div>
-      <div class="skill" onclick="addSkill('sql')">SQL</div>
-      <div class="skill" onclick="addSkill('javascript')">JavaScript</div>
-      <div class="skill" onclick="addSkill('react')">React</div>
-      <div class="skill" onclick="addSkill('marketing')">Marketing</div>
-    </div>
   </div>
 
   <!-- RESUME -->
   <div class="card">
-    <h3>📄 AI Resume</h3>
     <div id="resume"></div>
-  </div>
 
-  <!-- JOBS -->
-  <div class="card">
-    <h3>🎯 Job Matches</h3>
-    <div id="jobs"></div>
-  </div>
-
-  <!-- PAYMENT -->
-  <div class="card premium">
-    <h3>💎 Premium ₹200</h3>
-
-    <img width="160"
-    src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=upi://pay?pa=9975076459@mbk&pn=AOV&am=200&cu=INR">
-
-    <button onclick="pay()">Pay Now</button>
+    <button onclick="downloadPDF()">Download PDF</button>
   </div>
 
 </div>
 
 <script>
 
-const jobs = [
-  {title:"AI Engineer",skills:["ai","python","ml"]},
-  {title:"Data Analyst",skills:["data","sql"]},
-  {title:"Web Developer",skills:["react","javascript"]},
-  {title:"ML Intern",skills:["ml","python"]},
-  {title:"Digital Marketing",skills:["marketing"]},
-];
-
-// ADD SKILL
-function addSkill(s){
-  let input = document.getElementById("skills");
-  input.value += " " + s;
-}
-
-// MAIN AI
-function generateAI(){
+function generateResume(){
 
   let name = document.getElementById("name").value;
-  let skillsText = document.getElementById("skills").value.toLowerCase();
+  let father = document.getElementById("father").value;
+  let age = document.getElementById("age").value;
+  let address = document.getElementById("address").value;
+  let mobile = document.getElementById("mobile").value;
+  let email = document.getElementById("email").value;
+  let skills = document.getElementById("skills").value;
   let exp = document.getElementById("exp").value;
+  let qualification = document.getElementById("qualification").value;
+  let edu = document.getElementById("edu").value;
+  let hobbies = document.getElementById("hobbies").value;
 
-  let skills = skillsText.split(/[\s,]+/);
+  // current date auto
+  let today = new Date().toLocaleDateString();
 
-  // RESUME
-  let resume = `
-Name: ${name}
+  let html = `
+    <div class="resume" id="resumeContent">
 
-Skills: ${skills.join(", ")}
+      <h2 style="text-align:center">${name}</h2>
 
-Experience: ${exp}
+      <p><b>Father Name:</b> ${father}</p>
+      <p><b>Age:</b> ${age}</p>
+      <p><b>Address:</b> ${address}</p>
+      <p><b>Mobile:</b> ${mobile}</p>
+      <p><b>Email:</b> ${email}</p>
 
-Profile Summary:
-A motivated candidate with strong skills in ${skills.join(", ")}.
-Ready to work in real-world projects and grow professionally.
-`;
+      <hr>
 
-  document.getElementById("resume").innerHTML =
-    `<div class="resume">${resume}</div>`;
+      <h3>Profile Summary</h3>
+      <p>
+        A highly motivated professional with qualification in ${qualification}.
+        Skilled in ${skills} with experience in ${exp}.
+        Looking for opportunities to grow and contribute effectively.
+      </p>
 
-  // JOB MATCH
-  let html = "";
+      <h3>Skills</h3>
+      <p>${skills}</p>
 
-  jobs.forEach(j=>{
-    let score = 0;
+      <h3>Experience</h3>
+      <p>${exp}</p>
 
-    j.skills.forEach(s=>{
-      if(skills.includes(s)) score += 50;
-    });
+      <h3>Qualification</h3>
+      <p>${qualification}</p>
 
-    if(score > 0){
-      html += `
-        <div class="job">
-          <h3>${j.title}</h3>
-          <p>Match: ${score}%</p>
+      <h3>Education</h3>
+      <p>${edu}</p>
 
-          <div class="links">
-            <a target="_blank" href="https://www.linkedin.com/jobs/search/?keywords=${j.title}">
-              LinkedIn
-            </a>
+      <h3>Hobbies / Interests</h3>
+      <p>${hobbies}</p>
 
-            <a target="_blank" href="https://www.google.com/search?q=${j.title}+jobs">
-              Google
-            </a>
-          </div>
-        </div>
-      `;
-    }
-  });
+      <!-- SIGNATURE SECTION -->
+      <div class="signature">
+        <p>Date: ${today}</p>
+        <p>Yours faithfully,</p>
+        <br><br>
+        <p><b>${name}</b></p>
+      </div>
 
-  if(html === ""){
-    html = "<p>No match found. Try more skills.</p>";
-  }
+    </div>
+  `;
 
-  document.getElementById("jobs").innerHTML = html;
+  document.getElementById("resume").innerHTML = html;
 }
 
-// PAYMENT
-function pay(){
-  window.location.href =
-    "upi://pay?pa=9975076459@mbk&pn=AOV&am=200&cu=INR";
+// PDF DOWNLOAD
+function downloadPDF(){
+
+  let element = document.getElementById("resumeContent");
+
+  if(!element){
+    alert("Generate resume first");
+    return;
+  }
+
+  html2pdf().from(element).save("My_Resume.pdf");
 }
 
 </script>
