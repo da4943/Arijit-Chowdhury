@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>AOV AI Jobs - Professional Resume Builder</title>
+  <title>AOV AI Jobs - SaaS Resume Builder</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
@@ -111,7 +111,7 @@
 
 <div class="container">
 
-  <h1>🚀 Professional Resume Builder</h1>
+  <h1>🚀 AOV AI Jobs - Smart Resume Builder</h1>
 
   <!-- INPUT -->
   <div class="card">
@@ -127,6 +127,7 @@
     <input type="file" id="photo">
 
     <button onclick="generateResume()">Generate Resume</button>
+    <button onclick="generateAI()">AI Improve Resume</button>
     <button onclick="generateJobs()">Find Jobs</button>
 
   </div>
@@ -144,11 +145,10 @@
     <div id="jobs"></div>
   </div>
 
-  <!-- PREMIUM (NOW VISIBLE FIXED) -->
-  <div class="card premium" id="premium">
+  <!-- PREMIUM -->
+  <div class="card premium">
 
     <h2>💎 Premium ₹200</h2>
-    <p>Scan QR to pay</p>
 
     <img width="150"
     src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=upi://pay?pa=9975076459@mbk&pn=AOV&am=200&cu=INR">
@@ -168,6 +168,7 @@ const jobs = [
   {title:"Web Developer"}
 ];
 
+// RESUME
 function generateResume(){
 
   let name=document.getElementById("name").value;
@@ -217,7 +218,7 @@ function generateResume(){
 
       <div class="section">
         <h3>Declaration</h3>
-        <p>I hereby declare that all information is true.</p>
+        <p>I hereby declare all information is true.</p>
         <p class="center">Signature: ____________</p>
       </div>
 
@@ -228,6 +229,21 @@ function generateResume(){
   else reader.onload({target:{result:""}});
 }
 
+// AI
+function generateAI(){
+  let skills=document.getElementById("skills").value;
+  let exp=document.getElementById("exp").value;
+
+  alert("AI Resume Improved ✔");
+
+  document.getElementById("resume").innerHTML+=`
+  <div style="margin-top:10px;padding:10px;background:#f3f4f6;color:black;border-radius:8px;">
+    <h3>🤖 AI Summary</h3>
+    <p>Professional with skills in ${skills}, experienced in ${exp}. Job-ready candidate.</p>
+  </div>`;
+}
+
+// JOBS
 function generateJobs(){
 
   let html="";
@@ -252,15 +268,10 @@ function generateJobs(){
   document.getElementById("jobs").innerHTML=html;
 }
 
+// PDF
 function downloadPDF(){
-
   let el=document.getElementById("resumeContent");
-
-  if(!el){
-    alert("Generate resume first");
-    return;
-  }
-
+  if(!el){ alert("Generate resume first"); return; }
   html2pdf().from(el).save("Resume.pdf");
 }
 
