@@ -1,8 +1,13 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>AOV AI Jobs - SaaS Resume Builder</title>
+  <title>AOV AI Jobs SaaS</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
@@ -14,13 +19,7 @@
       color:white;
     }
 
-    .container{
-      max-width:900px;
-      margin:auto;
-      padding:20px;
-    }
-
-    h1{text-align:center;color:#38bdf8;}
+    .container{max-width:900px;margin:auto;padding:20px;}
 
     .card{
       background:#111827;
@@ -29,33 +28,21 @@
       border-radius:12px;
     }
 
-    input{
+    input, button{
       width:100%;
       padding:10px;
       margin-top:8px;
       border-radius:6px;
       border:none;
-      background:#0b1220;
-      color:white;
     }
 
     button{
-      width:100%;
-      padding:12px;
-      margin-top:10px;
       background:#38bdf8;
-      border:none;
-      border-radius:8px;
       font-weight:bold;
       cursor:pointer;
     }
 
-    .job{
-      padding:12px;
-      margin-top:10px;
-      background:#0b1220;
-      border-radius:8px;
-    }
+    .hidden{display:none;}
 
     .btn-row{
       display:flex;
@@ -76,7 +63,7 @@
     .google{background:#db4437;}
     .linkedin{background:#0a66c2;}
 
-    .resume-page{
+    .resume{
       background:white;
       color:black;
       padding:20px;
@@ -86,24 +73,11 @@
     .center{text-align:center;}
 
     .photo{
-      width:120px;
-      height:120px;
+      width:100px;
+      height:100px;
       border-radius:50%;
       object-fit:cover;
-      border:3px solid black;
     }
-
-    .section{
-      margin-top:10px;
-      border-bottom:1px solid #ddd;
-      padding-bottom:10px;
-    }
-
-    .premium{
-      border:2px solid gold;
-      text-align:center;
-    }
-
   </style>
 </head>
 
@@ -111,50 +85,62 @@
 
 <div class="container">
 
-  <h1>🚀 AOV AI Jobs - Smart Resume Builder</h1>
-
-  <!-- INPUT -->
-  <div class="card">
-
-    <input id="name" placeholder="Full Name">
-    <input id="father" placeholder="Father Name">
-    <input id="age" placeholder="Age">
-    <input id="gender" placeholder="Gender">
-    <input id="address" placeholder="Address">
-    <input id="qualification" placeholder="Qualification">
-    <input id="skills" placeholder="Skills">
-    <input id="exp" placeholder="Experience">
-    <input type="file" id="photo">
-
-    <button onclick="generateResume()">Generate Resume</button>
-    <button onclick="generateAI()">AI Improve Resume</button>
-    <button onclick="generateJobs()">Find Jobs</button>
-
+  <!-- LOGIN -->
+  <div class="card" id="loginBox">
+    <h2>🔐 Login</h2>
+    <button onclick="googleLogin()">Login with Google</button>
   </div>
 
-  <!-- RESUME -->
-  <div class="card">
-    <h2>📄 Resume Preview</h2>
-    <div id="resume"></div>
-    <button onclick="downloadPDF()">Download PDF</button>
-  </div>
+  <!-- APP -->
+  <div id="app" class="hidden">
 
-  <!-- JOBS -->
-  <div class="card">
-    <h2>🎯 Jobs</h2>
-    <div id="jobs"></div>
-  </div>
+    <div class="card">
+      <h2>📄 Resume Builder</h2>
 
-  <!-- PREMIUM -->
-  <div class="card premium">
+      <input id="name" placeholder="Full Name">
+      <input id="father" placeholder="Father Name">
+      <input id="age" placeholder="Age">
+      <input id="gender" placeholder="Gender">
+      <input id="address" placeholder="Address">
+      <input id="skills" placeholder="Skills">
+      <input id="exp" placeholder="Experience">
 
-    <h2>💎 Premium ₹200</h2>
+      <input type="file" id="photo">
 
-    <img width="150"
-    src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=upi://pay?pa=9975076459@mbk&pn=AOV&am=200&cu=INR">
+      <button onclick="generateResume()">Generate Resume</button>
+      <button onclick="saveResume()">Save to Firebase</button>
+    </div>
 
-    <input id="utr" placeholder="Enter UTR Number">
-    <button onclick="alert('Payment Submitted')">Submit Payment</button>
+    <!-- RESUME -->
+    <div class="card">
+      <div id="resume"></div>
+      <button onclick="downloadPDF()">Download PDF</button>
+    </div>
+
+    <!-- JOBS -->
+    <div class="card">
+      <h2>🎯 Jobs</h2>
+
+      <div class="btn-row">
+        <a class="google" target="_blank"
+        href="https://www.google.com/search?q=jobs">Google</a>
+
+        <a class="linkedin" target="_blank"
+        href="https://www.linkedin.com/jobs">LinkedIn</a>
+      </div>
+
+    </div>
+
+    <!-- PREMIUM -->
+    <div class="card">
+      <h2>💎 Premium ₹200</h2>
+
+      <img width="150"
+      src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=upi://pay?pa=9975076459@mbk&pn=AOV&am=200&cu=INR">
+
+      <input id="utr" placeholder="Enter UTR">
+      <button onclick="submitPayment()">Submit Payment</button>
+    </div>
 
   </div>
 
@@ -162,117 +148,89 @@
 
 <script>
 
-const jobs = [
-  {title:"AI Developer"},
-  {title:"Data Analyst"},
-  {title:"Web Developer"}
-];
+// Firebase config
+const firebaseConfig = {
+  apiKey: "YOUR_KEY",
+  authDomain: "YOUR_DOMAIN",
+  projectId: "YOUR_PROJECT",
+};
+
+firebase.initializeApp(firebaseConfig);
+
+const auth = firebase.auth();
+const db = firebase.firestore();
+
+let currentUser = null;
+
+// LOGIN
+function googleLogin(){
+  let provider = new firebase.auth.GoogleAuthProvider();
+
+  auth.signInWithPopup(provider)
+  .then(result=>{
+    currentUser = result.user;
+    document.getElementById("loginBox").classList.add("hidden");
+    document.getElementById("app").classList.remove("hidden");
+  });
+}
 
 // RESUME
 function generateResume(){
 
-  let name=document.getElementById("name").value;
-  let father=document.getElementById("father").value;
-  let age=document.getElementById("age").value;
-  let gender=document.getElementById("gender").value;
-  let address=document.getElementById("address").value;
-  let qualification=document.getElementById("qualification").value;
-  let skills=document.getElementById("skills").value;
-  let exp=document.getElementById("exp").value;
-  let photo=document.getElementById("photo").files[0];
+  let name = document.getElementById("name").value;
+  let father = document.getElementById("father").value;
+  let age = document.getElementById("age").value;
+  let gender = document.getElementById("gender").value;
+  let address = document.getElementById("address").value;
+  let skills = document.getElementById("skills").value;
+  let exp = document.getElementById("exp").value;
 
-  let reader=new FileReader();
+  document.getElementById("resume").innerHTML = `
+  <div id="resumeContent" class="resume">
 
-  reader.onload=function(e){
+    <div class="center">
+      <h2>${name}</h2>
+      <p>${address}</p>
+    </div>
 
-    document.getElementById("resume").innerHTML=`
-    <div id="resumeContent" class="resume-page">
+    <p><b>Father:</b> ${father}</p>
+    <p><b>Age:</b> ${age}</p>
+    <p><b>Gender:</b> ${gender}</p>
+    <p><b>Skills:</b> ${skills}</p>
+    <p><b>Experience:</b> ${exp}</p>
 
-      <div class="center">
-        ${photo?`<img src="${e.target.result}" class="photo">`:""}
-        <h2>${name}</h2>
-        <p>${address}</p>
-      </div>
+    <h3>Declaration</h3>
+    <p>I declare all information is true.</p>
 
-      <div class="section">
-        <h3>Personal Details</h3>
-        <p><b>Father:</b> ${father}</p>
-        <p><b>Age:</b> ${age}</p>
-        <p><b>Gender:</b> ${gender}</p>
-      </div>
-
-      <div class="section">
-        <h3>Education</h3>
-        <p>${qualification}</p>
-      </div>
-
-      <div class="section">
-        <h3>Skills</h3>
-        <p>${skills}</p>
-      </div>
-
-      <div class="section">
-        <h3>Experience</h3>
-        <p>${exp}</p>
-      </div>
-
-      <div class="section">
-        <h3>Declaration</h3>
-        <p>I hereby declare all information is true.</p>
-        <p class="center">Signature: ____________</p>
-      </div>
-
-    </div>`;
-  }
-
-  if(photo) reader.readAsDataURL(photo);
-  else reader.onload({target:{result:""}});
-}
-
-// AI
-function generateAI(){
-  let skills=document.getElementById("skills").value;
-  let exp=document.getElementById("exp").value;
-
-  alert("AI Resume Improved ✔");
-
-  document.getElementById("resume").innerHTML+=`
-  <div style="margin-top:10px;padding:10px;background:#f3f4f6;color:black;border-radius:8px;">
-    <h3>🤖 AI Summary</h3>
-    <p>Professional with skills in ${skills}, experienced in ${exp}. Job-ready candidate.</p>
   </div>`;
 }
 
-// JOBS
-function generateJobs(){
-
-  let html="";
-
-  jobs.forEach(j=>{
-
-    html+=`
-    <div class="job">
-      <h3>${j.title}</h3>
-
-      <div class="btn-row">
-        <a class="google" target="_blank"
-        href="https://www.google.com/search?q=${j.title}+jobs">Google</a>
-
-        <a class="linkedin" target="_blank"
-        href="https://www.linkedin.com/jobs/search/?keywords=${j.title}">LinkedIn</a>
-      </div>
-
-    </div>`;
+// SAVE FIREBASE
+function saveResume(){
+  db.collection("resumes").add({
+    user: currentUser.email,
+    name: document.getElementById("name").value
   });
 
-  document.getElementById("jobs").innerHTML=html;
+  alert("Saved to Firebase ✔");
 }
 
 // PDF
 function downloadPDF(){
   let el=document.getElementById("resumeContent");
-  if(!el){ alert("Generate resume first"); return; }
-  html2pdf().from(el).save("Resume.pdf");
+  if(!el){alert("Generate first");return;}
+  html2pdf().from(el).save("resume.pdf");
+}
+
+// PAYMENT
+function submitPayment(){
+  db.collection("payments").add({
+    user: currentUser.email,
+    utr: document.getElementById("utr").value,
+    status:"pending"
+  });
+
+  alert("Payment submitted");
 }
 
 </script>
