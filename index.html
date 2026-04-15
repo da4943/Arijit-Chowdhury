@@ -88,36 +88,23 @@ const db = firebase.firestore();
 
 let user = null;
 
-// ✅ LOGIN (REDIRECT - WORKS EVERYWHERE)
+// ✅ LOGIN (REDIRECT)
 function googleLogin(){
   const provider = new firebase.auth.GoogleAuthProvider();
   auth.signInWithRedirect(provider);
 }
 
-// ✅ HANDLE LOGIN RESULT AFTER REDIRECT
-auth.getRedirectResult()
-.then((result) => {
-  if (result.user) {
-    user = result.user;
-    showApp();
-  }
-})
-.catch((error) => {
-  alert("Login Error: " + error.message);
-});
-
-// ✅ AUTO LOGIN IF ALREADY SIGNED IN
+// ✅ MAIN FIX (AUTO LOGIN DETECTION)
 auth.onAuthStateChanged((u)=>{
   if(u){
     user = u;
-    showApp();
+    document.getElementById("loginBox").style.display="none";
+    document.getElementById("app").classList.remove("hidden");
+  } else {
+    document.getElementById("loginBox").style.display="block";
+    document.getElementById("app").classList.add("hidden");
   }
 });
-
-function showApp(){
-  document.getElementById("loginBox").style.display="none";
-  document.getElementById("app").classList.remove("hidden");
-}
 
 // RESUME
 function generateResume(){
