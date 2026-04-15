@@ -3,6 +3,7 @@
 <head>
   <title>AOV AI Jobs - Smart Resume Builder</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="AI Resume Builder - Create professional resumes instantly">
 
   <!-- Firebase -->
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
@@ -74,23 +75,23 @@
 
   </div>
 
-  <!-- FOOTER (VERY IMPORTANT FOR STRIPE/PADDLE) -->
+  <!-- FIXED FOOTER -->
   <div class="footer">
     © 2026 AOV AI Jobs | Contact: carijit22@gmail.com <br>
-    <a href="/terms" style="color:#38bdf8">Terms</a> |
-    <a href="/privacy" style="color:#38bdf8">Privacy</a> |
-    <a href="/refund" style="color:#38bdf8">Refund</a>
+    <a href="terms.html" style="color:#38bdf8">Terms</a> |
+    <a href="privacy.html" style="color:#38bdf8">Privacy</a> |
+    <a href="refund.html" style="color:#38bdf8">Refund</a>
   </div>
 
 </div>
 
 <script>
 
-// Firebase config
+// 🔥 USE YOUR ORIGINAL FIREBASE CONFIG HERE
 const firebaseConfig = {
-  apiKey: "YOUR_KEY",
-  authDomain: "YOUR_DOMAIN",
-  projectId: "YOUR_PROJECT"
+  apiKey: "AIzaSy...", 
+  authDomain: "aov-ai-jobs-c697d.firebaseapp.com",
+  projectId: "aov-ai-jobs-c697d"
 };
 
 firebase.initializeApp(firebaseConfig);
@@ -103,37 +104,45 @@ let user = null;
 auth.onAuthStateChanged((u)=>{
   if(u){
     user = u;
-    loginBox.style.display="none";
-    app.classList.remove("hidden");
+    document.getElementById("loginBox").style.display="none";
+    document.getElementById("app").classList.remove("hidden");
   } else {
-    loginBox.style.display="block";
-    app.classList.add("hidden");
+    document.getElementById("loginBox").style.display="block";
+    document.getElementById("app").classList.add("hidden");
   }
 });
 
 // Login
 function googleLogin(){
   const provider = new firebase.auth.GoogleAuthProvider();
-  auth.signInWithPopup(provider);
+  auth.signInWithPopup(provider).catch(err=>{
+    alert("Login error");
+  });
 }
 
-// Resume
+// Resume (FIXED)
 function generateResume(){
   const nameVal = document.getElementById("name").value;
+  const addressVal = document.getElementById("address").value;
+  const fatherVal = document.getElementById("father").value;
+  const ageVal = document.getElementById("age").value;
+  const genderVal = document.getElementById("gender").value;
+  const skillsVal = document.getElementById("skills").value;
+  const expVal = document.getElementById("exp").value;
 
   let html = `
   <div id="resumeContent" class="resume">
     <div class="center">
       <h2>${nameVal}</h2>
-      <p>${address.value}</p>
+      <p>${addressVal}</p>
     </div>
-    <p><b>Father:</b> ${father.value}</p>
-    <p><b>Age:</b> ${age.value}</p>
-    <p><b>Gender:</b> ${gender.value}</p>
-    <p><b>Skills:</b> ${skills.value}</p>
-    <p><b>Experience:</b> ${exp.value}</p>
+    <p><b>Father:</b> ${fatherVal}</p>
+    <p><b>Age:</b> ${ageVal}</p>
+    <p><b>Gender:</b> ${genderVal}</p>
+    <p><b>Skills:</b> ${skillsVal}</p>
+    <p><b>Experience:</b> ${expVal}</p>
   </div>`;
-  
+
   document.getElementById("resume").innerHTML = html;
 }
 
@@ -142,7 +151,7 @@ function saveData(){
   if(!user){ alert("Login first"); return; }
 
   db.collection("users").add({
-    name: name.value,
+    name: document.getElementById("name").value,
     email: user.email
   });
 
@@ -155,7 +164,7 @@ function pay(){
 
   db.collection("payments").add({
     email:user.email,
-    utr:utr.value,
+    utr:document.getElementById("utr").value,
     status:"pending"
   });
 
