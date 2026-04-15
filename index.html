@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>AOV AI Jobs</title>
+  <title>AOV AI Jobs - Smart Resume Builder</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <!-- Firebase -->
@@ -20,12 +20,16 @@
     .hidden{display:none}
     .resume{background:white;color:black;padding:20px;border-radius:10px}
     .center{text-align:center}
+    .header{font-size:22px;font-weight:bold;text-align:center;margin-bottom:10px}
+    .footer{font-size:12px;text-align:center;margin-top:20px;color:#94a3b8}
   </style>
 </head>
 
 <body>
 
 <div class="container">
+
+  <div class="header">AOV AI Resume Builder</div>
 
   <!-- LOGIN -->
   <div class="card" id="loginBox">
@@ -37,7 +41,7 @@
   <div id="app" class="hidden">
 
     <div class="card">
-      <h2>Resume Builder</h2>
+      <h2>Create Your Resume</h2>
 
       <input id="name" placeholder="Full Name">
       <input id="father" placeholder="Father Name">
@@ -48,7 +52,7 @@
       <input id="exp" placeholder="Experience">
 
       <button onclick="generateResume()">Generate Resume</button>
-      <button onclick="saveData()">Save to Firebase</button>
+      <button onclick="saveData()">Save</button>
     </div>
 
     <div class="card">
@@ -56,29 +60,37 @@
       <button onclick="downloadPDF()">Download PDF</button>
     </div>
 
+    <!-- PRICING -->
     <div class="card">
-      <h2>Premium ₹200</h2>
+      <h2>Premium Plan - ₹200</h2>
+      <p>Unlock advanced resume features & download premium templates</p>
+
       <img width="160"
       src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=upi://pay?pa=9975076459@mbk&pn=AOV&am=200&cu=INR">
 
-      <input id="utr" placeholder="Enter UTR">
+      <input id="utr" placeholder="Enter UTR Number">
       <button onclick="pay()">Submit Payment</button>
     </div>
 
+  </div>
+
+  <!-- FOOTER (VERY IMPORTANT FOR STRIPE/PADDLE) -->
+  <div class="footer">
+    © 2026 AOV AI Jobs | Contact: carijit22@gmail.com <br>
+    <a href="/terms" style="color:#38bdf8">Terms</a> |
+    <a href="/privacy" style="color:#38bdf8">Privacy</a> |
+    <a href="/refund" style="color:#38bdf8">Refund</a>
   </div>
 
 </div>
 
 <script>
 
-// FIREBASE CONFIG
+// Firebase config
 const firebaseConfig = {
-  apiKey: "AIzaSyBpJQ44k1gokp3sSZggyESC7HpvqssClEE",
-  authDomain: "aov-ai-jobs-c697d.firebaseapp.com",
-  projectId: "aov-ai-jobs-c697d",
-  storageBucket: "aov-ai-jobs-c697d.firebasestorage.app",
-  messagingSenderId: "898401199585",
-  appId: "1:898401199585:web:760d147b7d9b23e655dea0"
+  apiKey: "YOUR_KEY",
+  authDomain: "YOUR_DOMAIN",
+  projectId: "YOUR_PROJECT"
 };
 
 firebase.initializeApp(firebaseConfig);
@@ -88,30 +100,31 @@ const db = firebase.firestore();
 
 let user = null;
 
-// ✅ IMPORTANT FIX: CHECK LOGIN STATE
 auth.onAuthStateChanged((u)=>{
   if(u){
     user = u;
-    document.getElementById("loginBox").style.display="none";
-    document.getElementById("app").classList.remove("hidden");
+    loginBox.style.display="none";
+    app.classList.remove("hidden");
   } else {
-    document.getElementById("loginBox").style.display="block";
-    document.getElementById("app").classList.add("hidden");
+    loginBox.style.display="block";
+    app.classList.add("hidden");
   }
 });
 
-// LOGIN
+// Login
 function googleLogin(){
   const provider = new firebase.auth.GoogleAuthProvider();
   auth.signInWithPopup(provider);
 }
 
-// RESUME
+// Resume
 function generateResume(){
+  const nameVal = document.getElementById("name").value;
+
   let html = `
   <div id="resumeContent" class="resume">
     <div class="center">
-      <h2>${name.value}</h2>
+      <h2>${nameVal}</h2>
       <p>${address.value}</p>
     </div>
     <p><b>Father:</b> ${father.value}</p>
@@ -120,10 +133,11 @@ function generateResume(){
     <p><b>Skills:</b> ${skills.value}</p>
     <p><b>Experience:</b> ${exp.value}</p>
   </div>`;
-  resume.innerHTML = html;
+  
+  document.getElementById("resume").innerHTML = html;
 }
 
-// SAVE
+// Save
 function saveData(){
   if(!user){ alert("Login first"); return; }
 
@@ -135,7 +149,7 @@ function saveData(){
   alert("Saved ✔");
 }
 
-// PAYMENT
+// Payment
 function pay(){
   if(!user){ alert("Login first"); return; }
 
