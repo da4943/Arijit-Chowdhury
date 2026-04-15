@@ -4,7 +4,7 @@
   <title>AOV AI Jobs</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <!-- Firebase v9 (FIXED MODERN VERSION) -->
+  <!-- Firebase -->
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
@@ -71,7 +71,7 @@
 
 <script>
 
-// ✅ YOUR FIREBASE CONFIG (IMPORTANT)
+// 🔥 Firebase Config
 const firebaseConfig = {
   apiKey: "AIzaSyBpJQ44k1gokp3sSZggyESC7HpvqssClEE",
   authDomain: "aov-ai-jobs-c697d.firebaseapp.com",
@@ -88,24 +88,39 @@ const db = firebase.firestore();
 
 let user = null;
 
-// ✅ GOOGLE LOGIN FIXED
+// ✅ LOGIN (REDIRECT - WORKS EVERYWHERE)
 function googleLogin(){
   const provider = new firebase.auth.GoogleAuthProvider();
+  auth.signInWithRedirect(provider);
+}
 
-  auth.signInWithPopup(provider)
-  .then((result)=>{
+// ✅ HANDLE LOGIN RESULT AFTER REDIRECT
+auth.getRedirectResult()
+.then((result) => {
+  if (result.user) {
     user = result.user;
-    document.getElementById("loginBox").style.display="none";
-    document.getElementById("app").classList.remove("hidden");
-  })
-  .catch((error)=>{
-    alert("Login Failed: " + error.message);
-  });
+    showApp();
+  }
+})
+.catch((error) => {
+  alert("Login Error: " + error.message);
+});
+
+// ✅ AUTO LOGIN IF ALREADY SIGNED IN
+auth.onAuthStateChanged((u)=>{
+  if(u){
+    user = u;
+    showApp();
+  }
+});
+
+function showApp(){
+  document.getElementById("loginBox").style.display="none";
+  document.getElementById("app").classList.remove("hidden");
 }
 
 // RESUME
 function generateResume(){
-
   let html = `
   <div id="resumeContent" class="resume">
 
@@ -130,6 +145,11 @@ function generateResume(){
 
 // SAVE FIREBASE
 function saveData(){
+  if(!user){
+    alert("Login first!");
+    return;
+  }
+
   db.collection("users").add({
     name: document.getElementById("name").value,
     email: user.email
@@ -140,6 +160,11 @@ function saveData(){
 
 // PAYMENT
 function pay(){
+  if(!user){
+    alert("Login first!");
+    return;
+  }
+
   db.collection("payments").add({
     email:user.email,
     utr:document.getElementById("utr").value,
