@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -75,7 +76,7 @@
 
   </div>
 
-  <!-- FIXED FOOTER -->
+  <!-- FOOTER -->
   <div class="footer">
     © 2026 AOV AI Jobs | Contact: carijit22@gmail.com <br>
     <a href="terms.html" style="color:#38bdf8">Terms</a> |
@@ -87,11 +88,15 @@
 
 <script>
 
-// 🔥 USE YOUR ORIGINAL FIREBASE CONFIG HERE
+// ✅ FULL CORRECT FIREBASE CONFIG (FIXED)
 const firebaseConfig = {
-  apiKey: "AIzaSy...", 
+  apiKey: "AIzaSyBpJQ44k1gokp3sSZggyESC7HpvqssClEE",
   authDomain: "aov-ai-jobs-c697d.firebaseapp.com",
-  projectId: "aov-ai-jobs-c697d"
+  projectId: "aov-ai-jobs-c697d",
+  storageBucket: "aov-ai-jobs-c697d.firebasestorage.app",
+  messagingSenderId: "898401199585",
+  appId: "1:898401199585:web:760d147b7d9b23e655dea0",
+  measurementId: "G-DM43LS8L6N"
 };
 
 firebase.initializeApp(firebaseConfig);
@@ -112,15 +117,15 @@ auth.onAuthStateChanged((u)=>{
   }
 });
 
-// Login
+// LOGIN
 function googleLogin(){
   const provider = new firebase.auth.GoogleAuthProvider();
   auth.signInWithPopup(provider).catch(err=>{
-    alert("Login error");
+    alert("Login error: " + err.message);
   });
 }
 
-// Resume (FIXED)
+// RESUME
 function generateResume(){
   const nameVal = document.getElementById("name").value;
   const addressVal = document.getElementById("address").value;
@@ -146,7 +151,7 @@ function generateResume(){
   document.getElementById("resume").innerHTML = html;
 }
 
-// Save
+// SAVE
 function saveData(){
   if(!user){ alert("Login first"); return; }
 
@@ -158,7 +163,7 @@ function saveData(){
   alert("Saved ✔");
 }
 
-// Payment
+// PAYMENT
 function pay(){
   if(!user){ alert("Login first"); return; }
 
