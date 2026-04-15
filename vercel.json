@@ -1,0 +1,12 @@
+{
+  "routes": [
+    {
+      "src": "/__/auth/handler",
+      "dest": "/index.html"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "/index.html"
+    }
+  ]
+}
