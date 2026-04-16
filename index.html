@@ -125,8 +125,14 @@
   <div class="logo">AOV AI Resume</div>
 
   <div class="social">
-    <button class="google" onclick="fakeLogin('Google')">Google</button>
-    <button class="linkedin" onclick="fakeLogin('LinkedIn')">LinkedIn</button>
+    <!-- ONLY CHANGE HERE -->
+    <a href="https://www.google.com/search?q=jobs+near+me" target="_blank">
+      <button class="google">Google</button>
+    </a>
+
+    <a href="https://www.linkedin.com/jobs/" target="_blank">
+      <button class="linkedin">LinkedIn</button>
+    </a>
   </div>
 </div>
 
@@ -175,11 +181,6 @@
 </div>
 
 <script>
-
-/* FAKE LOGIN (UI TEST ONLY) */
-function fakeLogin(type){
-  alert(type + " login will be added later");
-}
 
 /* GENERATE */
 function generate(){
