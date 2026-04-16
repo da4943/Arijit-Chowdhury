@@ -10,6 +10,7 @@
       font-family:Arial;
       background:#0b1220;
       color:white;
+      scroll-behavior:smooth;
     }
 
     .container{
@@ -48,6 +49,7 @@
       justify-content:space-around;
       margin:40px 0;
       text-align:center;
+      gap:10px;
     }
 
     .stat{
@@ -83,6 +85,10 @@
       color:#cbd5e1;
     }
 
+    .login{
+      border:2px solid #38bdf8;
+    }
+
     .footer{
       text-align:center;
       padding:30px;
@@ -92,7 +98,7 @@
 
     @media(max-width:768px){
       .hero h1{font-size:28px;}
-      .stats{flex-direction:column;gap:10px;}
+      .stats{flex-direction:column;}
       .stat{width:100%;}
     }
   </style>
@@ -105,8 +111,9 @@
   <!-- HERO -->
   <div class="hero">
     <h1>Build a Free AI Resume That Gets You Hired</h1>
-    <p>Trusted by thousands of job seekers — create your CV in minutes and download instantly.</p>
-    <button class="btn">Create Resume Free</button>
+    <p>Trusted by thousands of job seekers — create your CV in minutes</p>
+
+    <button class="btn" onclick="goToLogin()">Create Resume Free</button>
   </div>
 
   <!-- STATS -->
@@ -139,7 +146,7 @@
 
       <div class="card step">
         <h3>Step 2</h3>
-        <p>Fill your details with AI help</p>
+        <p>Fill your details</p>
       </div>
 
       <div class="card step">
@@ -149,27 +156,12 @@
     </div>
   </div>
 
-  <!-- TESTIMONIALS -->
-  <div class="section">
-    <h2 style="text-align:center">What users say</h2>
-
-    <div class="grid">
-
-      <div class="card">
-        <p class="testimonial">“Got interviews within a week after using this CV tool.”</p>
-        <b>- Anna</b>
-      </div>
-
-      <div class="card">
-        <p class="testimonial">“Very easy and professional CV builder.”</p>
-        <b>- Mark</b>
-      </div>
-
-      <div class="card">
-        <p class="testimonial">“Helped me fix ATS issues and get job calls.”</p>
-        <b>- Priya</b>
-      </div>
-
+  <!-- LOGIN SECTION -->
+  <div class="section" id="login">
+    <div class="card login">
+      <h2>Login Required</h2>
+      <p>Access resume builder</p>
+      <button class="btn" onclick="fakeLogin()">Login with Google</button>
     </div>
   </div>
 
@@ -177,7 +169,7 @@
   <div class="hero">
     <h2>Ready to boost your career?</h2>
     <p>Start building your professional CV now</p>
-    <button class="btn">Get Started Free</button>
+    <button class="btn" onclick="scrollToTop()">Get Started</button>
   </div>
 
 </div>
@@ -185,6 +177,25 @@
 <div class="footer">
   © 2026 AOV AI Jobs | All rights reserved
 </div>
+
+<script>
+
+// NAVIGATION FIX
+function goToLogin(){
+  document.getElementById("login").scrollIntoView({behavior:"smooth"});
+}
+
+function scrollToTop(){
+  window.scrollTo({top:0, behavior:"smooth"});
+}
+
+// LOGIN (DEMO)
+function fakeLogin(){
+  alert("Login successful ✔ (demo mode)");
+  alert("Now you can unlock Resume Builder in next version 🚀");
+}
+
+</script>
 
 </body>
 </html>
