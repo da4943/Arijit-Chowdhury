@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>AOV Resume FIX PRO</title>
+  <title>AOV Resume PRO FIX</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <!-- Firebase -->
@@ -13,32 +13,13 @@
 
   <style>
     body{margin:0;font-family:Arial;background:#0b1220;color:white}
-
-    .card{
-      padding:20px;
-      background:#111827;
-      margin:10px;
-      border-radius:10px;
-    }
-
+    .card{padding:20px;background:#111827;margin:10px;border-radius:10px}
     .hidden{display:none}
-
     input,button{
-      width:100%;
-      padding:10px;
-      margin-top:8px;
-      border-radius:6px;
-      border:none;
+      width:100%;padding:10px;margin-top:8px;border-radius:6px;border:none
     }
-
     button{cursor:pointer;background:#38bdf8;font-weight:bold}
-
-    .resume-box{
-      background:white;
-      color:black;
-      padding:20px;
-      border-radius:10px;
-    }
+    .resume-box{background:white;color:black;padding:20px;border-radius:10px}
   </style>
 </head>
 
@@ -46,7 +27,7 @@
 
 <!-- LOGIN -->
 <div class="card" id="loginBox">
-  <h2>Login</h2>
+  <h2>Login Required</h2>
   <button onclick="login()">Login with Google</button>
 </div>
 
@@ -75,23 +56,23 @@
 
 <script>
 
-/* FIREBASE CONFIG (YOU MUST REPLACE THIS) */
+/* 🔴 STEP 1: REPLACE THIS (IMPORTANT) */
 const firebaseConfig = {
   apiKey: "YOUR_KEY",
   authDomain: "YOUR_PROJECT.firebaseapp.com",
-  projectId: "YOUR_PROJECT_ID"
+  projectId: "YOUR_PROJECT_ID",
+  appId: "YOUR_APP_ID"
 };
 
-if (!firebase.apps.length) {
-  firebase.initializeApp(firebaseConfig);
-}
+/* INIT */
+firebase.initializeApp(firebaseConfig);
 
 const auth = firebase.auth();
 const db = firebase.firestore();
 
 let user = null;
 
-/* UI CONTROL */
+/* UI */
 function showLogin(){
   document.getElementById("loginBox").style.display="block";
   document.getElementById("form").classList.add("hidden");
@@ -102,7 +83,7 @@ function showApp(){
   document.getElementById("form").classList.remove("hidden");
 }
 
-/* AUTH STATE */
+/* AUTH FIX */
 auth.onAuthStateChanged((u)=>{
   if(u){
     user = u;
@@ -113,16 +94,24 @@ auth.onAuthStateChanged((u)=>{
   }
 });
 
-/* LOGIN FIXED (NO POPUP ISSUE) */
+/* LOGIN FIX (WORKS STABLE) */
 function login(){
   const provider = new firebase.auth.GoogleAuthProvider();
 
-  auth.signInWithRedirect(provider).catch(err=>{
-    alert(err.message);
+  auth.signInWithPopup(provider)
+  .catch((err)=>{
+    console.log(err);
+
+    // fallback fix
+    if(err.code === "auth/popup-blocked"){
+      auth.signInWithRedirect(provider);
+    } else {
+      alert(err.message);
+    }
   });
 }
 
-/* GENERATE RESUME */
+/* RESUME */
 function generate(){
 
   const data = {
@@ -139,6 +128,7 @@ function generate(){
 
   document.getElementById("resume").innerHTML = `
     <div class="resume-box" id="resumeBox">
+
       <center>
         <img src="${data.photo}" width="90" style="border-radius:50%">
         <h2>${data.name}</h2>
@@ -155,11 +145,12 @@ function generate(){
       <p><b>Declaration:</b> ${data.declaration}</p>
       <p><b>Signature:</b> ${data.signature}</p>
       <p><b>Date:</b> ${new Date().toLocaleDateString()}</p>
+
     </div>
   `;
 }
 
-/* SAVE */
+/* SAVE FIX */
 function save(){
   if(!user){
     alert("Login first");
@@ -172,15 +163,15 @@ function save(){
     createdAt: Date.now()
   });
 
-  alert("Saved ✔");
+  alert("Saved Successfully ✔");
 }
 
-/* PDF FIXED */
+/* PDF FIX */
 function downloadPDF(){
   const el = document.getElementById("resumeBox");
 
   if(!el){
-    alert("Generate first");
+    alert("Generate resume first");
     return;
   }
 
