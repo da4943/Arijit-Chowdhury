@@ -49,15 +49,31 @@
       padding:20px;
       border-radius:12px;
     }
+
+    .premium{
+      background:gold;
+      color:black;
+      padding:10px;
+      border-radius:10px;
+      text-align:center;
+      font-weight:bold;
+    }
   </style>
 </head>
 
 <body>
 
+<!-- HEADER -->
+<div class="card">
+  <div class="title">AOV AI RESUME BUILDER</div>
+
+  <div class="premium">
+    🔥 Premium Plan ₹200 — QR Payment Available
+  </div>
+</div>
+
 <!-- FORM -->
 <div class="card">
-
-  <div class="title">AOV AI Resume Generator</div>
 
   <input id="name" placeholder="Name">
   <input id="age" placeholder="Age">
@@ -70,7 +86,19 @@
   <input id="signature" placeholder="Signature">
 
   <button onclick="generate()">Generate Resume</button>
+  <button onclick="saveLocal()">Save (Local)</button>
   <button onclick="downloadPDF()">Download PDF</button>
+</div>
+
+<!-- PREMIUM QR SECTION -->
+<div class="card">
+  <h3>Pay ₹200 to Unlock Premium</h3>
+  <p>Scan QR below:</p>
+
+  <!-- Replace with your real QR image -->
+  <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=PAY-200-AOV" width="150">
+
+  <p>After payment, contact admin to activate premium</p>
 </div>
 
 <!-- PREVIEW -->
@@ -80,7 +108,7 @@
 
 <script>
 
-/* GENERATE RESUME */
+/* GENERATE */
 function generate(){
 
   const name = document.getElementById("name").value;
@@ -117,10 +145,14 @@ function generate(){
   `;
 }
 
-/* PDF DOWNLOAD */
+/* SAVE LOCAL */
+function saveLocal(){
+  alert("Saved locally (no login system)");
+}
+
+/* PDF */
 function downloadPDF(){
   const el = document.getElementById("resumeBox");
-
   if(!el){
     alert("Generate first");
     return;
