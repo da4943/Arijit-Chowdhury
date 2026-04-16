@@ -1,8 +1,13 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>AOV AI Resume PRO</title>
+  <title>Leeco AI SaaS Resume Builder</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
@@ -10,66 +15,20 @@
     body{
       margin:0;
       font-family:Arial;
-      background:linear-gradient(135deg,#050816,#0b1220);
+      background:linear-gradient(135deg,#0b1220,#111827);
       color:white;
     }
 
-    /* TOP NAV */
-    .nav{
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      padding:15px 20px;
-      background:#0f172a;
-      position:sticky;
-      top:0;
-    }
-
-    .logo{
-      font-size:20px;
-      font-weight:bold;
-      color:#38bdf8;
-    }
-
-    .social button{
-      margin-left:10px;
-      padding:10px 14px;
-      border-radius:8px;
-      border:none;
-      font-weight:bold;
-      cursor:pointer;
-    }
-
-    .google{background:white;color:black}
-    .linkedin{background:#0a66c2;color:white}
-
-    /* MAIN CONTAINER */
-    .container{
-      max-width:1000px;
-      margin:auto;
-      padding:15px;
-    }
-
-    /* HERO */
-    .hero{
+    .center{
       text-align:center;
-      padding:25px;
+      padding:40px;
     }
 
-    .hero h1{
-      font-size:28px;
-      color:#38bdf8;
-    }
-
-    .hero p{
-      opacity:0.8;
-    }
-
-    /* CARD */
     .card{
-      background:#111827;
+      max-width:500px;
+      margin:20px auto;
+      background:#1f2937;
       padding:20px;
-      margin-top:15px;
       border-radius:15px;
       box-shadow:0 0 20px rgba(0,0,0,0.4);
     }
@@ -78,174 +37,139 @@
       width:100%;
       padding:12px;
       margin-top:10px;
-      border-radius:10px;
+      border-radius:8px;
       border:none;
-      font-size:15px;
-      box-sizing:border-box;
     }
 
     button{
       background:#38bdf8;
       font-weight:bold;
       cursor:pointer;
-      transition:0.3s;
     }
 
-    button:hover{
-      background:#0ea5e9;
-      transform:scale(1.02);
-    }
+    .hidden{display:none}
 
-    /* PREMIUM */
-    .premium{
-      text-align:center;
-      background:linear-gradient(45deg,#ffcc00,#ff8800);
-      color:black;
-      padding:25px;
-      border-radius:15px;
-    }
-
-    .premium h2{
-      font-size:24px;
-    }
-
-    .qr{
-      margin-top:10px;
-      width:220px;
-      height:220px;
-      border-radius:12px;
-      background:white;
-      padding:10px;
-    }
-
-    /* RESUME */
-    .resume-box{
+    .resume{
       background:white;
       color:black;
       padding:20px;
-      border-radius:12px;
+      border-radius:10px;
     }
 
-    /* GRID */
-    .grid{
-      display:grid;
-      grid-template-columns:1fr 1fr;
-      gap:15px;
-    }
-
-    @media(max-width:768px){
-      .grid{
-        grid-template-columns:1fr;
-      }
-
-      .hero h1{
-        font-size:22px;
-      }
+    .premium{
+      background:gold;
+      color:black;
+      padding:10px;
+      text-align:center;
+      border-radius:10px;
+      font-weight:bold;
+      margin-bottom:10px;
     }
   </style>
 </head>
 
 <body>
 
-<!-- NAV -->
-<div class="nav">
-  <div class="logo">AOV AI Resume</div>
-
-  <div class="social">
-    <button class="google">Google</button>
-    <button class="linkedin">LinkedIn</button>
-  </div>
+<div class="center">
+  <h1>🚀 Leeco AI SaaS Resume Builder</h1>
+  <p>Build Resume • Save • Download PDF</p>
 </div>
 
-<div class="container">
+<!-- LOGIN -->
+<div class="card" id="loginBox">
+  <h2>Login</h2>
+  <button onclick="login()">Continue with Google</button>
+</div>
 
-  <!-- HERO -->
-  <div class="hero">
-    <h1>Create Professional Resume in Seconds</h1>
-    <p>AI style resume builder • Free + Premium tools</p>
-  </div>
+<!-- APP -->
+<div class="card hidden" id="app">
 
-  <!-- PREMIUM -->
-  <div class="card premium">
-    <h2>💎 Premium Unlock ₹200</h2>
-    <p>Get Pro Templates + PDF HD Export</p>
+  <div class="premium">⭐ Free Plan (Upgrade coming soon)</div>
 
-    <img class="qr"
-      src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=upi://pay?pa=yourupi@bank&pn=AOV%20AI&am=200&cu=INR"
-    />
+  <input id="name" placeholder="Name">
+  <input id="age" placeholder="Age">
+  <input id="skills" placeholder="Skills">
+  <input id="experience" placeholder="Experience">
+  <input id="photo" placeholder="Photo URL">
 
-    <p>Scan to Pay</p>
-  </div>
+  <button onclick="generate()">Generate Resume</button>
+  <button onclick="save()">Save</button>
+  <button onclick="downloadPDF()">Download PDF</button>
 
-  <!-- FORM -->
-  <div class="card">
+</div>
 
-    <h2>Resume Builder</h2>
-
-    <div class="grid">
-      <input id="name" placeholder="Full Name">
-      <input id="age" placeholder="Age">
-      <input id="qualification" placeholder="Qualification">
-      <input id="experience" placeholder="Experience">
-    </div>
-
-    <input id="skills" placeholder="Skills">
-    <input id="about" placeholder="About You">
-    <input id="photo" placeholder="Photo URL">
-    <input id="declaration" placeholder="Declaration">
-    <input id="signature" placeholder="Signature">
-
-    <button onclick="generate()">Generate Resume</button>
-    <button onclick="downloadPDF()">Download PDF</button>
-  </div>
-
-  <!-- OUTPUT -->
-  <div class="card">
-    <div id="resume"></div>
-  </div>
-
+<div class="card">
+  <div id="output"></div>
 </div>
 
 <script>
+const firebaseConfig = {
+  apiKey: "PASTE_YOUR_API_KEY",
+  authDomain: "YOUR_PROJECT.firebaseapp.com",
+  projectId: "YOUR_PROJECT_ID",
+};
+
+firebase.initializeApp(firebaseConfig);
+
+const auth = firebase.auth();
+const db = firebase.firestore();
+
+/* LOGIN */
+function login(){
+  const provider = new firebase.auth.GoogleAuthProvider();
+  auth.signInWithPopup(provider)
+  .catch(e=>{
+    alert("Login Error: " + e.message);
+  });
+}
+
+/* AUTH CHECK */
+auth.onAuthStateChanged(user=>{
+  if(user){
+    document.getElementById("loginBox").classList.add("hidden");
+    document.getElementById("app").classList.remove("hidden");
+  } else {
+    document.getElementById("loginBox").classList.remove("hidden");
+    document.getElementById("app").classList.add("hidden");
+  }
+});
 
 /* GENERATE */
 function generate(){
-
-  document.getElementById("resume").innerHTML = `
-    <div class="resume-box" id="resumeBox">
-
+  output.innerHTML = `
+    <div class="resume" id="resumeBox">
       <center>
-        <img src="${photo.value}" width="100" style="border-radius:50%">
+        <img src="${photo.value}" width="80" style="border-radius:50%">
         <h2>${name.value}</h2>
       </center>
-
       <p><b>Age:</b> ${age.value}</p>
-      <p><b>Qualification:</b> ${qualification.value}</p>
-      <p><b>Experience:</b> ${experience.value}</p>
       <p><b>Skills:</b> ${skills.value}</p>
-      <p><b>About:</b> ${about.value}</p>
-
-      <hr>
-
-      <p><b>Declaration:</b> ${declaration.value}</p>
-      <p><b>Signature:</b> ${signature.value}</p>
-      <p><b>Date:</b> ${new Date().toLocaleDateString()}</p>
-
+      <p><b>Experience:</b> ${experience.value}</p>
     </div>
   `;
+}
+
+/* SAVE */
+function save(){
+  const user = auth.currentUser;
+  if(!user) return alert("Login first");
+
+  db.collection("resumes").add({
+    name: name.value,
+    email: user.email,
+    time: Date.now()
+  });
+
+  alert("Saved ✔");
 }
 
 /* PDF */
 function downloadPDF(){
   const el = document.getElementById("resumeBox");
-  if(!el){
-    alert("Generate resume first");
-    return;
-  }
+  if(!el) return alert("Generate first");
 
-  html2pdf().from(el).save("AOV_Resume.pdf");
+  html2pdf().from(el).save("resume.pdf");
 }
-
 </script>
 
 </body>
