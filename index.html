@@ -1,125 +1,135 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>AOV Resume FIX TEST</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+  <style>
+    body{margin:0;font-family:Arial;background:#0b1220;color:white}
+    .card{padding:20px;background:#111827;margin:10px;border-radius:10px}
+    .hidden{display:none}
+    input,button{width:100%;padding:10px;margin-top:8px}
+  </style>
+</head>
+
+<body>
+
+<div class="card" id="loginBox">
+  <h2>Login</h2>
+  <button onclick="login()">Login with Google</button>
+</div>
+
+<div class="card hidden" id="form">
+
+  <input id="name" placeholder="Name">
+  <input id="age" placeholder="Age">
+  <input id="qualification" placeholder="Qualification">
+  <input id="experience" placeholder="Experience">
+  <input id="skills" placeholder="Skills">
+  <input id="about" placeholder="About">
+  <input id="photo" placeholder="Photo URL">
+  <input id="declaration" placeholder="Declaration">
+  <input id="signature" placeholder="Signature">
+
+  <button onclick="generate()">Generate</button>
+  <button onclick="save()">Save</button>
+  <button onclick="downloadPDF()">Download PDF</button>
+</div>
+
+<div class="card">
+  <div id="resume"></div>
+</div>
+
 <script>
 
-window.onload = function () {
-
-/* FIREBASE SAFE INIT */
 const firebaseConfig = {
   apiKey: "YOUR_KEY",
   authDomain: "YOUR_DOMAIN",
   projectId: "YOUR_ID"
 };
 
-if (!firebase.apps.length) {
-  firebase.initializeApp(firebaseConfig);
-}
+if (!firebase.apps.length) firebase.initializeApp(firebaseConfig);
 
 const auth = firebase.auth();
 const db = firebase.firestore();
 
 let user = null;
 
-/* UI */
-function showApp(){
-  const loginBox = document.getElementById("loginBox");
-  const form = document.getElementById("form");
-
-  if(loginBox) loginBox.style.display = "none";
-  if(form) form.classList.remove("hidden");
-}
-
-function showLogin(){
-  const loginBox = document.getElementById("loginBox");
-  const form = document.getElementById("form");
-
-  if(loginBox) loginBox.style.display = "block";
-  if(form) form.classList.add("hidden");
-}
-
 /* AUTH */
-auth.onAuthStateChanged((u)=>{
+auth.onAuthStateChanged(u=>{
   user = u;
 
-  if(user) showApp();
-  else showLogin();
+  if(user){
+    document.getElementById("loginBox").style.display="none";
+    document.getElementById("form").classList.remove("hidden");
+  } else {
+    document.getElementById("loginBox").style.display="block";
+    document.getElementById("form").classList.add("hidden");
+  }
 });
 
 /* LOGIN */
-window.login = function(){
+function login(){
   const provider = new firebase.auth.GoogleAuthProvider();
-
   auth.signInWithPopup(provider)
-  .then(res=>{
-    user = res.user;
-    showApp();
-  })
-  .catch(err=>{
-    console.log(err);
-
-    if(err.code === "auth/popup-blocked"){
-      auth.signInWithRedirect(provider);
-    } else {
-      alert("Login failed: " + err.message);
-    }
+  .catch(e=>{
+    alert(e.message);
+    console.log(e);
   });
 }
 
-/* RESUME */
-window.generate = function(){
-
-  const get = (id)=> document.getElementById(id)?.value || "";
+/* GENERATE */
+function generate(){
 
   document.getElementById("resume").innerHTML = `
-    <div class="resumeBox" id="resumeBox">
+    <div style="background:white;color:black;padding:20px">
+      <center>
+        <img src="${photo.value}" width="80" style="border-radius:50%">
+        <h2>${name.value}</h2>
+      </center>
 
-      <div style="text-align:center">
-        <img src="${get("photo")}" width="100" style="border-radius:50%">
-        <h2>${get("name")}</h2>
-      </div>
-
-      <p><b>Age:</b> ${get("age")}</p>
-      <p><b>Qualification:</b> ${get("qualification")}</p>
-      <p><b>Experience:</b> ${get("experience")}</p>
-      <p><b>Skills:</b> ${get("skills")}</p>
-      <p><b>About:</b> ${get("about")}</p>
+      <p>Age: ${age.value}</p>
+      <p>Qualification: ${qualification.value}</p>
+      <p>Experience: ${experience.value}</p>
+      <p>Skills: ${skills.value}</p>
+      <p>About: ${about.value}</p>
 
       <hr>
 
-      <p><b>Declaration:</b> ${get("declaration")}</p>
-      <p><b>Signature:</b> ${get("signature")}</p>
-      <p><b>Date:</b> ${new Date().toLocaleDateString()}</p>
-
+      <p>${declaration.value}</p>
+      <p>${signature.value}</p>
+      <p>Date: ${new Date().toLocaleDateString()}</p>
     </div>
   `;
 }
 
 /* SAVE */
-window.save = function(){
-  if(!user){
-    alert("Login first");
-    return;
-  }
+function save(){
+  if(!user) return alert("Login first");
 
   db.collection("resumes").add({
-    name: document.getElementById("name")?.value || "",
-    email: user.email,
-    createdAt: Date.now()
+    name:name.value,
+    email:user.email
   });
 
-  alert("Saved ✔");
+  alert("Saved");
 }
 
 /* PDF */
-window.downloadPDF = function(){
-  const el = document.getElementById("resumeBox");
-
-  if(!el){
-    alert("Generate resume first");
-    return;
-  }
+function downloadPDF(){
+  const el = document.querySelector("#resume div");
+  if(!el) return alert("Generate first");
 
   html2pdf().from(el).save("resume.pdf");
 }
 
-}; // end window.onload
+</script>
 
-</script> 
+</body>
+</html>
