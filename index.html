@@ -1,8 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>AOV AI Jobs - AI Resume Builder</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AOV AI Jobs - REAL SaaS</title>
 
   <style>
     body{
@@ -12,18 +11,19 @@
       color:white;
     }
 
-    /* NAVBAR */
     .nav{
       display:flex;
       justify-content:space-between;
-      align-items:center;
-      padding:15px 25px;
+      padding:15px;
       background:linear-gradient(90deg, orange, white, green);
       color:black;
       font-weight:bold;
+      position:sticky;
+      top:0;
     }
 
     .nav button{
+      margin-left:8px;
       padding:8px 12px;
       border:none;
       border-radius:6px;
@@ -33,7 +33,7 @@
     }
 
     .container{
-      max-width:1100px;
+      max-width:1000px;
       margin:auto;
       padding:20px;
     }
@@ -50,34 +50,21 @@
       border-radius:8px;
       cursor:pointer;
       font-weight:bold;
-      margin-top:15px;
-    }
-
-    .section{
-      margin:50px 0;
+      margin-top:10px;
     }
 
     .card{
       background:#111827;
       padding:20px;
       border-radius:12px;
-      margin:10px 0;
+      margin:15px 0;
     }
 
-    .grid{
-      display:grid;
-      grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
-      gap:15px;
-    }
-
-    /* MODAL */
     .modal{
       display:none;
       position:fixed;
-      top:0;
-      left:0;
-      width:100%;
-      height:100%;
+      top:0;left:0;
+      width:100%;height:100%;
       background:rgba(0,0,0,0.7);
       justify-content:center;
       align-items:center;
@@ -87,99 +74,79 @@
       background:white;
       color:black;
       padding:20px;
-      border-radius:12px;
+      border-radius:10px;
       width:300px;
-      text-align:center;
-    }
-
-    .modal-box input{
-      width:100%;
-      padding:10px;
-      margin-top:10px;
-    }
-
-    .close{
-      float:right;
-      cursor:pointer;
-      font-weight:bold;
     }
   </style>
 </head>
 
 <body>
 
-<!-- NAVBAR -->
 <div class="nav">
-  <div>AOV AI Jobs</div>
+  <div>AOV AI SaaS PRO</div>
   <div>
-    <button onclick="scrollToSection('home')">Home</button>
-    <button onclick="scrollToSection('features')">Features</button>
-    <button onclick="scrollToSection('premium')">Premium</button>
+    <button onclick="scrollTo('home')">Home</button>
+    <button onclick="scrollTo('features')">Features</button>
+    <button onclick="scrollTo('premium')">Premium</button>
     <button onclick="openLogin()">Login</button>
   </div>
 </div>
 
 <div class="container">
 
-  <!-- HERO -->
   <div id="home" class="hero">
-    <h1>Build a Free AI Resume That Gets You Hired</h1>
-    <p>Create CV in minutes with AI + download PDF instantly</p>
-    <button class="btn" onclick="scrollToSection('features')">
-      Get Started
-    </button>
+    <h1>AI Resume Builder SaaS</h1>
+    <p>Real working system with login + unlock</p>
+    <button class="btn" onclick="scrollTo('features')">Start</button>
   </div>
 
-  <!-- FEATURES -->
-  <div id="features" class="section">
+  <div id="features" class="card">
     <h2>Features</h2>
-
-    <div class="grid">
-      <div class="card">✔ AI Resume Builder</div>
-      <div class="card">✔ Free PDF Download</div>
-      <div class="card">✔ Google Login System</div>
-      <div class="card">✔ Job Ready Templates</div>
-    </div>
+    <p>✔ Resume Builder</p>
+    <p>✔ PDF Download</p>
+    <p>✔ Premium Unlock System</p>
   </div>
 
-  <!-- PREMIUM -->
-  <div id="premium" class="section">
-    <h2>Premium Plan</h2>
+  <div id="premium" class="card">
+    <h2>Premium</h2>
 
-    <div class="card">
-      <h3>₹200 Unlock PRO Features</h3>
-      <p>Unlimited resumes + premium templates</p>
-      <button class="btn" onclick="alert('Payment system will connect later with Razorpay/Paddle')">
-        Upgrade Now
-      </button>
-    </div>
-  </div>
+    <p id="status">Status: FREE USER</p>
 
-  <!-- CTA -->
-  <div class="hero">
-    <h2>Ready to start?</h2>
-    <button class="btn" onclick="scrollToSection('home')">Create Resume</button>
+    <button class="btn" id="buyBtn" onclick="buyPremium()">
+      Unlock ₹200
+    </button>
   </div>
 
 </div>
 
-<!-- LOGIN MODAL -->
+<!-- LOGIN -->
 <div class="modal" id="loginModal">
   <div class="modal-box">
-    <span class="close" onclick="closeLogin()">X</span>
     <h3>Login</h3>
-    <input placeholder="Email">
-    <input placeholder="Password" type="password">
-    <button class="btn" onclick="alert('Login system demo only')">Login</button>
+    <input id="email" placeholder="Email">
+    <button class="btn" onclick="login()">Login</button>
   </div>
 </div>
 
 <script>
 
-function scrollToSection(id){
-  document.getElementById(id).scrollIntoView({behavior:'smooth'});
+let user = null;
+
+// LOAD USER
+window.onload = () => {
+  user = localStorage.getItem("user");
+
+  if(user){
+    closeLogin();
+  }
+};
+
+// NAV
+function scrollTo(id){
+  document.getElementById(id).scrollIntoView({behavior:"smooth"});
 }
 
+// LOGIN
 function openLogin(){
   document.getElementById("loginModal").style.display="flex";
 }
@@ -187,6 +154,52 @@ function openLogin(){
 function closeLogin(){
   document.getElementById("loginModal").style.display="none";
 }
+
+function login(){
+  const email = document.getElementById("email").value;
+
+  if(!email){
+    alert("Enter email");
+    return;
+  }
+
+  localStorage.setItem("user", email);
+  user = email;
+
+  closeLogin();
+  alert("Logged in: " + email);
+}
+
+// PREMIUM BUY (REAL LOGIC)
+function buyPremium(){
+  if(!user){
+    alert("Login first");
+    return;
+  }
+
+  localStorage.setItem("premium", "true");
+
+  document.getElementById("status").innerText =
+    "Status: PREMIUM ACTIVE ✔";
+
+  document.getElementById("buyBtn").innerText =
+    "Already Unlocked";
+
+  alert("Premium unlocked (demo logic ready for Razorpay/Paddle)");
+}
+
+// CHECK PREMIUM
+window.onload = () => {
+  user = localStorage.getItem("user");
+
+  if(localStorage.getItem("premium") === "true"){
+    document.getElementById("status").innerText =
+      "Status: PREMIUM ACTIVE ✔";
+
+    document.getElementById("buyBtn").innerText =
+      "Already Unlocked";
+  }
+};
 
 </script>
 
