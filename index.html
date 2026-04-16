@@ -1,94 +1,87 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>AI Resume SaaS PRO</title>
+  <title>AOV AI Resume Builder PRO</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
-
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
   <style>
     body{margin:0;font-family:Arial;background:#0b1220;color:white}
-    .nav{display:flex;justify-content:space-between;padding:15px;background:#111827}
-    .nav button{padding:8px;border:none;border-radius:6px;background:#38bdf8;font-weight:bold}
-
-    .container{max-width:1000px;margin:auto;padding:20px}
-    .card{background:#1f2937;padding:20px;border-radius:12px;margin:10px 0}
-
-    input,button{width:100%;padding:10px;margin-top:8px;border-radius:6px;border:none}
-
-    .resume{background:white;color:black;padding:15px;border-radius:10px}
+    .nav{
+      display:flex;justify-content:space-between;align-items:center;
+      padding:15px;background:linear-gradient(90deg,orange,white,green);color:black;font-weight:bold;
+    }
+    .container{max-width:1100px;margin:auto;padding:20px}
+    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:15px}
+    .card{background:#111827;padding:15px;border-radius:12px}
+    input,textarea,button{
+      width:100%;padding:10px;margin-top:8px;border-radius:6px;border:none
+    }
+    button{background:#38bdf8;font-weight:bold;cursor:pointer}
+    .btn2{background:#22c55e}
+    .resumeBox{background:white;color:black;padding:20px;border-radius:10px}
+    .hidden{display:none}
   </style>
 </head>
 
 <body>
 
 <div class="nav">
-  <div>AI Resume SaaS PRO</div>
+  <div>AOV AI RESUME PRO</div>
   <div>
+    <button onclick="document.getElementById('form').scrollIntoView()">Create</button>
+    <button onclick="window.open('https://www.google.com/search?q=jobs')">Google Jobs</button>
+    <button onclick="window.open('https://www.linkedin.com/jobs')">LinkedIn Jobs</button>
     <button onclick="login()">Login</button>
   </div>
 </div>
 
 <div class="container">
 
-<!-- JOB LINKS -->
-<div class="card">
-  <h2>Find Jobs Instantly</h2>
+  <!-- LOGIN -->
+  <div class="card" id="loginBox">
+    <h3>Login Required</h3>
+    <button onclick="login()">Login with Google</button>
+  </div>
 
-  <button onclick="window.open('https://www.google.com/search?q=jobs+near+me')">
-    🔍 Google Jobs Search
-  </button>
+  <!-- FORM -->
+  <div id="form" class="card hidden">
+    <h2>Create Resume</h2>
 
-  <button onclick="window.open('https://www.linkedin.com/jobs')">
-    💼 LinkedIn Jobs
-  </button>
-</div>
+    <input id="name" placeholder="Full Name">
+    <input id="age" placeholder="Age">
+    <input id="qualification" placeholder="Qualification">
+    <input id="experience" placeholder="Experience">
+    <input id="skills" placeholder="Skills">
+    <textarea id="about" placeholder="Short Description"></textarea>
 
-<!-- RESUME BUILDER -->
-<div class="card">
-  <h2>Resume Builder</h2>
+    <input id="photo" placeholder="Photo URL (paste image link)">
 
-  <input id="name" placeholder="Full Name">
-  <input id="phone" placeholder="Phone">
-  <input id="skills" placeholder="Skills">
-  <input id="education" placeholder="Education">
-  <input id="experience" placeholder="Experience">
+    <input id="declaration" placeholder="Declaration (I hereby declare...)">
+    <input id="signature" placeholder="Signature Name">
 
-  <button onclick="saveResume()">Save Resume</button>
-  <button onclick="generate()">Generate Preview</button>
+    <button onclick="generate()">Generate Resume</button>
+    <button onclick="save()">Save</button>
+  </div>
 
-  <div id="output"></div>
-  <button onclick="downloadPDF()">Download PDF</button>
-</div>
-
-<!-- PREMIUM -->
-<div class="card">
-  <h2>Premium Unlock</h2>
-
-  <img width="200"
-  src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=upi://pay?pa=9975076459@mbk&pn=AOV&am=199&cu=INR">
-
-  <p>UPI ID: 9975076459@mbk</p>
-
-  <button onclick="requestPremium()">I Have Paid</button>
-</div>
+  <!-- RESUME -->
+  <div class="card">
+    <div id="resume"></div>
+    <button onclick="downloadPDF()">Download PDF</button>
+  </div>
 
 </div>
 
 <script>
 
-// FIREBASE CONFIG
 const firebaseConfig = {
-  apiKey: "AIzaSyBpJQ44k1gokp3sSZggyESC7HpvqssClEE",
-  authDomain: "aov-ai-jobs-c697d.firebaseapp.com",
-  projectId: "aov-ai-jobs-c697d",
-  storageBucket: "aov-ai-jobs-c697d.firebasestorage.app",
-  messagingSenderId: "898401199585",
-  appId: "1:898401199585:web:760d147b7d9b23e655dea0"
+  apiKey: "YOUR_KEY",
+  authDomain: "YOUR_DOMAIN",
+  projectId: "YOUR_ID"
 };
 
 firebase.initializeApp(firebaseConfig);
@@ -96,70 +89,64 @@ firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const db = firebase.firestore();
 
-let user = null;
+let user=null;
 
-// LOGIN
+auth.onAuthStateChanged(u=>{
+  user=u;
+  if(user){
+    document.getElementById("loginBox").classList.add("hidden");
+    document.getElementById("form").classList.remove("hidden");
+  }
+});
+
 function login(){
-  const provider = new firebase.auth.GoogleAuthProvider();
-
-  auth.signInWithPopup(provider).then(res=>{
-    user = res.user;
-
-    db.collection("users").doc(user.uid).set({
-      email: user.email,
-      premium: false,
-      createdAt: Date.now()
-    }, {merge:true});
-
-    alert("Logged in");
-  });
+  const provider=new firebase.auth.GoogleAuthProvider();
+  auth.signInWithPopup(provider);
 }
 
-// SAVE RESUME
-function saveResume(){
-  if(!user){ alert("Login first"); return; }
-
-  db.collection("resumes").doc(user.uid).set({
-    name: name.value,
-    phone: phone.value,
-    skills: skills.value,
-    education: education.value,
-    experience: experience.value,
-    email: user.email,
-    createdAt: Date.now()
-  });
-
-  alert("Resume saved to cloud ✔");
-}
-
-// GENERATE
+/* RESUME GENERATOR */
 function generate(){
-  output.innerHTML = `
-    <div class="resume">
-      <h2>${name.value}</h2>
-      <p>${phone.value}</p>
-      <p>${skills.value}</p>
-      <p>${education.value}</p>
-      <p>${experience.value}</p>
+
+  document.getElementById("resume").innerHTML=`
+    <div class="resumeBox">
+      <div style="text-align:center">
+        <img src="${photo.value}" width="100" style="border-radius:50%">
+        <h2>${name.value}</h2>
+      </div>
+
+      <p><b>Age:</b> ${age.value}</p>
+      <p><b>Qualification:</b> ${qualification.value}</p>
+      <p><b>Experience:</b> ${experience.value}</p>
+      <p><b>Skills:</b> ${skills.value}</p>
+      <p><b>About:</b> ${about.value}</p>
+
+      <hr>
+
+      <p><b>Declaration:</b> ${declaration.value}</p>
+      <p><b>Signature:</b> ${signature.value}</p>
+      <p><b>Date:</b> ${new Date().toLocaleDateString()}</p>
     </div>
   `;
 }
 
-// PDF
-function downloadPDF(){
-  html2pdf().from(output).save("resume.pdf");
-}
+/* SAVE TO FIREBASE */
+function save(){
+  if(!user){alert("Login first");return;}
 
-// PREMIUM REQUEST
-function requestPremium(){
-  if(!user){ alert("Login first"); return; }
-
-  db.collection("payments").doc(user.uid).set({
+  db.collection("resumes").add({
+    name:name.value,
     email:user.email,
-    status:"pending"
+    createdAt:Date.now()
   });
 
-  alert("Payment submitted (manual approval)");
+  alert("Saved");
+}
+
+/* PDF */
+function downloadPDF(){
+  const el=document.querySelector(".resumeBox");
+  if(!el){alert("Generate first");return;}
+  html2pdf().from(el).save("resume.pdf");
 }
 
 </script>
