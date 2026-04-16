@@ -1,81 +1,3 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <title>AOV AI Resume Builder PRO</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-
-  <style>
-    body{margin:0;font-family:Arial;background:#0b1220;color:white}
-    .nav{
-      display:flex;justify-content:space-between;align-items:center;
-      padding:15px;background:linear-gradient(90deg,orange,white,green);color:black;font-weight:bold;
-    }
-    .container{max-width:1100px;margin:auto;padding:20px}
-    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:15px}
-    .card{background:#111827;padding:15px;border-radius:12px}
-    input,textarea,button{
-      width:100%;padding:10px;margin-top:8px;border-radius:6px;border:none
-    }
-    button{background:#38bdf8;font-weight:bold;cursor:pointer}
-    .btn2{background:#22c55e}
-    .resumeBox{background:white;color:black;padding:20px;border-radius:10px}
-    .hidden{display:none}
-  </style>
-</head>
-
-<body>
-
-<div class="nav">
-  <div>AOV AI RESUME PRO</div>
-  <div>
-    <button onclick="document.getElementById('form').scrollIntoView()">Create</button>
-    <button onclick="window.open('https://www.google.com/search?q=jobs')">Google Jobs</button>
-    <button onclick="window.open('https://www.linkedin.com/jobs')">LinkedIn Jobs</button>
-    <button onclick="login()">Login</button>
-  </div>
-</div>
-
-<div class="container">
-
-  <!-- LOGIN -->
-  <div class="card" id="loginBox">
-    <h3>Login Required</h3>
-    <button onclick="login()">Login with Google</button>
-  </div>
-
-  <!-- FORM -->
-  <div id="form" class="card hidden">
-    <h2>Create Resume</h2>
-
-    <input id="name" placeholder="Full Name">
-    <input id="age" placeholder="Age">
-    <input id="qualification" placeholder="Qualification">
-    <input id="experience" placeholder="Experience">
-    <input id="skills" placeholder="Skills">
-    <textarea id="about" placeholder="Short Description"></textarea>
-
-    <input id="photo" placeholder="Photo URL (paste image link)">
-
-    <input id="declaration" placeholder="Declaration (I hereby declare...)">
-    <input id="signature" placeholder="Signature Name">
-
-    <button onclick="generate()">Generate Resume</button>
-    <button onclick="save()">Save</button>
-  </div>
-
-  <!-- RESUME -->
-  <div class="card">
-    <div id="resume"></div>
-    <button onclick="downloadPDF()">Download PDF</button>
-  </div>
-
-</div>
-
 <script>
 
 const firebaseConfig = {
@@ -84,72 +6,124 @@ const firebaseConfig = {
   projectId: "YOUR_ID"
 };
 
-firebase.initializeApp(firebaseConfig);
+/* SAFE INIT */
+if (!firebase.apps.length) {
+  firebase.initializeApp(firebaseConfig);
+}
 
 const auth = firebase.auth();
 const db = firebase.firestore();
 
-let user=null;
+let user = null;
 
-auth.onAuthStateChanged(u=>{
-  user=u;
-  if(user){
-    document.getElementById("loginBox").classList.add("hidden");
-    document.getElementById("form").classList.remove("hidden");
+/* UI CONTROL */
+function showApp(){
+  document.getElementById("loginBox").style.display="none";
+  document.getElementById("form").classList.remove("hidden");
+}
+
+function showLogin(){
+  document.getElementById("loginBox").style.display="block";
+  document.getElementById("form").classList.add("hidden");
+}
+
+/* AUTH STATE */
+auth.onAuthStateChanged((u)=>{
+  if(u){
+    user = u;
+    showApp();
+  } else {
+    user = null;
+    showLogin();
   }
 });
 
+/* GOOGLE LOGIN (FIXED) */
 function login(){
-  const provider=new firebase.auth.GoogleAuthProvider();
-  auth.signInWithPopup(provider);
+  const provider = new firebase.auth.GoogleAuthProvider();
+
+  auth.signInWithPopup(provider)
+  .then((result)=>{
+    user = result.user;
+    showApp();
+  })
+  .catch((err)=>{
+
+    console.log(err);
+
+    // fallback if popup blocked
+    if(err.code === "auth/popup-blocked"){
+      auth.signInWithRedirect(provider);
+    } else {
+      alert("Login failed: " + err.message);
+    }
+
+  });
 }
 
-/* RESUME GENERATOR */
+/* RESUME GENERATOR (SAFE DOM ACCESS) */
 function generate(){
 
-  document.getElementById("resume").innerHTML=`
-    <div class="resumeBox">
+  const data = {
+    name: document.getElementById("name").value,
+    age: document.getElementById("age").value,
+    qualification: document.getElementById("qualification").value,
+    experience: document.getElementById("experience").value,
+    skills: document.getElementById("skills").value,
+    about: document.getElementById("about").value,
+    photo: document.getElementById("photo").value,
+    declaration: document.getElementById("declaration").value,
+    signature: document.getElementById("signature").value
+  };
+
+  document.getElementById("resume").innerHTML = `
+    <div class="resumeBox" id="resumeBox">
       <div style="text-align:center">
-        <img src="${photo.value}" width="100" style="border-radius:50%">
-        <h2>${name.value}</h2>
+        <img src="${data.photo}" width="100" style="border-radius:50%">
+        <h2>${data.name}</h2>
       </div>
 
-      <p><b>Age:</b> ${age.value}</p>
-      <p><b>Qualification:</b> ${qualification.value}</p>
-      <p><b>Experience:</b> ${experience.value}</p>
-      <p><b>Skills:</b> ${skills.value}</p>
-      <p><b>About:</b> ${about.value}</p>
+      <p><b>Age:</b> ${data.age}</p>
+      <p><b>Qualification:</b> ${data.qualification}</p>
+      <p><b>Experience:</b> ${data.experience}</p>
+      <p><b>Skills:</b> ${data.skills}</p>
+      <p><b>About:</b> ${data.about}</p>
 
       <hr>
 
-      <p><b>Declaration:</b> ${declaration.value}</p>
-      <p><b>Signature:</b> ${signature.value}</p>
+      <p><b>Declaration:</b> ${data.declaration}</p>
+      <p><b>Signature:</b> ${data.signature}</p>
       <p><b>Date:</b> ${new Date().toLocaleDateString()}</p>
     </div>
   `;
 }
 
-/* SAVE TO FIREBASE */
+/* SAVE */
 function save(){
-  if(!user){alert("Login first");return;}
+  if(!user){
+    alert("Login first");
+    return;
+  }
 
   db.collection("resumes").add({
-    name:name.value,
-    email:user.email,
-    createdAt:Date.now()
+    name: document.getElementById("name").value,
+    email: user.email,
+    createdAt: Date.now()
   });
 
-  alert("Saved");
+  alert("Saved ✔");
 }
 
 /* PDF */
 function downloadPDF(){
-  const el=document.querySelector(".resumeBox");
-  if(!el){alert("Generate first");return;}
+  const el = document.getElementById("resumeBox");
+
+  if(!el){
+    alert("Generate first");
+    return;
+  }
+
   html2pdf().from(el).save("resume.pdf");
 }
 
 </script>
-
-</body>
-</html>
