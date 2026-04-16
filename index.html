@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>AOV SaaS v3 - Admin Panel</title>
+  <title>AOV AI Jobs - SaaS Resume Builder</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
@@ -11,15 +11,73 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
   <style>
-    body{margin:0;font-family:Arial;background:#0f172a;color:white}
-    .container{max-width:900px;margin:auto;padding:20px}
-    .card{background:#111827;padding:15px;margin:10px 0;border-radius:10px}
-    input,button{width:100%;padding:10px;margin-top:8px;border-radius:6px;border:none}
-    button{background:#38bdf8;cursor:pointer}
-    .hidden{display:none}
-    .admin{background:#1f2937}
-    .row{display:flex;gap:10px}
-    .row button{flex:1}
+    body{
+      margin:0;
+      font-family:Arial;
+      background:#0f172a;
+      color:white;
+    }
+
+    .container{
+      max-width:900px;
+      margin:auto;
+      padding:20px;
+    }
+
+    .card{
+      background:#111827;
+      padding:20px;
+      margin:15px 0;
+      border-radius:12px;
+      box-shadow:0 4px 20px rgba(0,0,0,0.3);
+    }
+
+    input,button{
+      width:100%;
+      padding:12px;
+      margin-top:10px;
+      border-radius:8px;
+      border:none;
+      font-size:14px;
+    }
+
+    button{
+      background:#38bdf8;
+      font-weight:bold;
+      cursor:pointer;
+    }
+
+    .btn-google{background:#db4437;}
+    .btn-linkedin{background:#0a66c2;}
+
+    .hidden{display:none;}
+
+    .center{text-align:center;}
+
+    .header{
+      text-align:center;
+      font-size:26px;
+      font-weight:bold;
+      margin:20px 0;
+    }
+
+    .premium{
+      border:2px solid gold;
+      padding:15px;
+      border-radius:12px;
+    }
+
+    .resume{
+      background:white;
+      color:black;
+      padding:20px;
+      border-radius:10px;
+    }
+
+    img{
+      display:block;
+      margin:auto;
+    }
   </style>
 </head>
 
@@ -27,108 +85,113 @@
 
 <div class="container">
 
-<h2 style="text-align:center">AOV SaaS v3 - Admin Panel</h2>
+  <div class="header">AOV AI Resume SaaS</div>
 
-<!-- LOGIN -->
-<div class="card" id="loginBox">
-  <h3>Login</h3>
-  <button onclick="googleLogin()">Login with Google</button>
-</div>
+  <!-- LOGIN SECTION -->
+  <div class="card center" id="loginBox">
+    <h2>Login to Continue</h2>
 
-<!-- APP -->
-<div id="app" class="hidden">
-
-  <div class="card">
-    <h3>Create Resume</h3>
-    <input id="name" placeholder="Name">
-    <input id="address" placeholder="Address">
-    <input id="skills" placeholder="Skills">
-    <button onclick="generate()">Generate</button>
+    <button class="btn-google" onclick="googleLogin()">Login with Google</button>
+    <button class="btn-linkedin">Login with LinkedIn</button>
   </div>
 
-  <div class="card">
-    <div id="resume"></div>
-    <button onclick="downloadPDF()">Download PDF</button>
+  <!-- APP -->
+  <div id="app" class="hidden">
+
+    <!-- FORM -->
+    <div class="card">
+      <h2>Create Resume</h2>
+
+      <input id="name" placeholder="Full Name">
+      <input id="father" placeholder="Father Name">
+      <input id="address" placeholder="Address">
+      <input id="skills" placeholder="Skills">
+
+      <button onclick="generateResume()">Generate Resume</button>
+      <button onclick="saveData()">Save Data</button>
+    </div>
+
+    <!-- RESUME PREVIEW -->
+    <div class="card">
+      <div id="resume"></div>
+      <button onclick="downloadPDF()">Download PDF</button>
+    </div>
+
+    <!-- PREMIUM SECTION -->
+    <div class="card premium center">
+      <h2>🔥 Premium Plan</h2>
+      <p>Unlock PRO templates & unlimited downloads</p>
+      <h3>₹199 / Month</h3>
+
+      <img width="160"
+      src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=upi://pay?pa=9975076459@mbk&pn=AOV&am=199&cu=INR">
+
+      <input id="utr" placeholder="Enter UTR Number">
+      <button onclick="pay()">Activate Premium</button>
+    </div>
+
   </div>
-
-  <div class="card">
-    <h3>Upgrade</h3>
-    <input id="utr" placeholder="UTR">
-    <button onclick="pay()">Submit Payment</button>
-    <p id="status">Status: FREE</p>
-  </div>
-
-</div>
-
-<!-- ADMIN PANEL -->
-<div class="card admin hidden" id="adminPanel">
-  <h2>🔥 ADMIN PANEL</h2>
-  <div id="payments"></div>
-</div>
 
 </div>
 
 <script>
 
-// FIREBASE
-const firebaseConfig = {
+// Firebase
+firebase.initializeApp({
   apiKey: "AIzaSyBpJQ44k1gokp3sSZggyESC7HpvqssClEE",
   authDomain: "aov-ai-jobs-c697d.firebaseapp.com",
   projectId: "aov-ai-jobs-c697d"
-};
-
-if(!firebase.apps.length){
-  firebase.initializeApp(firebaseConfig);
-}
+});
 
 const auth = firebase.auth();
 const db = firebase.firestore();
 
-let user = null;
-let isAdmin = false;
+let user=null;
 
-// ADMIN EMAIL (CHANGE THIS)
-const ADMIN_EMAIL = "carijit22@gmail.com";
+// LOGIN
+function googleLogin(){
+  const provider=new firebase.auth.GoogleAuthProvider();
+  auth.signInWithPopup(provider).catch(e=>alert(e.message));
+}
 
-// AUTH
-auth.onAuthStateChanged(async(u)=>{
-  user = u;
+// AUTH STATE
+auth.onAuthStateChanged(u=>{
+  user=u;
 
   if(user){
-    document.getElementById("loginBox").style.display="none";
-    document.getElementById("app").classList.remove("hidden");
-
-    if(user.email === ADMIN_EMAIL){
-      isAdmin = true;
-      document.getElementById("adminPanel").classList.remove("hidden");
-      loadPayments();
-    }
-
-  } else {
-    document.getElementById("loginBox").style.display="block";
-    document.getElementById("app").classList.add("hidden");
+    loginBox.style.display="none";
+    app.classList.remove("hidden");
+  }else{
+    loginBox.style.display="block";
+    app.classList.add("hidden");
   }
 });
 
-function googleLogin(){
-  const provider = new firebase.auth.GoogleAuthProvider();
-  auth.signInWithPopup(provider);
+// RESUME
+function generateResume(){
+  document.getElementById("resume").innerHTML=`
+  <div class="resume">
+    <h2>${name.value}</h2>
+    <p>${address.value}</p>
+    <p><b>Skills:</b> ${skills.value}</p>
+  </div>`;
 }
 
-// RESUME
-function generate(){
-  document.getElementById("resume").innerHTML = `
-    <div style="background:white;color:black;padding:10px;border-radius:8px">
-      <h3>${name.value}</h3>
-      <p>${address.value}</p>
-      <p>${skills.value}</p>
-    </div>
-  `;
+// SAVE
+function saveData(){
+  if(!user)return alert("Login first");
+
+  db.collection("users").add({
+    name:name.value,
+    email:user.email
+  });
+
+  alert("Saved");
 }
 
 // PAYMENT
 function pay(){
-  if(!user) return alert("Login first");
+  if(!user)return alert("Login first");
 
   db.collection("payments").add({
     email:user.email,
@@ -136,60 +199,12 @@ function pay(){
     status:"pending"
   });
 
-  alert("Submitted");
-}
-
-// LOAD PAYMENTS (ADMIN)
-async function loadPayments(){
-  const snap = await db.collection("payments").get();
-
-  let html = "";
-
-  snap.forEach(doc=>{
-    const d = doc.data();
-
-    html += `
-      <div class="card">
-        <p><b>Email:</b> ${d.email}</p>
-        <p><b>UTR:</b> ${d.utr}</p>
-        <p><b>Status:</b> ${d.status}</p>
-
-        <div class="row">
-          <button onclick="approve('${doc.id}','${d.email}')">Approve</button>
-          <button onclick="reject('${doc.id}')">Reject</button>
-        </div>
-      </div>
-    `;
-  });
-
-  document.getElementById("payments").innerHTML = html;
-}
-
-// APPROVE PAYMENT
-async function approve(id,email){
-  await db.collection("payments").doc(id).update({
-    status:"approved"
-  });
-
-  alert("User Approved ✔");
-  loadPayments();
-}
-
-// REJECT PAYMENT
-async function reject(id){
-  await db.collection("payments").doc(id).update({
-    status:"rejected"
-  });
-
-  alert("Rejected ❌");
-  loadPayments();
+  alert("Payment submitted");
 }
 
 // PDF
 function downloadPDF(){
-  const el = document.querySelector("#resume");
-
-  html2pdf().from(el).save("resume.pdf");
+  html2pdf().from(document.querySelector(".resume")).save("resume.pdf");
 }
 
 </script>
