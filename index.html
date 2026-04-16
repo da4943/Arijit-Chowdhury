@@ -32,19 +32,23 @@
 
     .social button{
       margin-left:10px;
-      padding:10px;
+      padding:10px 14px;
       border-radius:8px;
       border:none;
+      font-weight:bold;
       cursor:pointer;
+      display:flex;
+      align-items:center;
+      gap:6px;
     }
 
     .social img{
-      width:22px;
-      height:22px;
+      width:18px;
+      height:18px;
     }
 
-    .google{background:white}
-    .linkedin{background:#0a66c2}
+    .google{background:white;color:black}
+    .linkedin{background:#0a66c2;color:white}
 
     .container{
       max-width:1000px;
@@ -87,6 +91,7 @@
     }
 
     .btn-pdf{background:#f59e0b}
+    .btn-clear{background:#ef4444}
 
     .premium{
       text-align:center;
@@ -129,17 +134,17 @@
   <div class="logo">AOV AI Resume</div>
 
   <div class="social">
-    <!-- GOOGLE ICON ONLY -->
     <a href="https://www.google.com/search?q=jobs" target="_blank">
       <button class="google">
         <img src="https://cdn-icons-png.flaticon.com/512/2991/2991148.png">
+        Google
       </button>
     </a>
 
-    <!-- LINKEDIN ICON ONLY -->
     <a href="https://www.linkedin.com/jobs/" target="_blank">
       <button class="linkedin">
         <img src="https://cdn-icons-png.flaticon.com/512/174/174857.png">
+        LinkedIn
       </button>
     </a>
   </div>
@@ -181,6 +186,7 @@
 
     <button onclick="generate()">Generate Resume</button>
     <button class="btn-pdf" onclick="downloadPDF()">Download PDF</button>
+    <button class="btn-clear" onclick="clearData()">Clear Data</button>
   </div>
 
   <div class="card">
@@ -225,6 +231,12 @@ function downloadPDF(){
   }
 
   html2pdf().from(el).save("AOV_Resume.pdf");
+}
+
+/* CLEAR DATA */
+function clearData(){
+  document.querySelectorAll("input").forEach(i => i.value = "");
+  document.getElementById("resume").innerHTML = "";
 }
 
 </script>
