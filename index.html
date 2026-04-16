@@ -37,14 +37,6 @@
       border:none;
       font-weight:bold;
       cursor:pointer;
-      display:flex;
-      align-items:center;
-      gap:6px;
-    }
-
-    .social img{
-      width:18px;
-      height:18px;
     }
 
     .google{background:white;color:black}
@@ -112,8 +104,9 @@
     .resume-box{
       background:white;
       color:black;
-      padding:20px;
+      padding:25px;
       border-radius:12px;
+      line-height:1.6;
     }
 
     .grid{
@@ -136,14 +129,14 @@
   <div class="social">
     <a href="https://www.google.com/search?q=jobs" target="_blank">
       <button class="google">
-        <img src="https://cdn-icons-png.flaticon.com/512/2991/2991148.png">
+        <img src="https://cdn-icons-png.flaticon.com/512/2991/2991148.png" width="16" style="vertical-align:middle;margin-right:5px;">
         Google
       </button>
     </a>
 
     <a href="https://www.linkedin.com/jobs/" target="_blank">
       <button class="linkedin">
-        <img src="https://cdn-icons-png.flaticon.com/512/174/174857.png">
+        <img src="https://cdn-icons-png.flaticon.com/512/174/174857.png" width="16" style="vertical-align:middle;margin-right:5px;">
         LinkedIn
       </button>
     </a>
@@ -180,7 +173,10 @@
 
     <input id="skills" placeholder="Skills">
     <input id="about" placeholder="About You">
-    <input id="photo" placeholder="Photo URL">
+
+    <!-- PHOTO UPLOAD -->
+    <input type="file" id="photoUpload" accept="image/*">
+
     <input id="declaration" placeholder="Declaration">
     <input id="signature" placeholder="Signature">
 
@@ -197,20 +193,61 @@
 
 <script>
 
+let photoData = "";
+
+/* AUTO SAVE */
+document.querySelectorAll("input").forEach(input=>{
+  input.addEventListener("input",()=>{
+    localStorage.setItem(input.id, input.value);
+  });
+
+  if(localStorage.getItem(input.id)){
+    input.value = localStorage.getItem(input.id);
+  }
+});
+
+/* PHOTO UPLOAD */
+document.getElementById("photoUpload").addEventListener("change",function(e){
+  const file = e.target.files[0];
+  const reader = new FileReader();
+
+  reader.onload = function(){
+    photoData = reader.result;
+    localStorage.setItem("photoData", photoData);
+  };
+
+  if(file) reader.readAsDataURL(file);
+});
+
+/* LOAD PHOTO */
+if(localStorage.getItem("photoData")){
+  photoData = localStorage.getItem("photoData");
+}
+
+/* GENERATE */
 function generate(){
   document.getElementById("resume").innerHTML = `
     <div class="resume-box" id="resumeBox">
 
       <center>
-        <img src="${photo.value}" width="100" style="border-radius:50%">
+        ${photoData ? `<img src="${photoData}" width="100" style="border-radius:50%">` : ""}
         <h2>${name.value}</h2>
+        <p>${qualification.value}</p>
       </center>
 
+      <hr>
+
+      <h3>Profile</h3>
+      <p>${about.value}</p>
+
+      <h3>Experience</h3>
+      <p>${experience.value}</p>
+
+      <h3>Skills</h3>
+      <p>${skills.value}</p>
+
+      <h3>Personal Details</h3>
       <p><b>Age:</b> ${age.value}</p>
-      <p><b>Qualification:</b> ${qualification.value}</p>
-      <p><b>Experience:</b> ${experience.value}</p>
-      <p><b>Skills:</b> ${skills.value}</p>
-      <p><b>About:</b> ${about.value}</p>
 
       <hr>
 
@@ -222,21 +259,22 @@ function generate(){
   `;
 }
 
+/* PDF */
 function downloadPDF(){
   const el = document.getElementById("resumeBox");
-
   if(!el){
     alert("Generate resume first");
     return;
   }
-
   html2pdf().from(el).save("AOV_Resume.pdf");
 }
 
-/* CLEAR DATA */
+/* CLEAR */
 function clearData(){
-  document.querySelectorAll("input").forEach(i => i.value = "");
-  document.getElementById("resume").innerHTML = "";
+  localStorage.clear();
+  document.querySelectorAll("input").forEach(i=>i.value="");
+  photoData = "";
+  document.getElementById("resume").innerHTML="";
 }
 
 </script>
