@@ -70,19 +70,16 @@
 
 <script>
 
-// Firebase config
-const firebaseConfig = {
-  apiKey: "AIzaSyBpJQ44k1gokp3sSZggyESC7HpvqssClEE",
-  authDomain: "aov-ai-jobs-c697d.firebaseapp.com",
-  projectId: "aov-ai-jobs-c697d",
-  storageBucket: "aov-ai-jobs-c697d.firebasestorage.app",
-  messagingSenderId: "898401199585",
-  appId: "1:898401199585:web:760d147b7d9b23e655dea0"
-};
-
-// Safe init
+// 🔥 SAFE FIREBASE INIT (FIX FOR VERCEL)
 if (!firebase.apps.length) {
-  firebase.initializeApp(firebaseConfig);
+  firebase.initializeApp({
+    apiKey: "AIzaSyBpJQ44k1gokp3sSZggyESC7HpvqssClEE",
+    authDomain: "aov-ai-jobs-c697d.firebaseapp.com",
+    projectId: "aov-ai-jobs-c697d",
+    storageBucket: "aov-ai-jobs-c697d.firebasestorage.app",
+    messagingSenderId: "898401199585",
+    appId: "1:898401199585:web:760d147b7d9b23e655dea0"
+  });
 }
 
 const auth = firebase.auth();
@@ -90,9 +87,9 @@ const db = firebase.firestore();
 
 let user = null;
 
-// Auth state
+// AUTH STATE
 auth.onAuthStateChanged((u)=>{
-  user = u || null;
+  user = u;
 
   if(user){
     document.getElementById("loginBox").style.display="none";
@@ -103,40 +100,36 @@ auth.onAuthStateChanged((u)=>{
   }
 });
 
-// LOGIN
+// LOGIN (FIXED POPUP SAFETY)
 function googleLogin(){
   const provider = new firebase.auth.GoogleAuthProvider();
-  auth.signInWithPopup(provider).catch(err=>{
+
+  auth.signInWithPopup(provider)
+  .catch((err)=>{
     alert("Login error: " + err.message);
   });
 }
 
 // RESUME
 function generateResume(){
-  const name = document.getElementById("name").value;
-  const father = document.getElementById("father").value;
-  const age = document.getElementById("age").value;
-  const gender = document.getElementById("gender").value;
-  const address = document.getElementById("address").value;
-  const skills = document.getElementById("skills").value;
-  const exp = document.getElementById("exp").value;
+  const el = document.getElementById("resume");
 
-  document.getElementById("resume").innerHTML = `
+  el.innerHTML = `
     <div class="resume">
       <div class="center">
-        <h2>${name}</h2>
-        <p>${address}</p>
+        <h2>${name.value}</h2>
+        <p>${address.value}</p>
       </div>
-      <p><b>Father:</b> ${father}</p>
-      <p><b>Age:</b> ${age}</p>
-      <p><b>Gender:</b> ${gender}</p>
-      <p><b>Skills:</b> ${skills}</p>
-      <p><b>Experience:</b> ${exp}</p>
+      <p><b>Father:</b> ${father.value}</p>
+      <p><b>Age:</b> ${age.value}</p>
+      <p><b>Gender:</b> ${gender.value}</p>
+      <p><b>Skills:</b> ${skills.value}</p>
+      <p><b>Experience:</b> ${exp.value}</p>
     </div>
   `;
 }
 
-// SAVE
+// SAVE (SAFE)
 function saveData(){
   if(!user){
     alert("Login first");
@@ -145,29 +138,38 @@ function saveData(){
 
   db.collection("users").add({
     name: document.getElementById("name").value || "",
-    email: user.email
+    email: user.email,
+    createdAt: Date.now()
   });
 
   alert("Saved ✔");
 }
 
-// PAYMENT
+// PAYMENT (CLEAN)
 function pay(){
   if(!user){
     alert("Login first");
     return;
   }
 
+  const utr = document.getElementById("utr").value;
+
+  if(!utr){
+    alert("Enter UTR");
+    return;
+  }
+
   db.collection("payments").add({
     email: user.email,
-    utr: document.getElementById("utr").value || "",
-    status: "pending"
+    utr: utr,
+    status: "pending",
+    createdAt: Date.now()
   });
 
   alert("Payment Submitted");
 }
 
-// PDF
+// PDF (SAFE CHECK)
 function downloadPDF(){
   const el = document.querySelector(".resume");
 
