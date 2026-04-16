@@ -83,6 +83,7 @@
     }
 
     .btn-pdf{background:#f59e0b}
+    .btn-clear{background:#ef4444}
 
     .premium{
       text-align:center;
@@ -125,13 +126,8 @@
   <div class="logo">AOV AI Resume</div>
 
   <div class="social">
-    <a href="https://www.google.com/search?q=jobs+near+me" target="_blank">
-      <button class="google">Google</button>
-    </a>
-
-    <a href="https://www.linkedin.com/jobs/" target="_blank">
-      <button class="linkedin">LinkedIn</button>
-    </a>
+    <button class="google" onclick="openGoogleJobs()">Google</button>
+    <button class="linkedin" onclick="openLinkedIn()">LinkedIn</button>
   </div>
 </div>
 
@@ -144,13 +140,13 @@
 
   <div class="card premium">
     <h2>💎 Premium Unlock ₹200</h2>
-    <p>Get Pro Templates + HD PDF Export</p>
+    <p id="premiumText">Get Pro Templates + HD PDF Export</p>
 
     <img class="qr"
       src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=upi://pay?pa=yourupi@bank&pn=AOV%20AI&am=200&cu=INR"
     />
 
-    <p>Scan & Pay via UPI</p>
+    <button onclick="unlockPremium()">I Paid ₹200</button>
   </div>
 
   <div class="card">
@@ -171,6 +167,7 @@
 
     <button onclick="generate()">Generate Resume</button>
     <button class="btn-pdf" onclick="downloadPDF()">Download PDF</button>
+    <button class="btn-clear" onclick="clearData()">Clear Data</button>
   </div>
 
   <div class="card">
@@ -180,6 +177,44 @@
 </div>
 
 <script>
+
+/* GOOGLE JOB SEARCH */
+function openGoogleJobs(){
+  const query = name.value || "jobs near me";
+  window.open("https://www.google.com/search?q=" + query + "+jobs", "_blank");
+}
+
+/* LINKEDIN */
+function openLinkedIn(){
+  window.open("https://www.linkedin.com/jobs/", "_blank");
+}
+
+/* PREMIUM SYSTEM */
+function unlockPremium(){
+  localStorage.setItem("premium", "true");
+  document.getElementById("premiumText").innerHTML = "✅ Premium Activated";
+  alert("Premium Unlocked ✔");
+}
+
+/* CHECK PREMIUM */
+window.onload = function(){
+  const data = JSON.parse(localStorage.getItem("resumeData"));
+  if(data){
+    name.value = data.name || "";
+    age.value = data.age || "";
+    qualification.value = data.qualification || "";
+    experience.value = data.experience || "";
+    skills.value = data.skills || "";
+    about.value = data.about || "";
+    photo.value = data.photo || "";
+    declaration.value = data.declaration || "";
+    signature.value = data.signature || "";
+  }
+
+  if(localStorage.getItem("premium") === "true"){
+    document.getElementById("premiumText").innerHTML = "✅ Premium Activated";
+  }
+}
 
 /* AUTO SAVE */
 function saveData(){
@@ -196,28 +231,16 @@ function saveData(){
   }));
 }
 
-/* LOAD DATA */
-window.onload = function(){
-  const data = JSON.parse(localStorage.getItem("resumeData"));
-  if(data){
-    name.value = data.name || "";
-    age.value = data.age || "";
-    qualification.value = data.qualification || "";
-    experience.value = data.experience || "";
-    skills.value = data.skills || "";
-    about.value = data.about || "";
-    photo.value = data.photo || "";
-    declaration.value = data.declaration || "";
-    signature.value = data.signature || "";
-  }
-}
-
-/* AUTO SAVE ON INPUT */
 document.addEventListener("input", saveData);
+
+/* CLEAR DATA */
+function clearData(){
+  localStorage.clear();
+  location.reload();
+}
 
 /* GENERATE */
 function generate(){
-
   document.getElementById("resume").innerHTML = `
     <div class="resume-box" id="resumeBox">
 
