@@ -18,7 +18,7 @@
     .hero{text-align:center;padding:25px;}
     .hero h1{font-size:28px;color:#38bdf8;}
     .card{background:#111827;padding:20px;margin-top:15px;border-radius:15px;}
-    input,button,select{width:100%;padding:12px;margin-top:10px;border-radius:10px;border:none;}
+    input,button{width:100%;padding:12px;margin-top:10px;border-radius:10px;border:none;}
     button{background:#38bdf8;font-weight:bold;cursor:pointer;}
     .btn-pdf{background:#f59e0b}
     .btn-clear{background:#ef4444}
@@ -58,20 +58,16 @@
       <input id="experience" placeholder="Experience">
     </div>
 
-    <input id="skills" value="Chef, Waiter, Carpenter, Entrepreneur">
+    <input id="skills" placeholder="Skills (Chef, Waiter, Carpenter, Entrepreneur)">
     <input id="hobbies" placeholder="Hobbies">
     <input id="about" placeholder="About You">
-    <input type="file" id="photoUpload">
+
+    <!-- PHOTO UPLOAD -->
+    <input type="file" id="photoUpload" accept="image/*">
+
     <input id="declaration" placeholder="Declaration">
     <input id="signature" placeholder="Signature">
 
-    <!-- TEMPLATE -->
-    <select id="template">
-      <option value="1">Template 1</option>
-      <option value="2">Template 2</option>
-    </select>
-
-    <button onclick="autoFill()">AI Auto Fill</button>
     <button onclick="generate()">Generate Resume</button>
     <button class="btn-pdf" onclick="downloadPDF()">Download PDF</button>
     <button onclick="downloadImage()">Download Image</button>
@@ -92,67 +88,49 @@ let photoData="";
 document.getElementById("photoUpload").addEventListener("change",e=>{
   const reader=new FileReader();
   reader.onload=()=>photoData=reader.result;
-  reader.readAsDataURL(e.target.files[0]);
+  if(e.target.files[0]) reader.readAsDataURL(e.target.files[0]);
 });
-
-/* AI AUTO FILL */
-function autoFill(){
-  name.value="Arijit Chowdhury";
-  qualification.value="MBA, B.Com";
-  experience.value="5+ Years in Business & Management";
-  skills.value="Chef, Waiter, Carpenter, Entrepreneur";
-  hobbies.value="Reading, Traveling, Cooking";
-  about.value="Self-motivated professional with strong business and operational skills.";
-}
 
 /* GENERATE */
 function generate(){
-  const t=document.getElementById("template").value;
-
-  let html="";
-
-  if(t=="1"){
-    html=`
+  document.getElementById("resume").innerHTML = `
     <div class="resume-box" id="resumeBox">
       <center>
         ${photoData?`<img src="${photoData}" width="100" style="border-radius:50%">`:""}
         <h2>${name.value}</h2>
         <p>${qualification.value}</p>
       </center>
+
       <hr>
+
       <p><b>Experience:</b> ${experience.value}</p>
       <p><b>Skills:</b> ${skills.value}</p>
       <p><b>Hobbies:</b> ${hobbies.value}</p>
-      <p>${about.value}</p>
-    </div>`;
-  } else {
-    html=`
-    <div class="resume-box" id="resumeBox">
-      <h2>${name.value}</h2>
-      ${photoData?`<img src="${photoData}" width="80">`:""}
-      <hr>
-      <h3>Profile</h3>
-      <p>${about.value}</p>
-      <h3>Skills</h3>
-      <p>${skills.value}</p>
-      <h3>Hobbies</h3>
-      <p>${hobbies.value}</p>
-      <h3>Experience</h3>
-      <p>${experience.value}</p>
-    </div>`;
-  }
 
-  document.getElementById("resume").innerHTML=html;
+      <h3>About</h3>
+      <p>${about.value}</p>
+
+      <hr>
+
+      <p><b>Declaration:</b> ${declaration.value}</p>
+      <p><b>Signature:</b> ${signature.value}</p>
+      <p><b>Date:</b> ${new Date().toLocaleDateString()}</p>
+    </div>
+  `;
 }
 
 /* PDF */
 function downloadPDF(){
-  html2pdf().from(document.getElementById("resumeBox")).save();
+  const el=document.getElementById("resumeBox");
+  if(!el){alert("Generate resume first");return;}
+  html2pdf().from(el).save("resume.pdf");
 }
 
 /* IMAGE */
 function downloadImage(){
-  html2canvas(document.getElementById("resumeBox")).then(canvas=>{
+  const el=document.getElementById("resumeBox");
+  if(!el){alert("Generate first");return;}
+  html2canvas(el).then(canvas=>{
     let link=document.createElement("a");
     link.download="resume.png";
     link.href=canvas.toDataURL();
@@ -163,6 +141,7 @@ function downloadImage(){
 /* CLEAR */
 function clearData(){
   document.querySelectorAll("input").forEach(i=>i.value="");
+  photoData="";
   document.getElementById("resume").innerHTML="";
 }
 
