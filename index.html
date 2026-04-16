@@ -218,34 +218,24 @@ document.addEventListener("input", saveData);
 /* GENERATE */
 function generate(){
 
-  const nameVal = name.value;
-  const ageVal = age.value;
-  const qualificationVal = qualification.value;
-  const experienceVal = experience.value;
-  const skillsVal = skills.value;
-  const aboutVal = about.value;
-  const photoVal = photo.value;
-  const declarationVal = declaration.value;
-  const signatureVal = signature.value;
-
   document.getElementById("resume").innerHTML = `
     <div class="resume-box" id="resumeBox">
 
       <center>
-        <img src="${photoVal}" width="100" style="border-radius:50%">
-        <h2>${nameVal}</h2>
+        <img src="${photo.value}" width="100" style="border-radius:50%">
+        <h2>${name.value}</h2>
       </center>
 
-      <p><b>Age:</b> ${ageVal}</p>
-      <p><b>Qualification:</b> ${qualificationVal}</p>
-      <p><b>Experience:</b> ${experienceVal}</p>
-      <p><b>Skills:</b> ${skillsVal}</p>
-      <p><b>About:</b> ${aboutVal}</p>
+      <p><b>Age:</b> ${age.value}</p>
+      <p><b>Qualification:</b> ${qualification.value}</p>
+      <p><b>Experience:</b> ${experience.value}</p>
+      <p><b>Skills:</b> ${skills.value}</p>
+      <p><b>About:</b> ${about.value}</p>
 
       <hr>
 
-      <p><b>Declaration:</b> ${declarationVal}</p>
-      <p><b>Signature:</b> ${signatureVal}</p>
+      <p><b>Declaration:</b> ${declaration.value}</p>
+      <p><b>Signature:</b> ${signature.value}</p>
       <p><b>Date:</b> ${new Date().toLocaleDateString()}</p>
 
     </div>
