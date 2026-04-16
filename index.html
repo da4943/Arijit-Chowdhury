@@ -5,119 +5,26 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
 
   <style>
-    body{
-      margin:0;
-      font-family:Arial;
-      background:linear-gradient(135deg,#050816,#0b1220);
-      color:white;
-    }
-
-    .nav{
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      padding:15px 20px;
-      background:#0f172a;
-      position:sticky;
-      top:0;
-    }
-
-    .logo{
-      font-size:20px;
-      font-weight:bold;
-      color:#38bdf8;
-    }
-
-    .social button{
-      margin-left:10px;
-      padding:10px 14px;
-      border-radius:8px;
-      border:none;
-      font-weight:bold;
-      cursor:pointer;
-    }
-
+    body{margin:0;font-family:Arial;background:linear-gradient(135deg,#050816,#0b1220);color:white;}
+    .nav{display:flex;justify-content:space-between;align-items:center;padding:15px 20px;background:#0f172a;}
+    .logo{font-size:20px;font-weight:bold;color:#38bdf8;}
+    .social button{margin-left:10px;padding:10px 14px;border-radius:8px;border:none;font-weight:bold;cursor:pointer;}
     .google{background:white;color:black}
     .linkedin{background:#0a66c2;color:white}
-
-    .container{
-      max-width:1000px;
-      margin:auto;
-      padding:15px;
-    }
-
-    .hero{
-      text-align:center;
-      padding:25px;
-    }
-
-    .hero h1{
-      font-size:28px;
-      color:#38bdf8;
-    }
-
-    .card{
-      background:#111827;
-      padding:20px;
-      margin-top:15px;
-      border-radius:15px;
-      box-shadow:0 0 20px rgba(0,0,0,0.4);
-    }
-
-    input,button{
-      width:100%;
-      padding:12px;
-      margin-top:10px;
-      border-radius:10px;
-      border:none;
-      font-size:15px;
-      box-sizing:border-box;
-    }
-
-    button{
-      background:#38bdf8;
-      font-weight:bold;
-      cursor:pointer;
-    }
-
+    .container{max-width:1000px;margin:auto;padding:15px;}
+    .hero{text-align:center;padding:25px;}
+    .hero h1{font-size:28px;color:#38bdf8;}
+    .card{background:#111827;padding:20px;margin-top:15px;border-radius:15px;}
+    input,button,select{width:100%;padding:12px;margin-top:10px;border-radius:10px;border:none;}
+    button{background:#38bdf8;font-weight:bold;cursor:pointer;}
     .btn-pdf{background:#f59e0b}
     .btn-clear{background:#ef4444}
-
-    .premium{
-      text-align:center;
-      background:linear-gradient(45deg,#ffcc00,#ff8800);
-      color:black;
-      padding:25px;
-      border-radius:15px;
-    }
-
-    .qr{
-      margin-top:10px;
-      width:220px;
-      border-radius:12px;
-      background:white;
-      padding:10px;
-    }
-
-    .resume-box{
-      background:white;
-      color:black;
-      padding:25px;
-      border-radius:12px;
-      line-height:1.6;
-    }
-
-    .grid{
-      display:grid;
-      grid-template-columns:1fr 1fr;
-      gap:15px;
-    }
-
-    @media(max-width:768px){
-      .grid{grid-template-columns:1fr}
-    }
+    .resume-box{background:white;color:black;padding:20px;border-radius:12px;}
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:15px;}
+    @media(max-width:768px){.grid{grid-template-columns:1fr}}
   </style>
 </head>
 
@@ -125,20 +32,12 @@
 
 <div class="nav">
   <div class="logo">AOV AI Resume</div>
-
   <div class="social">
     <a href="https://www.google.com/search?q=jobs" target="_blank">
-      <button class="google">
-        <img src="https://cdn-icons-png.flaticon.com/512/2991/2991148.png" width="16" style="vertical-align:middle;margin-right:5px;">
-        Google
-      </button>
+      <button class="google">Google</button>
     </a>
-
     <a href="https://www.linkedin.com/jobs/" target="_blank">
-      <button class="linkedin">
-        <img src="https://cdn-icons-png.flaticon.com/512/174/174857.png" width="16" style="vertical-align:middle;margin-right:5px;">
-        LinkedIn
-      </button>
+      <button class="linkedin">LinkedIn</button>
     </a>
   </div>
 </div>
@@ -147,18 +46,6 @@
 
   <div class="hero">
     <h1>Create Professional Resume in Seconds</h1>
-    <p>AI style resume builder • Free + Premium tools</p>
-  </div>
-
-  <div class="card premium">
-    <h2>💎 Premium Unlock ₹200</h2>
-    <p>Get Pro Templates + HD PDF Export</p>
-
-    <img class="qr"
-      src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=upi://pay?pa=yourupi@bank&pn=AOV%20AI&am=200&cu=INR"
-    />
-
-    <p>Scan & Pay via UPI</p>
   </div>
 
   <div class="card">
@@ -171,17 +58,23 @@
       <input id="experience" placeholder="Experience">
     </div>
 
-    <input id="skills" placeholder="Skills">
+    <input id="skills" value="Chef, Waiter, Carpenter, Entrepreneur">
+    <input id="hobbies" placeholder="Hobbies">
     <input id="about" placeholder="About You">
-
-    <!-- PHOTO UPLOAD -->
-    <input type="file" id="photoUpload" accept="image/*">
-
+    <input type="file" id="photoUpload">
     <input id="declaration" placeholder="Declaration">
     <input id="signature" placeholder="Signature">
 
+    <!-- TEMPLATE -->
+    <select id="template">
+      <option value="1">Template 1</option>
+      <option value="2">Template 2</option>
+    </select>
+
+    <button onclick="autoFill()">AI Auto Fill</button>
     <button onclick="generate()">Generate Resume</button>
     <button class="btn-pdf" onclick="downloadPDF()">Download PDF</button>
+    <button onclick="downloadImage()">Download Image</button>
     <button class="btn-clear" onclick="clearData()">Clear Data</button>
   </div>
 
@@ -193,87 +86,83 @@
 
 <script>
 
-let photoData = "";
+let photoData="";
 
-/* AUTO SAVE */
-document.querySelectorAll("input").forEach(input=>{
-  input.addEventListener("input",()=>{
-    localStorage.setItem(input.id, input.value);
-  });
-
-  if(localStorage.getItem(input.id)){
-    input.value = localStorage.getItem(input.id);
-  }
+/* PHOTO */
+document.getElementById("photoUpload").addEventListener("change",e=>{
+  const reader=new FileReader();
+  reader.onload=()=>photoData=reader.result;
+  reader.readAsDataURL(e.target.files[0]);
 });
 
-/* PHOTO UPLOAD */
-document.getElementById("photoUpload").addEventListener("change",function(e){
-  const file = e.target.files[0];
-  const reader = new FileReader();
-
-  reader.onload = function(){
-    photoData = reader.result;
-    localStorage.setItem("photoData", photoData);
-  };
-
-  if(file) reader.readAsDataURL(file);
-});
-
-/* LOAD PHOTO */
-if(localStorage.getItem("photoData")){
-  photoData = localStorage.getItem("photoData");
+/* AI AUTO FILL */
+function autoFill(){
+  name.value="Arijit Chowdhury";
+  qualification.value="MBA, B.Com";
+  experience.value="5+ Years in Business & Management";
+  skills.value="Chef, Waiter, Carpenter, Entrepreneur";
+  hobbies.value="Reading, Traveling, Cooking";
+  about.value="Self-motivated professional with strong business and operational skills.";
 }
 
 /* GENERATE */
 function generate(){
-  document.getElementById("resume").innerHTML = `
-    <div class="resume-box" id="resumeBox">
+  const t=document.getElementById("template").value;
 
+  let html="";
+
+  if(t=="1"){
+    html=`
+    <div class="resume-box" id="resumeBox">
       <center>
-        ${photoData ? `<img src="${photoData}" width="100" style="border-radius:50%">` : ""}
+        ${photoData?`<img src="${photoData}" width="100" style="border-radius:50%">`:""}
         <h2>${name.value}</h2>
         <p>${qualification.value}</p>
       </center>
-
       <hr>
-
+      <p><b>Experience:</b> ${experience.value}</p>
+      <p><b>Skills:</b> ${skills.value}</p>
+      <p><b>Hobbies:</b> ${hobbies.value}</p>
+      <p>${about.value}</p>
+    </div>`;
+  } else {
+    html=`
+    <div class="resume-box" id="resumeBox">
+      <h2>${name.value}</h2>
+      ${photoData?`<img src="${photoData}" width="80">`:""}
+      <hr>
       <h3>Profile</h3>
       <p>${about.value}</p>
-
-      <h3>Experience</h3>
-      <p>${experience.value}</p>
-
       <h3>Skills</h3>
       <p>${skills.value}</p>
+      <h3>Hobbies</h3>
+      <p>${hobbies.value}</p>
+      <h3>Experience</h3>
+      <p>${experience.value}</p>
+    </div>`;
+  }
 
-      <h3>Personal Details</h3>
-      <p><b>Age:</b> ${age.value}</p>
-
-      <hr>
-
-      <p><b>Declaration:</b> ${declaration.value}</p>
-      <p><b>Signature:</b> ${signature.value}</p>
-      <p><b>Date:</b> ${new Date().toLocaleDateString()}</p>
-
-    </div>
-  `;
+  document.getElementById("resume").innerHTML=html;
 }
 
 /* PDF */
 function downloadPDF(){
-  const el = document.getElementById("resumeBox");
-  if(!el){
-    alert("Generate resume first");
-    return;
-  }
-  html2pdf().from(el).save("AOV_Resume.pdf");
+  html2pdf().from(document.getElementById("resumeBox")).save();
+}
+
+/* IMAGE */
+function downloadImage(){
+  html2canvas(document.getElementById("resumeBox")).then(canvas=>{
+    let link=document.createElement("a");
+    link.download="resume.png";
+    link.href=canvas.toDataURL();
+    link.click();
+  });
 }
 
 /* CLEAR */
 function clearData(){
-  localStorage.clear();
   document.querySelectorAll("input").forEach(i=>i.value="");
-  photoData = "";
   document.getElementById("resume").innerHTML="";
 }
 
