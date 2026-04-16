@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Leeco AI SaaS Resume Builder</title>
+  <title>AOV AI Resume SaaS</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <!-- Firebase -->
@@ -9,36 +9,33 @@
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
 
+  <!-- PDF -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
   <style>
     body{
       margin:0;
       font-family:Arial;
-      background:linear-gradient(135deg,#0b1220,#111827);
+      background:linear-gradient(135deg,#0f172a,#1e293b);
       color:white;
     }
 
-    .center{
-      text-align:center;
-      padding:40px;
+    .card{
+      background:#111827;
+      margin:10px;
+      padding:20px;
+      border-radius:12px;
     }
 
-    .card{
-      max-width:500px;
-      margin:20px auto;
-      background:#1f2937;
-      padding:20px;
-      border-radius:15px;
-      box-shadow:0 0 20px rgba(0,0,0,0.4);
-    }
+    .hidden{display:none}
 
     input,button{
       width:100%;
       padding:12px;
-      margin-top:10px;
+      margin-top:8px;
       border-radius:8px;
       border:none;
+      font-size:16px;
     }
 
     button{
@@ -47,112 +44,146 @@
       cursor:pointer;
     }
 
-    .hidden{display:none}
+    .title{
+      text-align:center;
+      font-size:22px;
+      font-weight:bold;
+    }
 
-    .resume{
+    .resume-box{
       background:white;
       color:black;
       padding:20px;
-      border-radius:10px;
-    }
-
-    .premium{
-      background:gold;
-      color:black;
-      padding:10px;
-      text-align:center;
-      border-radius:10px;
-      font-weight:bold;
-      margin-bottom:10px;
+      border-radius:12px;
     }
   </style>
 </head>
 
 <body>
 
-<div class="center">
-  <h1>🚀 Leeco AI SaaS Resume Builder</h1>
-  <p>Build Resume • Save • Download PDF</p>
-</div>
-
 <!-- LOGIN -->
 <div class="card" id="loginBox">
-  <h2>Login</h2>
-  <button onclick="login()">Continue with Google</button>
+  <div class="title">AOV AI SaaS LOGIN</div>
+  <button onclick="login()">🔵 Continue with Google</button>
 </div>
 
-<!-- APP -->
-<div class="card hidden" id="app">
-
-  <div class="premium">⭐ Free Plan (Upgrade coming soon)</div>
+<!-- FORM -->
+<div class="card hidden" id="form">
 
   <input id="name" placeholder="Name">
   <input id="age" placeholder="Age">
-  <input id="skills" placeholder="Skills">
+  <input id="qualification" placeholder="Qualification">
   <input id="experience" placeholder="Experience">
+  <input id="skills" placeholder="Skills">
+  <input id="about" placeholder="About">
   <input id="photo" placeholder="Photo URL">
+  <input id="declaration" placeholder="Declaration">
+  <input id="signature" placeholder="Signature">
 
   <button onclick="generate()">Generate Resume</button>
   <button onclick="save()">Save</button>
   <button onclick="downloadPDF()">Download PDF</button>
-
 </div>
 
+<!-- PREVIEW -->
 <div class="card">
-  <div id="output"></div>
+  <div id="resume"></div>
 </div>
 
 <script>
-const firebaseConfig = {
-  apiKey: "PASTE_YOUR_API_KEY",
-  authDomain: "YOUR_PROJECT.firebaseapp.com",
-  projectId: "YOUR_PROJECT_ID",
+
+/* ===== SAFETY ERROR LOG ===== */
+window.onerror = function(e){
+  console.log("ERROR:", e);
 };
 
+/* ===== FIREBASE CONFIG (REPLACE THIS) ===== */
+const firebaseConfig = {
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_PROJECT.firebaseapp.com",
+  projectId: "YOUR_PROJECT_ID",
+  appId: "YOUR_APP_ID"
+};
+
+/* INIT */
 firebase.initializeApp(firebaseConfig);
 
 const auth = firebase.auth();
 const db = firebase.firestore();
 
-/* LOGIN */
-function login(){
-  const provider = new firebase.auth.GoogleAuthProvider();
-  auth.signInWithPopup(provider)
-  .catch(e=>{
-    alert("Login Error: " + e.message);
-  });
+let user = null;
+
+/* ===== UI CONTROL ===== */
+function showLogin(){
+  document.getElementById("loginBox").style.display="block";
+  document.getElementById("form").classList.add("hidden");
 }
 
-/* AUTH CHECK */
-auth.onAuthStateChanged(user=>{
-  if(user){
-    document.getElementById("loginBox").classList.add("hidden");
-    document.getElementById("app").classList.remove("hidden");
+function showApp(){
+  document.getElementById("loginBox").style.display="none";
+  document.getElementById("form").classList.remove("hidden");
+}
+
+/* ===== AUTH STATE ===== */
+auth.onAuthStateChanged(u=>{
+  if(u){
+    user = u;
+    showApp();
   } else {
-    document.getElementById("loginBox").classList.remove("hidden");
-    document.getElementById("app").classList.add("hidden");
+    showLogin();
   }
 });
 
-/* GENERATE */
+/* ===== LOGIN FIX (MOBILE + LAPTOP SAFE) ===== */
+function login(){
+  const provider = new firebase.auth.GoogleAuthProvider();
+
+  auth.signInWithPopup(provider)
+  .catch(err=>{
+    console.log(err);
+
+    if(err.code === "auth/popup-blocked"){
+      auth.signInWithRedirect(provider);
+    }
+
+    if(err.code === "auth/unauthorized-domain"){
+      alert("Add your domain in Firebase Authorized Domains");
+    }
+  });
+}
+
+/* ===== GENERATE ===== */
 function generate(){
-  output.innerHTML = `
-    <div class="resume" id="resumeBox">
+  document.getElementById("resume").innerHTML = `
+    <div class="resume-box" id="resumeBox">
+
       <center>
-        <img src="${photo.value}" width="80" style="border-radius:50%">
+        <img src="${photo.value}" width="90" style="border-radius:50%">
         <h2>${name.value}</h2>
       </center>
+
       <p><b>Age:</b> ${age.value}</p>
-      <p><b>Skills:</b> ${skills.value}</p>
+      <p><b>Qualification:</b> ${qualification.value}</p>
       <p><b>Experience:</b> ${experience.value}</p>
+      <p><b>Skills:</b> ${skills.value}</p>
+      <p><b>About:</b> ${about.value}</p>
+
+      <hr>
+
+      <p><b>Declaration:</b> ${declaration.value}</p>
+      <p><b>Signature:</b> ${signature.value}</p>
+      <p><b>Date:</b> ${new Date().toLocaleDateString()}</p>
+
     </div>
   `;
 }
 
-/* SAVE */
+/* ===== SAVE ===== */
 function save(){
-  const user = auth.currentUser;
-  if(!user) return alert("Login first");
+  if(!user){
+    alert("Login first");
+    return;
+  }
 
   db.collection("resumes").add({
     name: name.value,
@@ -163,13 +194,17 @@ function save(){
   alert("Saved ✔");
 }
 
-/* PDF */
+/* ===== PDF ===== */
 function downloadPDF(){
   const el = document.getElementById("resumeBox");
-  if(!el) return alert("Generate first");
+  if(!el){
+    alert("Generate first");
+    return;
+  }
 
   html2pdf().from(el).save("resume.pdf");
 }
+
 </script>
 
 </body>
