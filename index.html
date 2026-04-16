@@ -1,14 +1,9 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>AOV Resume NO LOGIN FIX</title>
+  <title>AOV Resume + Premium QR</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <!-- Firestore only (optional save) -->
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
-
-  <!-- PDF -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
   <style>
@@ -19,19 +14,27 @@
       color:white;
     }
 
+    .container{
+      max-width:900px;
+      margin:auto;
+      padding:10px;
+    }
+
     .card{
       padding:20px;
-      margin:10px;
+      margin:10px 0;
       background:#111827;
-      border-radius:10px;
+      border-radius:12px;
     }
 
     input,button{
       width:100%;
-      padding:10px;
-      margin-top:8px;
-      border-radius:6px;
+      padding:12px;
+      margin-top:10px;
+      border-radius:8px;
       border:none;
+      font-size:16px;
+      box-sizing:border-box;
     }
 
     button{
@@ -40,56 +43,96 @@
       cursor:pointer;
     }
 
+    /* 💎 PREMIUM */
+    .premium-box{
+      text-align:center;
+      background:linear-gradient(45deg,#ffcc00,#ff8800);
+      color:black;
+      padding:25px;
+      border-radius:15px;
+      box-shadow:0 0 20px #ffcc00;
+    }
+
+    .premium-title{
+      font-size:22px;
+      font-weight:bold;
+    }
+
+    .premium-btn{
+      margin-top:15px;
+      padding:18px;
+      font-size:20px;
+      background:black;
+      color:white;
+      border-radius:12px;
+    }
+
     .resume-box{
       background:white;
       color:black;
       padding:20px;
       border-radius:10px;
     }
+
+    /* MOBILE */
+    @media (max-width:600px){
+      .premium-title{font-size:18px;}
+      .premium-btn{font-size:18px;}
+    }
   </style>
 </head>
 
 <body>
 
-<!-- FORM -->
-<div class="card">
+<div class="container">
 
-  <h2>Resume Generator</h2>
+  <!-- 💎 PREMIUM SECTION -->
+  <div class="card premium-box">
 
-  <input id="name" placeholder="Name">
-  <input id="age" placeholder="Age">
-  <input id="qualification" placeholder="Qualification">
-  <input id="experience" placeholder="Experience">
-  <input id="skills" placeholder="Skills">
-  <input id="about" placeholder="About">
-  <input id="photo" placeholder="Photo URL">
-  <input id="declaration" placeholder="Declaration">
-  <input id="signature" placeholder="Signature">
+    <div class="premium-title">💎 PREMIUM UNLOCK</div>
+    <div>Unlock All Features ₹200</div>
 
-  <button onclick="generate()">Generate Resume</button>
-  <button onclick="downloadPDF()">Download PDF</button>
+    <img 
+      src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=upi://pay?pa=yourupi@bank&pn=AOV%20Resume&am=200&cu=INR"
+      style="margin-top:15px;width:200px;height:200px;border-radius:10px;background:white;padding:10px"
+    />
 
-</div>
+    <div style="margin-top:10px;font-size:14px">
+      Scan QR to pay ₹200
+    </div>
 
-<!-- RESUME -->
-<div class="card">
-  <div id="resume"></div>
+  </div>
+
+  <!-- FORM -->
+  <div class="card">
+
+    <h2>Resume Generator</h2>
+
+    <input id="name" placeholder="Name">
+    <input id="age" placeholder="Age">
+    <input id="qualification" placeholder="Qualification">
+    <input id="experience" placeholder="Experience">
+    <input id="skills" placeholder="Skills">
+    <input id="about" placeholder="About">
+    <input id="photo" placeholder="Photo URL">
+    <input id="declaration" placeholder="Declaration">
+    <input id="signature" placeholder="Signature">
+
+    <button onclick="generate()">Generate Resume</button>
+    <button onclick="downloadPDF()">Download PDF</button>
+
+  </div>
+
+  <!-- RESUME -->
+  <div class="card">
+    <div id="resume"></div>
+  </div>
+
 </div>
 
 <script>
 
-/* OPTIONAL FIREBASE (SAFE) */
-const firebaseConfig = {
-  apiKey: "PASTE_YOUR_API_KEY",
-  authDomain: "YOUR_PROJECT.firebaseapp.com",
-  projectId: "YOUR_PROJECT_ID"
-};
-
-firebase.initializeApp(firebaseConfig);
-
-const db = firebase.firestore();
-
-/* GENERATE */
+/* GENERATE RESUME */
 function generate(){
 
   const data = {
@@ -128,12 +171,12 @@ function generate(){
   `;
 }
 
-/* PDF */
+/* PDF DOWNLOAD */
 function downloadPDF(){
   const el = document.getElementById("resumeBox");
 
   if(!el){
-    alert("Generate first");
+    alert("Generate resume first");
     return;
   }
 
