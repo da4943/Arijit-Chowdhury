@@ -10,7 +10,26 @@
       font-family:Arial;
       background:#0b1220;
       color:white;
-      scroll-behavior:smooth;
+    }
+
+    /* NAVBAR */
+    .nav{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      padding:15px 25px;
+      background:linear-gradient(90deg, orange, white, green);
+      color:black;
+      font-weight:bold;
+    }
+
+    .nav button{
+      padding:8px 12px;
+      border:none;
+      border-radius:6px;
+      cursor:pointer;
+      background:#111827;
+      color:white;
     }
 
     .container{
@@ -24,16 +43,6 @@
       padding:60px 20px;
     }
 
-    .hero h1{
-      font-size:42px;
-      margin-bottom:10px;
-    }
-
-    .hero p{
-      color:#cbd5e1;
-      font-size:18px;
-    }
-
     .btn{
       background:#38bdf8;
       border:none;
@@ -44,23 +53,15 @@
       margin-top:15px;
     }
 
-    .stats{
-      display:flex;
-      justify-content:space-around;
-      margin:40px 0;
-      text-align:center;
-      gap:10px;
+    .section{
+      margin:50px 0;
     }
 
-    .stat{
+    .card{
       background:#111827;
       padding:20px;
       border-radius:12px;
-      width:30%;
-    }
-
-    .section{
-      margin:50px 0;
+      margin:10px 0;
     }
 
     .grid{
@@ -69,130 +70,122 @@
       gap:15px;
     }
 
-    .card{
-      background:#111827;
+    /* MODAL */
+    .modal{
+      display:none;
+      position:fixed;
+      top:0;
+      left:0;
+      width:100%;
+      height:100%;
+      background:rgba(0,0,0,0.7);
+      justify-content:center;
+      align-items:center;
+    }
+
+    .modal-box{
+      background:white;
+      color:black;
       padding:20px;
       border-radius:12px;
-    }
-
-    .step{
-      background:#0f172a;
-      border:1px solid #1e293b;
-    }
-
-    .testimonial{
-      font-size:14px;
-      color:#cbd5e1;
-    }
-
-    .login{
-      border:2px solid #38bdf8;
-    }
-
-    .footer{
+      width:300px;
       text-align:center;
-      padding:30px;
-      color:#94a3b8;
-      font-size:12px;
     }
 
-    @media(max-width:768px){
-      .hero h1{font-size:28px;}
-      .stats{flex-direction:column;}
-      .stat{width:100%;}
+    .modal-box input{
+      width:100%;
+      padding:10px;
+      margin-top:10px;
+    }
+
+    .close{
+      float:right;
+      cursor:pointer;
+      font-weight:bold;
     }
   </style>
 </head>
 
 <body>
 
+<!-- NAVBAR -->
+<div class="nav">
+  <div>AOV AI Jobs</div>
+  <div>
+    <button onclick="scrollToSection('home')">Home</button>
+    <button onclick="scrollToSection('features')">Features</button>
+    <button onclick="scrollToSection('premium')">Premium</button>
+    <button onclick="openLogin()">Login</button>
+  </div>
+</div>
+
 <div class="container">
 
   <!-- HERO -->
-  <div class="hero">
+  <div id="home" class="hero">
     <h1>Build a Free AI Resume That Gets You Hired</h1>
-    <p>Trusted by thousands of job seekers — create your CV in minutes</p>
-
-    <button class="btn" onclick="goToLogin()">Create Resume Free</button>
+    <p>Create CV in minutes with AI + download PDF instantly</p>
+    <button class="btn" onclick="scrollToSection('features')">
+      Get Started
+    </button>
   </div>
 
-  <!-- STATS -->
-  <div class="stats">
-    <div class="stat">
-      <h2>48,825</h2>
-      <p>CVs created today</p>
-    </div>
-
-    <div class="stat">
-      <h2>48%</h2>
-      <p>More likely to get hired</p>
-    </div>
-
-    <div class="stat">
-      <h2>12%</h2>
-      <p>Better salary chance</p>
-    </div>
-  </div>
-
-  <!-- STEPS -->
-  <div class="section">
-    <h2 style="text-align:center">Create your CV in 3 steps</h2>
+  <!-- FEATURES -->
+  <div id="features" class="section">
+    <h2>Features</h2>
 
     <div class="grid">
-      <div class="card step">
-        <h3>Step 1</h3>
-        <p>Choose a professional template</p>
-      </div>
-
-      <div class="card step">
-        <h3>Step 2</h3>
-        <p>Fill your details</p>
-      </div>
-
-      <div class="card step">
-        <h3>Step 3</h3>
-        <p>Download PDF instantly</p>
-      </div>
+      <div class="card">✔ AI Resume Builder</div>
+      <div class="card">✔ Free PDF Download</div>
+      <div class="card">✔ Google Login System</div>
+      <div class="card">✔ Job Ready Templates</div>
     </div>
   </div>
 
-  <!-- LOGIN SECTION -->
-  <div class="section" id="login">
-    <div class="card login">
-      <h2>Login Required</h2>
-      <p>Access resume builder</p>
-      <button class="btn" onclick="fakeLogin()">Login with Google</button>
+  <!-- PREMIUM -->
+  <div id="premium" class="section">
+    <h2>Premium Plan</h2>
+
+    <div class="card">
+      <h3>₹200 Unlock PRO Features</h3>
+      <p>Unlimited resumes + premium templates</p>
+      <button class="btn" onclick="alert('Payment system will connect later with Razorpay/Paddle')">
+        Upgrade Now
+      </button>
     </div>
   </div>
 
   <!-- CTA -->
   <div class="hero">
-    <h2>Ready to boost your career?</h2>
-    <p>Start building your professional CV now</p>
-    <button class="btn" onclick="scrollToTop()">Get Started</button>
+    <h2>Ready to start?</h2>
+    <button class="btn" onclick="scrollToSection('home')">Create Resume</button>
   </div>
 
 </div>
 
-<div class="footer">
-  © 2026 AOV AI Jobs | All rights reserved
+<!-- LOGIN MODAL -->
+<div class="modal" id="loginModal">
+  <div class="modal-box">
+    <span class="close" onclick="closeLogin()">X</span>
+    <h3>Login</h3>
+    <input placeholder="Email">
+    <input placeholder="Password" type="password">
+    <button class="btn" onclick="alert('Login system demo only')">Login</button>
+  </div>
 </div>
 
 <script>
 
-// NAVIGATION FIX
-function goToLogin(){
-  document.getElementById("login").scrollIntoView({behavior:"smooth"});
+function scrollToSection(id){
+  document.getElementById(id).scrollIntoView({behavior:'smooth'});
 }
 
-function scrollToTop(){
-  window.scrollTo({top:0, behavior:"smooth"});
+function openLogin(){
+  document.getElementById("loginModal").style.display="flex";
 }
 
-// LOGIN (DEMO)
-function fakeLogin(){
-  alert("Login successful ✔ (demo mode)");
-  alert("Now you can unlock Resume Builder in next version 🚀");
+function closeLogin(){
+  document.getElementById("loginModal").style.display="none";
 }
 
 </script>
