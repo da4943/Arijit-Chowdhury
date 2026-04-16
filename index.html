@@ -20,7 +20,6 @@
     .hidden{display:none}
     .resume{background:white;color:black;padding:20px;border-radius:10px}
     .center{text-align:center}
-    .footer{font-size:12px;text-align:center;margin-top:20px;color:#94a3b8}
   </style>
 </head>
 
@@ -67,10 +66,6 @@
 
   </div>
 
-  <div class="footer">
-    © 2026 AOV AI Jobs
-  </div>
-
 </div>
 
 <script>
@@ -85,7 +80,7 @@ const firebaseConfig = {
   appId: "1:898401199585:web:760d147b7d9b23e655dea0"
 };
 
-// Initialize Firebase safely
+// Safe init
 if (!firebase.apps.length) {
   firebase.initializeApp(firebaseConfig);
 }
@@ -97,8 +92,9 @@ let user = null;
 
 // Auth state
 auth.onAuthStateChanged((u)=>{
-  if(u){
-    user = u;
+  user = u || null;
+
+  if(user){
     document.getElementById("loginBox").style.display="none";
     document.getElementById("app").classList.remove("hidden");
   } else {
@@ -107,15 +103,15 @@ auth.onAuthStateChanged((u)=>{
   }
 });
 
-// Login
+// LOGIN
 function googleLogin(){
   const provider = new firebase.auth.GoogleAuthProvider();
   auth.signInWithPopup(provider).catch(err=>{
-    alert(err.message);
+    alert("Login error: " + err.message);
   });
 }
 
-// Resume
+// RESUME
 function generateResume(){
   const name = document.getElementById("name").value;
   const father = document.getElementById("father").value;
@@ -140,26 +136,32 @@ function generateResume(){
   `;
 }
 
-// Save
+// SAVE
 function saveData(){
-  if(!user){ alert("Login first"); return; }
+  if(!user){
+    alert("Login first");
+    return;
+  }
 
   db.collection("users").add({
-    name: document.getElementById("name").value,
+    name: document.getElementById("name").value || "",
     email: user.email
   });
 
   alert("Saved ✔");
 }
 
-// Payment
+// PAYMENT
 function pay(){
-  if(!user){ alert("Login first"); return; }
+  if(!user){
+    alert("Login first");
+    return;
+  }
 
   db.collection("payments").add({
-    email:user.email,
-    utr:document.getElementById("utr").value,
-    status:"pending"
+    email: user.email,
+    utr: document.getElementById("utr").value || "",
+    status: "pending"
   });
 
   alert("Payment Submitted");
@@ -167,8 +169,13 @@ function pay(){
 
 // PDF
 function downloadPDF(){
-  let el = document.querySelector(".resume");
-  if(!el){ alert("Generate first"); return; }
+  const el = document.querySelector(".resume");
+
+  if(!el){
+    alert("Generate first");
+    return;
+  }
+
   html2pdf().from(el).save("resume.pdf");
 }
 
