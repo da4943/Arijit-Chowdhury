@@ -48,6 +48,17 @@
     <h1>Create Professional Resume in Seconds</h1>
   </div>
 
+  <!-- 💎 PREMIUM (ADDED - NO DESIGN BREAK) -->
+  <div class="card">
+    <h2>💎 Unlock Premium ₹200</h2>
+    <p>Scan & Pay to enable PDF + Image Download</p>
+
+    <img width="200"
+      src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=upi://pay?pa=yourupi@bank&pn=AOV%20AI&am=200&cu=INR">
+
+    <button onclick="unlockPremium()">I Paid ₹200</button>
+  </div>
+
   <div class="card">
     <h2>Resume Builder</h2>
 
@@ -62,7 +73,6 @@
     <input id="hobbies" placeholder="Hobbies">
     <input id="about" placeholder="About You">
 
-    <!-- PHOTO UPLOAD -->
     <input type="file" id="photoUpload" accept="image/*">
 
     <input id="declaration" placeholder="Declaration">
@@ -83,6 +93,7 @@
 <script>
 
 let photoData="";
+let isPremium = localStorage.getItem("premium") === "yes";
 
 /* PHOTO */
 document.getElementById("photoUpload").addEventListener("change",e=>{
@@ -90,6 +101,21 @@ document.getElementById("photoUpload").addEventListener("change",e=>{
   reader.onload=()=>photoData=reader.result;
   if(e.target.files[0]) reader.readAsDataURL(e.target.files[0]);
 });
+
+/* PREMIUM */
+function unlockPremium(){
+  localStorage.setItem("premium","yes");
+  isPremium = true;
+  alert("Premium Unlocked ✔");
+}
+
+function checkPremium(){
+  if(!isPremium){
+    alert("Please pay ₹200 to unlock Premium");
+    return false;
+  }
+  return true;
+}
 
 /* GENERATE */
 function generate(){
@@ -121,6 +147,8 @@ function generate(){
 
 /* PDF */
 function downloadPDF(){
+  if(!checkPremium()) return;
+
   const el=document.getElementById("resumeBox");
   if(!el){alert("Generate resume first");return;}
   html2pdf().from(el).save("resume.pdf");
@@ -128,6 +156,8 @@ function downloadPDF(){
 
 /* IMAGE */
 function downloadImage(){
+  if(!checkPremium()) return;
+
   const el=document.getElementById("resumeBox");
   if(!el){alert("Generate first");return;}
   html2canvas(el).then(canvas=>{
