@@ -1,43 +1,60 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>AOV AI Jobs - FULL RESTORE</title>
+  <title>AOV Resume NO LOGIN FIX</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <!-- Firebase -->
+  <!-- Firestore only (optional save) -->
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
 
+  <!-- PDF -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
   <style>
-    body{margin:0;font-family:Arial;background:#0b1220;color:white}
-    .card{padding:20px;margin:10px;background:#111827;border-radius:10px}
-    .hidden{display:none}
-    input,button{width:100%;padding:10px;margin-top:8px;border-radius:6px;border:none}
-    button{background:#38bdf8;font-weight:bold;cursor:pointer}
-    .resume-box{background:white;color:black;padding:20px;border-radius:10px}
-    .premium{background:gold;color:black;padding:10px;border-radius:6px;margin-top:10px;text-align:center}
+    body{
+      margin:0;
+      font-family:Arial;
+      background:#0b1220;
+      color:white;
+    }
+
+    .card{
+      padding:20px;
+      margin:10px;
+      background:#111827;
+      border-radius:10px;
+    }
+
+    input,button{
+      width:100%;
+      padding:10px;
+      margin-top:8px;
+      border-radius:6px;
+      border:none;
+    }
+
+    button{
+      background:#38bdf8;
+      font-weight:bold;
+      cursor:pointer;
+    }
+
+    .resume-box{
+      background:white;
+      color:black;
+      padding:20px;
+      border-radius:10px;
+    }
   </style>
 </head>
 
 <body>
 
-<!-- LOGIN -->
-<div class="card" id="loginBox">
-  <h2>Login</h2>
-  <button onclick="login()">Login with Google</button>
-</div>
-
-<!-- PREMIUM -->
-<div class="card hidden" id="premiumBox">
-  <div class="premium">💎 PREMIUM ₹200 ACTIVE FEATURES</div>
-  <button onclick="openUPI()">Pay ₹200 via UPI</button>
-</div>
-
 <!-- FORM -->
-<div class="card hidden" id="form">
+<div class="card">
+
+  <h2>Resume Generator</h2>
 
   <input id="name" placeholder="Name">
   <input id="age" placeholder="Age">
@@ -50,89 +67,41 @@
   <input id="signature" placeholder="Signature">
 
   <button onclick="generate()">Generate Resume</button>
-  <button onclick="save()">Save</button>
   <button onclick="downloadPDF()">Download PDF</button>
 
 </div>
 
+<!-- RESUME -->
 <div class="card">
   <div id="resume"></div>
 </div>
 
 <script>
 
-/* 🔥 FIREBASE CONFIG (REPLACE ONLY THIS) */
+/* OPTIONAL FIREBASE (SAFE) */
 const firebaseConfig = {
   apiKey: "PASTE_YOUR_API_KEY",
   authDomain: "YOUR_PROJECT.firebaseapp.com",
-  projectId: "YOUR_PROJECT_ID",
-  appId: "YOUR_APP_ID"
+  projectId: "YOUR_PROJECT_ID"
 };
 
 firebase.initializeApp(firebaseConfig);
 
-const auth = firebase.auth();
 const db = firebase.firestore();
-
-let user = null;
-let isPremium = false;
-
-/* UI */
-function showLogin(){
-  document.getElementById("loginBox").style.display="block";
-  document.getElementById("form").classList.add("hidden");
-  document.getElementById("premiumBox").classList.add("hidden");
-}
-
-function showApp(){
-  document.getElementById("loginBox").style.display="none";
-  document.getElementById("form").classList.remove("hidden");
-  document.getElementById("premiumBox").classList.remove("hidden");
-}
-
-/* AUTH */
-auth.onAuthStateChanged((u)=>{
-  if(u){
-    user = u;
-    showApp();
-  } else {
-    user = null;
-    showLogin();
-  }
-});
-
-/* LOGIN FIXED */
-function login(){
-  const provider = new firebase.auth.GoogleAuthProvider();
-  auth.signInWithRedirect(provider);
-}
-
-/* REDIRECT RESULT */
-auth.getRedirectResult().catch(console.error);
-
-/* PREMIUM UPI (SIMULATION LINK) */
-function openUPI(){
-  alert("Redirecting to UPI payment ₹200 (connect Razorpay/PhonePe link here)");
-  
-  // Example UPI link (replace with your real one)
-  window.location.href = "upi://pay?pa=yourupi@bank&pn=AOV%20AI&am=200&cu=INR";
-  
-  isPremium = true;
-}
 
 /* GENERATE */
 function generate(){
 
   const data = {
-    name: name.value,
-    age: age.value,
-    qualification: qualification.value,
-    experience: experience.value,
-    skills: skills.value,
-    about: about.value,
-    photo: photo.value,
-    declaration: declaration.value,
-    signature: signature.value
+    name: document.getElementById("name").value,
+    age: document.getElementById("age").value,
+    qualification: document.getElementById("qualification").value,
+    experience: document.getElementById("experience").value,
+    skills: document.getElementById("skills").value,
+    about: document.getElementById("about").value,
+    photo: document.getElementById("photo").value,
+    declaration: document.getElementById("declaration").value,
+    signature: document.getElementById("signature").value
   };
 
   document.getElementById("resume").innerHTML = `
@@ -155,32 +124,14 @@ function generate(){
       <p><b>Signature:</b> ${data.signature}</p>
       <p><b>Date:</b> ${new Date().toLocaleDateString()}</p>
 
-      ${isPremium ? "<h3>💎 Premium Resume Enabled</h3>" : ""}
-
     </div>
   `;
-}
-
-/* SAVE */
-function save(){
-  if(!user){
-    alert("Login first");
-    return;
-  }
-
-  db.collection("resumes").add({
-    name: name.value,
-    email: user.email,
-    premium: isPremium,
-    createdAt: Date.now()
-  });
-
-  alert("Saved ✔");
 }
 
 /* PDF */
 function downloadPDF(){
   const el = document.getElementById("resumeBox");
+
   if(!el){
     alert("Generate first");
     return;
