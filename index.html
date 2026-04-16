@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>AOV AI Jobs - Smart Resume Builder</title>
+  <title>AOV AI Jobs - SaaS PRO Resume Builder</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <!-- Firebase -->
@@ -9,6 +9,7 @@
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
 
+  <!-- PDF -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
   <style>
@@ -27,7 +28,7 @@
 
 <div class="container">
 
-  <h2 style="text-align:center">AOV AI Resume Builder</h2>
+  <h2 style="text-align:center">AOV AI SaaS PRO Resume Builder</h2>
 
   <!-- LOGIN -->
   <div class="card" id="loginBox">
@@ -58,10 +59,13 @@
       <button onclick="downloadPDF()">Download PDF</button>
     </div>
 
+    <!-- PRO PAYMENT -->
     <div class="card">
-      <h3>Premium ₹200</h3>
+      <h3>🚀 Upgrade to PRO (₹200)</h3>
+      <p id="statusText">Status: FREE USER</p>
+
       <input id="utr" placeholder="Enter UTR Number">
-      <button onclick="pay()">Submit Payment</button>
+      <button onclick="pay()">Unlock PRO</button>
     </div>
 
   </div>
@@ -70,112 +74,129 @@
 
 <script>
 
-// 🔥 SAFE FIREBASE INIT (FIX FOR VERCEL)
+// ================= FIREBASE =================
+const firebaseConfig = {
+  apiKey: "AIzaSyBpJQ44k1gokp3sSZggyESC7HpvqssClEE",
+  authDomain: "aov-ai-jobs-c697d.firebaseapp.com",
+  projectId: "aov-ai-jobs-c697d",
+  storageBucket: "aov-ai-jobs-c697d.firebasestorage.app",
+  messagingSenderId: "898401199585",
+  appId: "1:898401199585:web:760d147b7d9b23e655dea0"
+};
+
 if (!firebase.apps.length) {
-  firebase.initializeApp({
-    apiKey: "AIzaSyBpJQ44k1gokp3sSZggyESC7HpvqssClEE",
-    authDomain: "aov-ai-jobs-c697d.firebaseapp.com",
-    projectId: "aov-ai-jobs-c697d",
-    storageBucket: "aov-ai-jobs-c697d.firebasestorage.app",
-    messagingSenderId: "898401199585",
-    appId: "1:898401199585:web:760d147b7d9b23e655dea0"
-  });
+  firebase.initializeApp(firebaseConfig);
 }
 
 const auth = firebase.auth();
 const db = firebase.firestore();
 
 let user = null;
+let isPro = false;
 
-// AUTH STATE
-auth.onAuthStateChanged((u)=>{
+// ================= AUTH =================
+auth.onAuthStateChanged(async (u)=>{
   user = u;
 
   if(user){
     document.getElementById("loginBox").style.display="none";
     document.getElementById("app").classList.remove("hidden");
+
+    checkProStatus();
   } else {
     document.getElementById("loginBox").style.display="block";
     document.getElementById("app").classList.add("hidden");
   }
 });
 
-// LOGIN (FIXED POPUP SAFETY)
 function googleLogin(){
   const provider = new firebase.auth.GoogleAuthProvider();
-
-  auth.signInWithPopup(provider)
-  .catch((err)=>{
-    alert("Login error: " + err.message);
+  auth.signInWithPopup(provider).catch(err=>{
+    alert(err.message);
   });
 }
 
-// RESUME
-function generateResume(){
-  const el = document.getElementById("resume");
+// ================= PRO CHECK =================
+async function checkProStatus(){
+  if(!user) return;
 
-  el.innerHTML = `
+  const snap = await db.collection("payments")
+    .where("email","==",user.email)
+    .where("status","==","approved")
+    .get();
+
+  isPro = !snap.empty;
+
+  document.getElementById("statusText").innerText =
+    isPro ? "Status: PRO USER ✅" : "Status: FREE USER ❌";
+}
+
+// ================= RESUME =================
+function generateResume(){
+
+  const name = document.getElementById("name").value;
+  const father = document.getElementById("father").value;
+  const age = document.getElementById("age").value;
+  const gender = document.getElementById("gender").value;
+  const address = document.getElementById("address").value;
+  const skills = document.getElementById("skills").value;
+  const exp = document.getElementById("exp").value;
+
+  document.getElementById("resume").innerHTML = `
     <div class="resume">
       <div class="center">
-        <h2>${name.value}</h2>
-        <p>${address.value}</p>
+        <h2>${name}</h2>
+        <p>${address}</p>
       </div>
-      <p><b>Father:</b> ${father.value}</p>
-      <p><b>Age:</b> ${age.value}</p>
-      <p><b>Gender:</b> ${gender.value}</p>
-      <p><b>Skills:</b> ${skills.value}</p>
-      <p><b>Experience:</b> ${exp.value}</p>
+      <p><b>Father:</b> ${father}</p>
+      <p><b>Age:</b> ${age}</p>
+      <p><b>Gender:</b> ${gender}</p>
+      <p><b>Skills:</b> ${skills}</p>
+      <p><b>Experience:</b> ${exp}</p>
     </div>
   `;
 }
 
-// SAVE (SAFE)
+// ================= SAVE =================
 function saveData(){
-  if(!user){
-    alert("Login first");
-    return;
-  }
+  if(!user) return alert("Login first");
 
   db.collection("users").add({
-    name: document.getElementById("name").value || "",
+    name: document.getElementById("name").value,
     email: user.email,
-    createdAt: Date.now()
+    time: Date.now()
   });
 
   alert("Saved ✔");
 }
 
-// PAYMENT (CLEAN)
+// ================= PAYMENT (PRO SYSTEM) =================
 function pay(){
-  if(!user){
-    alert("Login first");
-    return;
-  }
+  if(!user) return alert("Login first");
 
   const utr = document.getElementById("utr").value;
-
-  if(!utr){
-    alert("Enter UTR");
-    return;
-  }
+  if(!utr) return alert("Enter UTR");
 
   db.collection("payments").add({
     email: user.email,
     utr: utr,
+    amount: 200,
     status: "pending",
     createdAt: Date.now()
   });
 
-  alert("Payment Submitted");
+  alert("Payment submitted. Waiting approval.");
 }
 
-// PDF (SAFE CHECK)
+// ================= PDF =================
 function downloadPDF(){
   const el = document.querySelector(".resume");
 
-  if(!el){
-    alert("Generate first");
-    return;
+  if(!el) return alert("Generate first");
+
+  // FREE users blocked
+  if(!isPro){
+    return alert("Upgrade to PRO to download PDF");
   }
 
   html2pdf().from(el).save("resume.pdf");
