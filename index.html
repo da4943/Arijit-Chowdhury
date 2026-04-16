@@ -32,15 +32,19 @@
 
     .social button{
       margin-left:10px;
-      padding:10px 14px;
+      padding:10px;
       border-radius:8px;
       border:none;
-      font-weight:bold;
       cursor:pointer;
     }
 
-    .google{background:white;color:black}
-    .linkedin{background:#0a66c2;color:white}
+    .social img{
+      width:22px;
+      height:22px;
+    }
+
+    .google{background:white}
+    .linkedin{background:#0a66c2}
 
     .container{
       max-width:1000px;
@@ -83,7 +87,6 @@
     }
 
     .btn-pdf{background:#f59e0b}
-    .btn-clear{background:#ef4444}
 
     .premium{
       text-align:center;
@@ -126,8 +129,19 @@
   <div class="logo">AOV AI Resume</div>
 
   <div class="social">
-    <button class="google" onclick="openGoogleJobs()">Google</button>
-    <button class="linkedin" onclick="openLinkedIn()">LinkedIn</button>
+    <!-- GOOGLE ICON ONLY -->
+    <a href="https://www.google.com/search?q=jobs" target="_blank">
+      <button class="google">
+        <img src="https://cdn-icons-png.flaticon.com/512/2991/2991148.png">
+      </button>
+    </a>
+
+    <!-- LINKEDIN ICON ONLY -->
+    <a href="https://www.linkedin.com/jobs/" target="_blank">
+      <button class="linkedin">
+        <img src="https://cdn-icons-png.flaticon.com/512/174/174857.png">
+      </button>
+    </a>
   </div>
 </div>
 
@@ -140,13 +154,13 @@
 
   <div class="card premium">
     <h2>💎 Premium Unlock ₹200</h2>
-    <p id="premiumText">Get Pro Templates + HD PDF Export</p>
+    <p>Get Pro Templates + HD PDF Export</p>
 
     <img class="qr"
       src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=upi://pay?pa=yourupi@bank&pn=AOV%20AI&am=200&cu=INR"
     />
 
-    <button onclick="unlockPremium()">I Paid ₹200</button>
+    <p>Scan & Pay via UPI</p>
   </div>
 
   <div class="card">
@@ -167,7 +181,6 @@
 
     <button onclick="generate()">Generate Resume</button>
     <button class="btn-pdf" onclick="downloadPDF()">Download PDF</button>
-    <button class="btn-clear" onclick="clearData()">Clear Data</button>
   </div>
 
   <div class="card">
@@ -178,68 +191,6 @@
 
 <script>
 
-/* GOOGLE JOB SEARCH */
-function openGoogleJobs(){
-  const query = name.value || "jobs near me";
-  window.open("https://www.google.com/search?q=" + query + "+jobs", "_blank");
-}
-
-/* LINKEDIN */
-function openLinkedIn(){
-  window.open("https://www.linkedin.com/jobs/", "_blank");
-}
-
-/* PREMIUM SYSTEM */
-function unlockPremium(){
-  localStorage.setItem("premium", "true");
-  document.getElementById("premiumText").innerHTML = "✅ Premium Activated";
-  alert("Premium Unlocked ✔");
-}
-
-/* CHECK PREMIUM */
-window.onload = function(){
-  const data = JSON.parse(localStorage.getItem("resumeData"));
-  if(data){
-    name.value = data.name || "";
-    age.value = data.age || "";
-    qualification.value = data.qualification || "";
-    experience.value = data.experience || "";
-    skills.value = data.skills || "";
-    about.value = data.about || "";
-    photo.value = data.photo || "";
-    declaration.value = data.declaration || "";
-    signature.value = data.signature || "";
-  }
-
-  if(localStorage.getItem("premium") === "true"){
-    document.getElementById("premiumText").innerHTML = "✅ Premium Activated";
-  }
-}
-
-/* AUTO SAVE */
-function saveData(){
-  localStorage.setItem("resumeData", JSON.stringify({
-    name: name.value,
-    age: age.value,
-    qualification: qualification.value,
-    experience: experience.value,
-    skills: skills.value,
-    about: about.value,
-    photo: photo.value,
-    declaration: declaration.value,
-    signature: signature.value
-  }));
-}
-
-document.addEventListener("input", saveData);
-
-/* CLEAR DATA */
-function clearData(){
-  localStorage.clear();
-  location.reload();
-}
-
-/* GENERATE */
 function generate(){
   document.getElementById("resume").innerHTML = `
     <div class="resume-box" id="resumeBox">
@@ -265,7 +216,6 @@ function generate(){
   `;
 }
 
-/* PDF */
 function downloadPDF(){
   const el = document.getElementById("resumeBox");
 
