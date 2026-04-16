@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>AOV AI Resume SaaS</title>
+  <title>AOV AI Resume SaaS FIXED</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <!-- Firebase -->
@@ -46,7 +46,7 @@
 
     .title{
       text-align:center;
-      font-size:22px;
+      font-size:20px;
       font-weight:bold;
     }
 
@@ -92,12 +92,11 @@
 
 <script>
 
-/* ===== SAFETY ERROR LOG ===== */
 window.onerror = function(e){
   console.log("ERROR:", e);
 };
 
-/* ===== FIREBASE CONFIG (REPLACE THIS) ===== */
+/* FIREBASE CONFIG (REPLACE THIS) */
 const firebaseConfig = {
   apiKey: "YOUR_API_KEY",
   authDomain: "YOUR_PROJECT.firebaseapp.com",
@@ -105,7 +104,6 @@ const firebaseConfig = {
   appId: "YOUR_APP_ID"
 };
 
-/* INIT */
 firebase.initializeApp(firebaseConfig);
 
 const auth = firebase.auth();
@@ -113,7 +111,7 @@ const db = firebase.firestore();
 
 let user = null;
 
-/* ===== UI CONTROL ===== */
+/* UI */
 function showLogin(){
   document.getElementById("loginBox").style.display="block";
   document.getElementById("form").classList.add("hidden");
@@ -124,69 +122,87 @@ function showApp(){
   document.getElementById("form").classList.remove("hidden");
 }
 
-/* ===== AUTH STATE ===== */
+/* AUTH */
 auth.onAuthStateChanged(u=>{
+  user = u;
   if(u){
-    user = u;
     showApp();
   } else {
     showLogin();
   }
 });
 
-/* ===== LOGIN FIX (MOBILE + LAPTOP SAFE) ===== */
+/* LOGIN FIX (MOBILE + LAPTOP SAFE) */
 function login(){
   const provider = new firebase.auth.GoogleAuthProvider();
 
-  auth.signInWithPopup(provider)
+  firebase.auth().signInWithPopup(provider)
+  .then(res=>{
+    user = res.user;
+    showApp();
+  })
   .catch(err=>{
     console.log(err);
 
     if(err.code === "auth/popup-blocked"){
-      auth.signInWithRedirect(provider);
+      firebase.auth().signInWithRedirect(provider);
     }
 
     if(err.code === "auth/unauthorized-domain"){
-      alert("Add your domain in Firebase Authorized Domains");
+      alert("Add your Vercel domain in Firebase Authorized Domains");
     }
   });
 }
 
-/* ===== GENERATE ===== */
+/* GENERATE RESUME */
 function generate(){
+
+  const name = document.getElementById("name").value;
+  const age = document.getElementById("age").value;
+  const qualification = document.getElementById("qualification").value;
+  const experience = document.getElementById("experience").value;
+  const skills = document.getElementById("skills").value;
+  const about = document.getElementById("about").value;
+  const photo = document.getElementById("photo").value;
+  const declaration = document.getElementById("declaration").value;
+  const signature = document.getElementById("signature").value;
+
   document.getElementById("resume").innerHTML = `
     <div class="resume-box" id="resumeBox">
 
       <center>
-        <img src="${photo.value}" width="90" style="border-radius:50%">
-        <h2>${name.value}</h2>
+        <img src="${photo}" width="90" style="border-radius:50%">
+        <h2>${name}</h2>
       </center>
 
-      <p><b>Age:</b> ${age.value}</p>
-      <p><b>Qualification:</b> ${qualification.value}</p>
-      <p><b>Experience:</b> ${experience.value}</p>
-      <p><b>Skills:</b> ${skills.value}</p>
-      <p><b>About:</b> ${about.value}</p>
+      <p><b>Age:</b> ${age}</p>
+      <p><b>Qualification:</b> ${qualification}</p>
+      <p><b>Experience:</b> ${experience}</p>
+      <p><b>Skills:</b> ${skills}</p>
+      <p><b>About:</b> ${about}</p>
 
       <hr>
 
-      <p><b>Declaration:</b> ${declaration.value}</p>
-      <p><b>Signature:</b> ${signature.value}</p>
+      <p><b>Declaration:</b> ${declaration}</p>
+      <p><b>Signature:</b> ${signature}</p>
       <p><b>Date:</b> ${new Date().toLocaleDateString()}</p>
 
     </div>
   `;
 }
 
-/* ===== SAVE ===== */
+/* SAVE */
 function save(){
+
   if(!user){
     alert("Login first");
     return;
   }
 
+  const name = document.getElementById("name").value;
+
   db.collection("resumes").add({
-    name: name.value,
+    name: name,
     email: user.email,
     time: Date.now()
   });
@@ -194,7 +210,7 @@ function save(){
   alert("Saved ✔");
 }
 
-/* ===== PDF ===== */
+/* PDF */
 function downloadPDF(){
   const el = document.getElementById("resumeBox");
   if(!el){
