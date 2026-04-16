@@ -1,8 +1,10 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>AOV AI Resume SaaS</title>
+  <title>AOV AI Resume Builder PRO</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
   <style>
     body{
@@ -17,21 +19,20 @@
       display:flex;
       justify-content:space-between;
       padding:15px;
-      background:linear-gradient(90deg,#ff9933,#ffffff,#138808);
-      color:black;
-      font-weight:bold;
+      background:#111827;
       position:sticky;
       top:0;
     }
 
     .nav button{
-      margin:3px;
+      margin:5px;
       padding:8px 12px;
       border:none;
       border-radius:6px;
       cursor:pointer;
-      background:#111827;
-      color:white;
+      background:#38bdf8;
+      color:black;
+      font-weight:bold;
     }
 
     .container{
@@ -41,13 +42,13 @@
     }
 
     .card{
-      background:#111827;
+      background:#1f2937;
       padding:20px;
       border-radius:12px;
       margin:15px 0;
     }
 
-    input,button{
+    input,select,button{
       width:100%;
       padding:10px;
       margin-top:8px;
@@ -61,26 +62,21 @@
       cursor:pointer;
     }
 
-    .grid{
-      display:grid;
-      grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
-      gap:10px;
-    }
-
     .hidden{display:none}
 
     .resume{
       background:white;
       color:black;
-      padding:15px;
+      padding:20px;
       border-radius:10px;
     }
 
-    .qr{
-      text-align:center;
-      background:white;
+    .template{
+      border:2px solid #38bdf8;
       padding:10px;
       border-radius:10px;
+      margin:5px;
+      cursor:pointer;
     }
   </style>
 </head>
@@ -89,11 +85,11 @@
 
 <!-- NAV -->
 <div class="nav">
-  <div>AOV Resume SaaS 🇮🇳</div>
+  <div>AI Resume SaaS</div>
   <div>
     <button onclick="show('home')">Home</button>
     <button onclick="show('builder')">Builder</button>
-    <button onclick="show('premium')">Premium</button>
+    <button onclick="openLogin()">Login</button>
   </div>
 </div>
 
@@ -101,69 +97,122 @@
 
 <!-- HOME -->
 <div id="home" class="card">
-  <h2>Build Resume + Find Jobs</h2>
-  <p>Create professional CV and apply jobs instantly</p>
+  <h2>Create Professional Resume</h2>
+  <p>Full SaaS Resume Builder with templates</p>
+</div>
 
-  <button class="btn" onclick="show('builder')">Start Building</button>
-
-  <div class="grid">
-    <button onclick="window.open('https://www.google.com/search?q=jobs+near+me')">
-      🔍 Search Jobs on Google
-    </button>
-
-    <button onclick="window.open('https://www.linkedin.com/jobs')">
-      💼 Search Jobs on LinkedIn
-    </button>
-  </div>
+<!-- LOGIN -->
+<div id="loginBox" class="card hidden">
+  <h3>Login</h3>
+  <input id="email" placeholder="Email">
+  <input id="password" type="password" placeholder="Password">
+  <button class="btn" onclick="login()">Login</button>
 </div>
 
 <!-- BUILDER -->
 <div id="builder" class="card hidden">
+
   <h2>Resume Builder</h2>
 
+  <h3>Select Template</h3>
+  <div style="display:flex;gap:10px">
+    <div class="template" onclick="setTemplate(1)">Template 1</div>
+    <div class="template" onclick="setTemplate(2)">Template 2</div>
+    <div class="template" onclick="setTemplate(3)">Template 3</div>
+  </div>
+
   <input id="name" placeholder="Full Name">
+  <input id="email2" placeholder="Email">
+  <input id="phone" placeholder="Phone">
+  <input id="address" placeholder="Address">
   <input id="skills" placeholder="Skills">
-  <input id="exp" placeholder="Experience">
+  <input id="education" placeholder="Education">
+  <input id="experience" placeholder="Experience">
+  <input id="projects" placeholder="Projects">
 
   <button class="btn" onclick="generate()">Generate Resume</button>
 
   <div id="output"></div>
-</div>
 
-<!-- PREMIUM -->
-<div id="premium" class="card hidden">
-  <h2>Premium Unlock</h2>
-
-  <p>Scan QR to unlock premium features</p>
-
-  <div class="qr">
-    <img width="220"
-    src="https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=upi://pay?pa=9975076459@mbk&pn=AOV&am=199&cu=INR">
-
-    <p><b>UPI ID:</b> 9975076459@mbk</p>
-  </div>
-
-  <p>After payment, resume features will be upgraded manually.</p>
+  <button onclick="download()">Download PDF</button>
 </div>
 
 </div>
 
 <script>
 
+let template = 1;
+
+// NAV
 function show(id){
   document.querySelectorAll('.card').forEach(c=>c.classList.add('hidden'));
   document.getElementById(id).classList.remove('hidden');
 }
 
-// RESUME GENERATE
+// LOGIN FIXED
+function openLogin(){
+  document.getElementById('loginBox').classList.toggle('hidden');
+}
+
+function login(){
+  if(email.value && password.value){
+    localStorage.setItem("user", email.value);
+    alert("Logged in successfully");
+    document.getElementById('loginBox').classList.add('hidden');
+  } else {
+    alert("Enter details");
+  }
+}
+
+// TEMPLATE SELECT
+function setTemplate(t){
+  template = t;
+  alert("Template " + t + " selected");
+}
+
+// RESUME GENERATE (FULL DETAILS)
 function generate(){
-  document.getElementById("output").innerHTML = `
-    <div class="resume">
-      <h3>${name.value}</h3>
-      <p><b>Skills:</b> ${skills.value}</p>
-      <p><b>Experience:</b> ${exp.value}</p>
-    </div>
+
+  let style = "";
+
+  if(template === 1){
+    style = "border-left:5px solid #38bdf8;padding-left:10px;";
+  }
+
+  if(template === 2){
+    style = "text-align:center;border:2px solid black;padding:10px;";
+  }
+
+  if(template === 3){
+    style = "background:#f3f4f6;padding:10px;";
+  }
+
+  output.innerHTML = `
+  <div class="resume" style="${style}">
+    <h2>${name.value}</h2>
+    <p><b>Email:</b> ${email2.value}</p>
+    <p><b>Phone:</b> ${phone.value}</p>
+    <p><b>Address:</b> ${address.value}</p>
+    <hr>
+
+    <h3>Skills</h3>
+    <p>${skills.value}</p>
+
+    <h3>Education</h3>
+    <p>${education.value}</p>
+
+    <h3>Experience</h3>
+    <p>${experience.value}</p>
+
+    <h3>Projects</h3>
+    <p>${projects.value}</p>
+  </div>
   `;
+}
+
+// PDF DOWNLOAD
+function download(){
+  html2pdf().from(output).save("resume.pdf");
 }
 
 </script>
