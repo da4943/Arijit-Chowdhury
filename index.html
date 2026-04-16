@@ -125,7 +125,6 @@
   <div class="logo">AOV AI Resume</div>
 
   <div class="social">
-    <!-- ONLY CHANGE HERE -->
     <a href="https://www.google.com/search?q=jobs+near+me" target="_blank">
       <button class="google">Google</button>
     </a>
@@ -182,37 +181,71 @@
 
 <script>
 
+/* AUTO SAVE */
+function saveData(){
+  localStorage.setItem("resumeData", JSON.stringify({
+    name: name.value,
+    age: age.value,
+    qualification: qualification.value,
+    experience: experience.value,
+    skills: skills.value,
+    about: about.value,
+    photo: photo.value,
+    declaration: declaration.value,
+    signature: signature.value
+  }));
+}
+
+/* LOAD DATA */
+window.onload = function(){
+  const data = JSON.parse(localStorage.getItem("resumeData"));
+  if(data){
+    name.value = data.name || "";
+    age.value = data.age || "";
+    qualification.value = data.qualification || "";
+    experience.value = data.experience || "";
+    skills.value = data.skills || "";
+    about.value = data.about || "";
+    photo.value = data.photo || "";
+    declaration.value = data.declaration || "";
+    signature.value = data.signature || "";
+  }
+}
+
+/* AUTO SAVE ON INPUT */
+document.addEventListener("input", saveData);
+
 /* GENERATE */
 function generate(){
 
-  const name = document.getElementById("name").value;
-  const age = document.getElementById("age").value;
-  const qualification = document.getElementById("qualification").value;
-  const experience = document.getElementById("experience").value;
-  const skills = document.getElementById("skills").value;
-  const about = document.getElementById("about").value;
-  const photo = document.getElementById("photo").value;
-  const declaration = document.getElementById("declaration").value;
-  const signature = document.getElementById("signature").value;
+  const nameVal = name.value;
+  const ageVal = age.value;
+  const qualificationVal = qualification.value;
+  const experienceVal = experience.value;
+  const skillsVal = skills.value;
+  const aboutVal = about.value;
+  const photoVal = photo.value;
+  const declarationVal = declaration.value;
+  const signatureVal = signature.value;
 
   document.getElementById("resume").innerHTML = `
     <div class="resume-box" id="resumeBox">
 
       <center>
-        <img src="${photo}" width="100" style="border-radius:50%">
-        <h2>${name}</h2>
+        <img src="${photoVal}" width="100" style="border-radius:50%">
+        <h2>${nameVal}</h2>
       </center>
 
-      <p><b>Age:</b> ${age}</p>
-      <p><b>Qualification:</b> ${qualification}</p>
-      <p><b>Experience:</b> ${experience}</p>
-      <p><b>Skills:</b> ${skills}</p>
-      <p><b>About:</b> ${about}</p>
+      <p><b>Age:</b> ${ageVal}</p>
+      <p><b>Qualification:</b> ${qualificationVal}</p>
+      <p><b>Experience:</b> ${experienceVal}</p>
+      <p><b>Skills:</b> ${skillsVal}</p>
+      <p><b>About:</b> ${aboutVal}</p>
 
       <hr>
 
-      <p><b>Declaration:</b> ${declaration}</p>
-      <p><b>Signature:</b> ${signature}</p>
+      <p><b>Declaration:</b> ${declarationVal}</p>
+      <p><b>Signature:</b> ${signatureVal}</p>
       <p><b>Date:</b> ${new Date().toLocaleDateString()}</p>
 
     </div>
