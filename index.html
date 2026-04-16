@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>AOV Resume + Premium QR</title>
+  <title>AOV AI Resume PRO</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
@@ -10,30 +10,77 @@
     body{
       margin:0;
       font-family:Arial;
-      background:#0b1220;
+      background:linear-gradient(135deg,#050816,#0b1220);
       color:white;
     }
 
-    .container{
-      max-width:900px;
-      margin:auto;
-      padding:10px;
+    /* TOP NAV */
+    .nav{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      padding:15px 20px;
+      background:#0f172a;
+      position:sticky;
+      top:0;
     }
 
+    .logo{
+      font-size:20px;
+      font-weight:bold;
+      color:#38bdf8;
+    }
+
+    .social button{
+      margin-left:10px;
+      padding:10px 14px;
+      border-radius:8px;
+      border:none;
+      font-weight:bold;
+      cursor:pointer;
+    }
+
+    .google{background:white;color:black}
+    .linkedin{background:#0a66c2;color:white}
+
+    /* MAIN CONTAINER */
+    .container{
+      max-width:1000px;
+      margin:auto;
+      padding:15px;
+    }
+
+    /* HERO */
+    .hero{
+      text-align:center;
+      padding:25px;
+    }
+
+    .hero h1{
+      font-size:28px;
+      color:#38bdf8;
+    }
+
+    .hero p{
+      opacity:0.8;
+    }
+
+    /* CARD */
     .card{
-      padding:20px;
-      margin:10px 0;
       background:#111827;
-      border-radius:12px;
+      padding:20px;
+      margin-top:15px;
+      border-radius:15px;
+      box-shadow:0 0 20px rgba(0,0,0,0.4);
     }
 
     input,button{
       width:100%;
       padding:12px;
       margin-top:10px;
-      border-radius:8px;
+      border-radius:10px;
       border:none;
-      font-size:16px;
+      font-size:15px;
       box-sizing:border-box;
     }
 
@@ -41,89 +88,118 @@
       background:#38bdf8;
       font-weight:bold;
       cursor:pointer;
+      transition:0.3s;
     }
 
-    /* 💎 PREMIUM */
-    .premium-box{
+    button:hover{
+      background:#0ea5e9;
+      transform:scale(1.02);
+    }
+
+    /* PREMIUM */
+    .premium{
       text-align:center;
       background:linear-gradient(45deg,#ffcc00,#ff8800);
       color:black;
       padding:25px;
       border-radius:15px;
-      box-shadow:0 0 20px #ffcc00;
     }
 
-    .premium-title{
-      font-size:22px;
-      font-weight:bold;
+    .premium h2{
+      font-size:24px;
     }
 
-    .premium-btn{
-      margin-top:15px;
-      padding:18px;
-      font-size:20px;
-      background:black;
-      color:white;
+    .qr{
+      margin-top:10px;
+      width:220px;
+      height:220px;
       border-radius:12px;
+      background:white;
+      padding:10px;
     }
 
+    /* RESUME */
     .resume-box{
       background:white;
       color:black;
       padding:20px;
-      border-radius:10px;
+      border-radius:12px;
     }
 
-    /* MOBILE */
-    @media (max-width:600px){
-      .premium-title{font-size:18px;}
-      .premium-btn{font-size:18px;}
+    /* GRID */
+    .grid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:15px;
+    }
+
+    @media(max-width:768px){
+      .grid{
+        grid-template-columns:1fr;
+      }
+
+      .hero h1{
+        font-size:22px;
+      }
     }
   </style>
 </head>
 
 <body>
 
+<!-- NAV -->
+<div class="nav">
+  <div class="logo">AOV AI Resume</div>
+
+  <div class="social">
+    <button class="google">Google</button>
+    <button class="linkedin">LinkedIn</button>
+  </div>
+</div>
+
 <div class="container">
 
-  <!-- 💎 PREMIUM SECTION -->
-  <div class="card premium-box">
+  <!-- HERO -->
+  <div class="hero">
+    <h1>Create Professional Resume in Seconds</h1>
+    <p>AI style resume builder • Free + Premium tools</p>
+  </div>
 
-    <div class="premium-title">💎 PREMIUM UNLOCK</div>
-    <div>Unlock All Features ₹200</div>
+  <!-- PREMIUM -->
+  <div class="card premium">
+    <h2>💎 Premium Unlock ₹200</h2>
+    <p>Get Pro Templates + PDF HD Export</p>
 
-    <img 
-      src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=upi://pay?pa=yourupi@bank&pn=AOV%20Resume&am=200&cu=INR"
-      style="margin-top:15px;width:200px;height:200px;border-radius:10px;background:white;padding:10px"
+    <img class="qr"
+      src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=upi://pay?pa=yourupi@bank&pn=AOV%20AI&am=200&cu=INR"
     />
 
-    <div style="margin-top:10px;font-size:14px">
-      Scan QR to pay ₹200
-    </div>
-
+    <p>Scan to Pay</p>
   </div>
 
   <!-- FORM -->
   <div class="card">
 
-    <h2>Resume Generator</h2>
+    <h2>Resume Builder</h2>
 
-    <input id="name" placeholder="Name">
-    <input id="age" placeholder="Age">
-    <input id="qualification" placeholder="Qualification">
-    <input id="experience" placeholder="Experience">
+    <div class="grid">
+      <input id="name" placeholder="Full Name">
+      <input id="age" placeholder="Age">
+      <input id="qualification" placeholder="Qualification">
+      <input id="experience" placeholder="Experience">
+    </div>
+
     <input id="skills" placeholder="Skills">
-    <input id="about" placeholder="About">
+    <input id="about" placeholder="About You">
     <input id="photo" placeholder="Photo URL">
     <input id="declaration" placeholder="Declaration">
     <input id="signature" placeholder="Signature">
 
     <button onclick="generate()">Generate Resume</button>
     <button onclick="downloadPDF()">Download PDF</button>
-
   </div>
 
-  <!-- RESUME -->
+  <!-- OUTPUT -->
   <div class="card">
     <div id="resume"></div>
   </div>
@@ -132,55 +208,42 @@
 
 <script>
 
-/* GENERATE RESUME */
+/* GENERATE */
 function generate(){
-
-  const data = {
-    name: document.getElementById("name").value,
-    age: document.getElementById("age").value,
-    qualification: document.getElementById("qualification").value,
-    experience: document.getElementById("experience").value,
-    skills: document.getElementById("skills").value,
-    about: document.getElementById("about").value,
-    photo: document.getElementById("photo").value,
-    declaration: document.getElementById("declaration").value,
-    signature: document.getElementById("signature").value
-  };
 
   document.getElementById("resume").innerHTML = `
     <div class="resume-box" id="resumeBox">
 
       <center>
-        <img src="${data.photo}" width="90" style="border-radius:50%">
-        <h2>${data.name}</h2>
+        <img src="${photo.value}" width="100" style="border-radius:50%">
+        <h2>${name.value}</h2>
       </center>
 
-      <p><b>Age:</b> ${data.age}</p>
-      <p><b>Qualification:</b> ${data.qualification}</p>
-      <p><b>Experience:</b> ${data.experience}</p>
-      <p><b>Skills:</b> ${data.skills}</p>
-      <p><b>About:</b> ${data.about}</p>
+      <p><b>Age:</b> ${age.value}</p>
+      <p><b>Qualification:</b> ${qualification.value}</p>
+      <p><b>Experience:</b> ${experience.value}</p>
+      <p><b>Skills:</b> ${skills.value}</p>
+      <p><b>About:</b> ${about.value}</p>
 
       <hr>
 
-      <p><b>Declaration:</b> ${data.declaration}</p>
-      <p><b>Signature:</b> ${data.signature}</p>
+      <p><b>Declaration:</b> ${declaration.value}</p>
+      <p><b>Signature:</b> ${signature.value}</p>
       <p><b>Date:</b> ${new Date().toLocaleDateString()}</p>
 
     </div>
   `;
 }
 
-/* PDF DOWNLOAD */
+/* PDF */
 function downloadPDF(){
   const el = document.getElementById("resumeBox");
-
   if(!el){
     alert("Generate resume first");
     return;
   }
 
-  html2pdf().from(el).save("resume.pdf");
+  html2pdf().from(el).save("AOV_Resume.pdf");
 }
 
 </script>
