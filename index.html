@@ -1,4 +1,8 @@
 <script>
+window.onerror = function(msg){
+  console.log("JS ERROR:", msg);
+};
+
 const firebaseConfig = {
   apiKey: "PASTE_YOUR_API_KEY",
   authDomain: "YOUR_PROJECT.firebaseapp.com",
@@ -35,29 +39,23 @@ auth.onAuthStateChanged((u) => {
   }
 });
 
-/* LOGIN FIXED (NO HANG VERSION) */
+/* LOGIN (MOBILE SAFE FIX) */
 function login(){
   const provider = new firebase.auth.GoogleAuthProvider();
-
-  auth.signInWithPopup(provider)
-    .then((result) => {
-      user = result.user;
-      showApp();
-    })
-    .catch((error) => {
-      console.log("LOGIN ERROR:", error);
-
-      // FIX DOMAIN ISSUE MESSAGE
-      if (error.code === "auth/unauthorized-domain") {
-        alert("Add your Vercel domain in Firebase Authorized Domains");
-      }
-
-      // FALLBACK
-      if (error.code === "auth/popup-blocked") {
-        auth.signInWithRedirect(provider);
-      }
-    });
+  firebase.auth().signInWithRedirect(provider);
 }
+
+/* HANDLE REDIRECT RESULT */
+auth.getRedirectResult()
+.then((result) => {
+  if (result && result.user) {
+    user = result.user;
+    showApp();
+  }
+})
+.catch((error) => {
+  console.log("LOGIN ERROR:", error);
+});
 
 /* GENERATE RESUME */
 function generate(){
