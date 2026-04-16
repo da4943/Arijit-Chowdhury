@@ -1,10 +1,8 @@
-
 <!DOCTYPE html>
 <html>
 <head>
   <title>AOV AI Jobs - Smart Resume Builder</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="AI Resume Builder - Create professional resumes instantly">
 
   <!-- Firebase -->
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
@@ -22,7 +20,6 @@
     .hidden{display:none}
     .resume{background:white;color:black;padding:20px;border-radius:10px}
     .center{text-align:center}
-    .header{font-size:22px;font-weight:bold;text-align:center;margin-bottom:10px}
     .footer{font-size:12px;text-align:center;margin-top:20px;color:#94a3b8}
   </style>
 </head>
@@ -31,7 +28,7 @@
 
 <div class="container">
 
-  <div class="header">AOV AI Resume Builder</div>
+  <h2 style="text-align:center">AOV AI Resume Builder</h2>
 
   <!-- LOGIN -->
   <div class="card" id="loginBox">
@@ -43,7 +40,7 @@
   <div id="app" class="hidden">
 
     <div class="card">
-      <h2>Create Your Resume</h2>
+      <h3>Create Resume</h3>
 
       <input id="name" placeholder="Full Name">
       <input id="father" placeholder="Father Name">
@@ -62,50 +59,43 @@
       <button onclick="downloadPDF()">Download PDF</button>
     </div>
 
-    <!-- PRICING -->
     <div class="card">
-      <h2>Premium Plan - ₹200</h2>
-      <p>Unlock advanced resume features & download premium templates</p>
-
-      <img width="160"
-      src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=upi://pay?pa=9975076459@mbk&pn=AOV&am=200&cu=INR">
-
+      <h3>Premium ₹200</h3>
       <input id="utr" placeholder="Enter UTR Number">
       <button onclick="pay()">Submit Payment</button>
     </div>
 
   </div>
 
-  <!-- FOOTER -->
   <div class="footer">
-    © 2026 AOV AI Jobs | Contact: carijit22@gmail.com <br>
-    <a href="terms.html" style="color:#38bdf8">Terms</a> |
-    <a href="privacy.html" style="color:#38bdf8">Privacy</a> |
-    <a href="refund.html" style="color:#38bdf8">Refund</a>
+    © 2026 AOV AI Jobs
   </div>
 
 </div>
 
 <script>
 
-// ✅ FULL CORRECT FIREBASE CONFIG (FIXED)
+// Firebase config
 const firebaseConfig = {
   apiKey: "AIzaSyBpJQ44k1gokp3sSZggyESC7HpvqssClEE",
   authDomain: "aov-ai-jobs-c697d.firebaseapp.com",
   projectId: "aov-ai-jobs-c697d",
   storageBucket: "aov-ai-jobs-c697d.firebasestorage.app",
   messagingSenderId: "898401199585",
-  appId: "1:898401199585:web:760d147b7d9b23e655dea0",
-  measurementId: "G-DM43LS8L6N"
+  appId: "1:898401199585:web:760d147b7d9b23e655dea0"
 };
 
-firebase.initializeApp(firebaseConfig);
+// Initialize Firebase safely
+if (!firebase.apps.length) {
+  firebase.initializeApp(firebaseConfig);
+}
 
 const auth = firebase.auth();
 const db = firebase.firestore();
 
 let user = null;
 
+// Auth state
 auth.onAuthStateChanged((u)=>{
   if(u){
     user = u;
@@ -117,41 +107,40 @@ auth.onAuthStateChanged((u)=>{
   }
 });
 
-// LOGIN
+// Login
 function googleLogin(){
   const provider = new firebase.auth.GoogleAuthProvider();
   auth.signInWithPopup(provider).catch(err=>{
-    alert("Login error: " + err.message);
+    alert(err.message);
   });
 }
 
-// RESUME
+// Resume
 function generateResume(){
-  const nameVal = document.getElementById("name").value;
-  const addressVal = document.getElementById("address").value;
-  const fatherVal = document.getElementById("father").value;
-  const ageVal = document.getElementById("age").value;
-  const genderVal = document.getElementById("gender").value;
-  const skillsVal = document.getElementById("skills").value;
-  const expVal = document.getElementById("exp").value;
+  const name = document.getElementById("name").value;
+  const father = document.getElementById("father").value;
+  const age = document.getElementById("age").value;
+  const gender = document.getElementById("gender").value;
+  const address = document.getElementById("address").value;
+  const skills = document.getElementById("skills").value;
+  const exp = document.getElementById("exp").value;
 
-  let html = `
-  <div id="resumeContent" class="resume">
-    <div class="center">
-      <h2>${nameVal}</h2>
-      <p>${addressVal}</p>
+  document.getElementById("resume").innerHTML = `
+    <div class="resume">
+      <div class="center">
+        <h2>${name}</h2>
+        <p>${address}</p>
+      </div>
+      <p><b>Father:</b> ${father}</p>
+      <p><b>Age:</b> ${age}</p>
+      <p><b>Gender:</b> ${gender}</p>
+      <p><b>Skills:</b> ${skills}</p>
+      <p><b>Experience:</b> ${exp}</p>
     </div>
-    <p><b>Father:</b> ${fatherVal}</p>
-    <p><b>Age:</b> ${ageVal}</p>
-    <p><b>Gender:</b> ${genderVal}</p>
-    <p><b>Skills:</b> ${skillsVal}</p>
-    <p><b>Experience:</b> ${expVal}</p>
-  </div>`;
-
-  document.getElementById("resume").innerHTML = html;
+  `;
 }
 
-// SAVE
+// Save
 function saveData(){
   if(!user){ alert("Login first"); return; }
 
@@ -163,7 +152,7 @@ function saveData(){
   alert("Saved ✔");
 }
 
-// PAYMENT
+// Payment
 function pay(){
   if(!user){ alert("Login first"); return; }
 
@@ -178,8 +167,8 @@ function pay(){
 
 // PDF
 function downloadPDF(){
-  let el = document.getElementById("resumeContent");
-  if(!el){alert("Generate first");return;}
+  let el = document.querySelector(".resume");
+  if(!el){ alert("Generate first"); return; }
   html2pdf().from(el).save("resume.pdf");
 }
 
