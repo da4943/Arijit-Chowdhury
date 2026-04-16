@@ -1,218 +1,165 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>AOV AI Resume Builder PRO</title>
+  <title>AI Resume SaaS PRO</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
 
   <style>
-    body{
-      margin:0;
-      font-family:Arial;
-      background:#0b1220;
-      color:white;
-    }
+    body{margin:0;font-family:Arial;background:#0b1220;color:white}
+    .nav{display:flex;justify-content:space-between;padding:15px;background:#111827}
+    .nav button{padding:8px;border:none;border-radius:6px;background:#38bdf8;font-weight:bold}
 
-    /* NAV */
-    .nav{
-      display:flex;
-      justify-content:space-between;
-      padding:15px;
-      background:#111827;
-      position:sticky;
-      top:0;
-    }
+    .container{max-width:1000px;margin:auto;padding:20px}
+    .card{background:#1f2937;padding:20px;border-radius:12px;margin:10px 0}
 
-    .nav button{
-      margin:5px;
-      padding:8px 12px;
-      border:none;
-      border-radius:6px;
-      cursor:pointer;
-      background:#38bdf8;
-      color:black;
-      font-weight:bold;
-    }
+    input,button{width:100%;padding:10px;margin-top:8px;border-radius:6px;border:none}
 
-    .container{
-      max-width:1000px;
-      margin:auto;
-      padding:20px;
-    }
-
-    .card{
-      background:#1f2937;
-      padding:20px;
-      border-radius:12px;
-      margin:15px 0;
-    }
-
-    input,select,button{
-      width:100%;
-      padding:10px;
-      margin-top:8px;
-      border-radius:6px;
-      border:none;
-    }
-
-    .btn{
-      background:#38bdf8;
-      font-weight:bold;
-      cursor:pointer;
-    }
-
-    .hidden{display:none}
-
-    .resume{
-      background:white;
-      color:black;
-      padding:20px;
-      border-radius:10px;
-    }
-
-    .template{
-      border:2px solid #38bdf8;
-      padding:10px;
-      border-radius:10px;
-      margin:5px;
-      cursor:pointer;
-    }
+    .resume{background:white;color:black;padding:15px;border-radius:10px}
   </style>
 </head>
 
 <body>
 
-<!-- NAV -->
 <div class="nav">
-  <div>AI Resume SaaS</div>
+  <div>AI Resume SaaS PRO</div>
   <div>
-    <button onclick="show('home')">Home</button>
-    <button onclick="show('builder')">Builder</button>
-    <button onclick="openLogin()">Login</button>
+    <button onclick="login()">Login</button>
   </div>
 </div>
 
 <div class="container">
 
-<!-- HOME -->
-<div id="home" class="card">
-  <h2>Create Professional Resume</h2>
-  <p>Full SaaS Resume Builder with templates</p>
+<!-- JOB LINKS -->
+<div class="card">
+  <h2>Find Jobs Instantly</h2>
+
+  <button onclick="window.open('https://www.google.com/search?q=jobs+near+me')">
+    🔍 Google Jobs Search
+  </button>
+
+  <button onclick="window.open('https://www.linkedin.com/jobs')">
+    💼 LinkedIn Jobs
+  </button>
 </div>
 
-<!-- LOGIN -->
-<div id="loginBox" class="card hidden">
-  <h3>Login</h3>
-  <input id="email" placeholder="Email">
-  <input id="password" type="password" placeholder="Password">
-  <button class="btn" onclick="login()">Login</button>
-</div>
-
-<!-- BUILDER -->
-<div id="builder" class="card hidden">
-
+<!-- RESUME BUILDER -->
+<div class="card">
   <h2>Resume Builder</h2>
 
-  <h3>Select Template</h3>
-  <div style="display:flex;gap:10px">
-    <div class="template" onclick="setTemplate(1)">Template 1</div>
-    <div class="template" onclick="setTemplate(2)">Template 2</div>
-    <div class="template" onclick="setTemplate(3)">Template 3</div>
-  </div>
-
   <input id="name" placeholder="Full Name">
-  <input id="email2" placeholder="Email">
   <input id="phone" placeholder="Phone">
-  <input id="address" placeholder="Address">
   <input id="skills" placeholder="Skills">
   <input id="education" placeholder="Education">
   <input id="experience" placeholder="Experience">
-  <input id="projects" placeholder="Projects">
 
-  <button class="btn" onclick="generate()">Generate Resume</button>
+  <button onclick="saveResume()">Save Resume</button>
+  <button onclick="generate()">Generate Preview</button>
 
   <div id="output"></div>
+  <button onclick="downloadPDF()">Download PDF</button>
+</div>
 
-  <button onclick="download()">Download PDF</button>
+<!-- PREMIUM -->
+<div class="card">
+  <h2>Premium Unlock</h2>
+
+  <img width="200"
+  src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=upi://pay?pa=9975076459@mbk&pn=AOV&am=199&cu=INR">
+
+  <p>UPI ID: 9975076459@mbk</p>
+
+  <button onclick="requestPremium()">I Have Paid</button>
 </div>
 
 </div>
 
 <script>
 
-let template = 1;
+// FIREBASE CONFIG
+const firebaseConfig = {
+  apiKey: "AIzaSyBpJQ44k1gokp3sSZggyESC7HpvqssClEE",
+  authDomain: "aov-ai-jobs-c697d.firebaseapp.com",
+  projectId: "aov-ai-jobs-c697d",
+  storageBucket: "aov-ai-jobs-c697d.firebasestorage.app",
+  messagingSenderId: "898401199585",
+  appId: "1:898401199585:web:760d147b7d9b23e655dea0"
+};
 
-// NAV
-function show(id){
-  document.querySelectorAll('.card').forEach(c=>c.classList.add('hidden'));
-  document.getElementById(id).classList.remove('hidden');
-}
+firebase.initializeApp(firebaseConfig);
 
-// LOGIN FIXED
-function openLogin(){
-  document.getElementById('loginBox').classList.toggle('hidden');
-}
+const auth = firebase.auth();
+const db = firebase.firestore();
 
+let user = null;
+
+// LOGIN
 function login(){
-  if(email.value && password.value){
-    localStorage.setItem("user", email.value);
-    alert("Logged in successfully");
-    document.getElementById('loginBox').classList.add('hidden');
-  } else {
-    alert("Enter details");
-  }
+  const provider = new firebase.auth.GoogleAuthProvider();
+
+  auth.signInWithPopup(provider).then(res=>{
+    user = res.user;
+
+    db.collection("users").doc(user.uid).set({
+      email: user.email,
+      premium: false,
+      createdAt: Date.now()
+    }, {merge:true});
+
+    alert("Logged in");
+  });
 }
 
-// TEMPLATE SELECT
-function setTemplate(t){
-  template = t;
-  alert("Template " + t + " selected");
+// SAVE RESUME
+function saveResume(){
+  if(!user){ alert("Login first"); return; }
+
+  db.collection("resumes").doc(user.uid).set({
+    name: name.value,
+    phone: phone.value,
+    skills: skills.value,
+    education: education.value,
+    experience: experience.value,
+    email: user.email,
+    createdAt: Date.now()
+  });
+
+  alert("Resume saved to cloud ✔");
 }
 
-// RESUME GENERATE (FULL DETAILS)
+// GENERATE
 function generate(){
-
-  let style = "";
-
-  if(template === 1){
-    style = "border-left:5px solid #38bdf8;padding-left:10px;";
-  }
-
-  if(template === 2){
-    style = "text-align:center;border:2px solid black;padding:10px;";
-  }
-
-  if(template === 3){
-    style = "background:#f3f4f6;padding:10px;";
-  }
-
   output.innerHTML = `
-  <div class="resume" style="${style}">
-    <h2>${name.value}</h2>
-    <p><b>Email:</b> ${email2.value}</p>
-    <p><b>Phone:</b> ${phone.value}</p>
-    <p><b>Address:</b> ${address.value}</p>
-    <hr>
-
-    <h3>Skills</h3>
-    <p>${skills.value}</p>
-
-    <h3>Education</h3>
-    <p>${education.value}</p>
-
-    <h3>Experience</h3>
-    <p>${experience.value}</p>
-
-    <h3>Projects</h3>
-    <p>${projects.value}</p>
-  </div>
+    <div class="resume">
+      <h2>${name.value}</h2>
+      <p>${phone.value}</p>
+      <p>${skills.value}</p>
+      <p>${education.value}</p>
+      <p>${experience.value}</p>
+    </div>
   `;
 }
 
-// PDF DOWNLOAD
-function download(){
+// PDF
+function downloadPDF(){
   html2pdf().from(output).save("resume.pdf");
+}
+
+// PREMIUM REQUEST
+function requestPremium(){
+  if(!user){ alert("Login first"); return; }
+
+  db.collection("payments").doc(user.uid).set({
+    email:user.email,
+    status:"pending"
+  });
+
+  alert("Payment submitted (manual approval)");
 }
 
 </script>
