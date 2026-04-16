@@ -15,18 +15,18 @@ let user = null;
 
 /* UI */
 function showLogin(){
-  document.getElementById("loginBox").style.display="block";
+  document.getElementById("loginBox").style.display = "block";
   document.getElementById("form").classList.add("hidden");
 }
 
 function showApp(){
-  document.getElementById("loginBox").style.display="none";
+  document.getElementById("loginBox").style.display = "none";
   document.getElementById("form").classList.remove("hidden");
 }
 
 /* AUTH STATE */
-auth.onAuthStateChanged((u)=>{
-  if(u){
+auth.onAuthStateChanged((u) => {
+  if (u) {
     user = u;
     showApp();
   } else {
@@ -35,25 +35,29 @@ auth.onAuthStateChanged((u)=>{
   }
 });
 
-/* LOGIN (FIXED - NO HANG) */
+/* LOGIN FIXED (NO HANG VERSION) */
 function login(){
   const provider = new firebase.auth.GoogleAuthProvider();
-  auth.signInWithRedirect(provider);
-}
 
-/* HANDLE REDIRECT RESULT */
-window.addEventListener("load", () => {
-  auth.getRedirectResult()
-  .then((result) => {
-    if(result && result.user){
+  auth.signInWithPopup(provider)
+    .then((result) => {
       user = result.user;
       showApp();
-    }
-  })
-  .catch((error) => {
-    console.log("Login error:", error);
-  });
-});
+    })
+    .catch((error) => {
+      console.log("LOGIN ERROR:", error);
+
+      // FIX DOMAIN ISSUE MESSAGE
+      if (error.code === "auth/unauthorized-domain") {
+        alert("Add your Vercel domain in Firebase Authorized Domains");
+      }
+
+      // FALLBACK
+      if (error.code === "auth/popup-blocked") {
+        auth.signInWithRedirect(provider);
+      }
+    });
+}
 
 /* GENERATE RESUME */
 function generate(){
@@ -113,6 +117,7 @@ function save(){
 /* PDF */
 function downloadPDF(){
   const el = document.getElementById("resumeBox");
+
   if(!el){
     alert("Generate first");
     return;
