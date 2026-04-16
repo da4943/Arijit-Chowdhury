@@ -1,12 +1,14 @@
 <script>
 
+window.onload = function () {
+
+/* FIREBASE SAFE INIT */
 const firebaseConfig = {
   apiKey: "YOUR_KEY",
   authDomain: "YOUR_DOMAIN",
   projectId: "YOUR_ID"
 };
 
-/* SAFE INIT */
 if (!firebase.apps.length) {
   firebase.initializeApp(firebaseConfig);
 }
@@ -16,97 +18,89 @@ const db = firebase.firestore();
 
 let user = null;
 
-/* UI CONTROL */
+/* UI */
 function showApp(){
-  document.getElementById("loginBox").style.display="none";
-  document.getElementById("form").classList.remove("hidden");
+  const loginBox = document.getElementById("loginBox");
+  const form = document.getElementById("form");
+
+  if(loginBox) loginBox.style.display = "none";
+  if(form) form.classList.remove("hidden");
 }
 
 function showLogin(){
-  document.getElementById("loginBox").style.display="block";
-  document.getElementById("form").classList.add("hidden");
+  const loginBox = document.getElementById("loginBox");
+  const form = document.getElementById("form");
+
+  if(loginBox) loginBox.style.display = "block";
+  if(form) form.classList.add("hidden");
 }
 
-/* AUTH STATE */
+/* AUTH */
 auth.onAuthStateChanged((u)=>{
-  if(u){
-    user = u;
-    showApp();
-  } else {
-    user = null;
-    showLogin();
-  }
+  user = u;
+
+  if(user) showApp();
+  else showLogin();
 });
 
-/* GOOGLE LOGIN (FIXED) */
-function login(){
+/* LOGIN */
+window.login = function(){
   const provider = new firebase.auth.GoogleAuthProvider();
 
   auth.signInWithPopup(provider)
-  .then((result)=>{
-    user = result.user;
+  .then(res=>{
+    user = res.user;
     showApp();
   })
-  .catch((err)=>{
-
+  .catch(err=>{
     console.log(err);
 
-    // fallback if popup blocked
     if(err.code === "auth/popup-blocked"){
       auth.signInWithRedirect(provider);
     } else {
       alert("Login failed: " + err.message);
     }
-
   });
 }
 
-/* RESUME GENERATOR (SAFE DOM ACCESS) */
-function generate(){
+/* RESUME */
+window.generate = function(){
 
-  const data = {
-    name: document.getElementById("name").value,
-    age: document.getElementById("age").value,
-    qualification: document.getElementById("qualification").value,
-    experience: document.getElementById("experience").value,
-    skills: document.getElementById("skills").value,
-    about: document.getElementById("about").value,
-    photo: document.getElementById("photo").value,
-    declaration: document.getElementById("declaration").value,
-    signature: document.getElementById("signature").value
-  };
+  const get = (id)=> document.getElementById(id)?.value || "";
 
   document.getElementById("resume").innerHTML = `
     <div class="resumeBox" id="resumeBox">
+
       <div style="text-align:center">
-        <img src="${data.photo}" width="100" style="border-radius:50%">
-        <h2>${data.name}</h2>
+        <img src="${get("photo")}" width="100" style="border-radius:50%">
+        <h2>${get("name")}</h2>
       </div>
 
-      <p><b>Age:</b> ${data.age}</p>
-      <p><b>Qualification:</b> ${data.qualification}</p>
-      <p><b>Experience:</b> ${data.experience}</p>
-      <p><b>Skills:</b> ${data.skills}</p>
-      <p><b>About:</b> ${data.about}</p>
+      <p><b>Age:</b> ${get("age")}</p>
+      <p><b>Qualification:</b> ${get("qualification")}</p>
+      <p><b>Experience:</b> ${get("experience")}</p>
+      <p><b>Skills:</b> ${get("skills")}</p>
+      <p><b>About:</b> ${get("about")}</p>
 
       <hr>
 
-      <p><b>Declaration:</b> ${data.declaration}</p>
-      <p><b>Signature:</b> ${data.signature}</p>
+      <p><b>Declaration:</b> ${get("declaration")}</p>
+      <p><b>Signature:</b> ${get("signature")}</p>
       <p><b>Date:</b> ${new Date().toLocaleDateString()}</p>
+
     </div>
   `;
 }
 
 /* SAVE */
-function save(){
+window.save = function(){
   if(!user){
     alert("Login first");
     return;
   }
 
   db.collection("resumes").add({
-    name: document.getElementById("name").value,
+    name: document.getElementById("name")?.value || "",
     email: user.email,
     createdAt: Date.now()
   });
@@ -115,15 +109,17 @@ function save(){
 }
 
 /* PDF */
-function downloadPDF(){
+window.downloadPDF = function(){
   const el = document.getElementById("resumeBox");
 
   if(!el){
-    alert("Generate first");
+    alert("Generate resume first");
     return;
   }
 
   html2pdf().from(el).save("resume.pdf");
 }
 
-</script>
+}; // end window.onload
+
+</script> 
