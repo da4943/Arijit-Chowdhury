@@ -57,7 +57,7 @@
     <img id="upiQR" width="200"
       src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=upi://pay?pa=yourupi@bank&pn=AOV%20AI&am=200&cu=INR">
 
-    <!-- PAYPAL BUTTON -->
+    <!-- PAYPAL -->
     <a id="paypalBtn" href="https://www.paypal.com/paypalme/aovai/20" target="_blank" style="display:none;">
       <button>Pay $20 (International)</button>
     </a>
@@ -101,12 +101,16 @@
 let photoData="";
 let isPremium = localStorage.getItem("premium") === "yes";
 let userCountry = "IN";
+let testMode = false; // 👉 change to true for testing PayPal
 
 /* COUNTRY DETECT */
 fetch("https://ipapi.co/json/")
 .then(res => res.json())
 .then(data => {
   userCountry = data.country;
+  updatePaymentUI();
+})
+.catch(()=>{
   updatePaymentUI();
 });
 
@@ -116,7 +120,7 @@ function updatePaymentUI(){
   const paypal = document.getElementById("paypalBtn");
   const price = document.getElementById("priceText");
 
-  if(userCountry === "IN"){
+  if(userCountry === "IN" && !testMode){
     qr.style.display = "block";
     paypal.style.display = "none";
     price.innerText = "💎 Unlock Premium ₹200";
