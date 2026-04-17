@@ -48,7 +48,7 @@
     <h1>Create Professional Resume in Seconds</h1>
   </div>
 
-  <!-- 💎 PREMIUM -->
+  <!-- PREMIUM -->
   <div class="card">
     <h2 id="priceText">💎 Unlock Premium ₹200</h2>
     <p>Scan & Pay to enable PDF + Image Download</p>
@@ -60,16 +60,20 @@
       <button>Pay $20 (International)</button>
     </a>
 
-    <!-- VERIFY INPUT (NO DESIGN BREAK) -->
     <input id="txn" placeholder="Enter Payment ID / Email">
-
     <button onclick="verifyPayment()">I Paid</button>
   </div>
 
-  <!-- EARNINGS -->
-  <div class="card">
+  <!-- 🔒 HIDDEN EARNINGS -->
+  <div class="card" id="earnCard" style="display:none;">
     <h3>Total Earnings</h3>
     <p id="earningsText">₹0</p>
+  </div>
+
+  <!-- SECRET ACCESS -->
+  <div class="card">
+    <input id="adminPin" placeholder="Enter Admin PIN">
+    <button onclick="unlockAdmin()">View Earnings</button>
   </div>
 
   <div class="card">
@@ -108,85 +112,73 @@
 let photoData="";
 let isPremium = localStorage.getItem("premium") === "yes";
 let userCountry = "IN";
+const ADMIN_PIN = "1234"; // 🔑 change this
 
-/* COUNTRY DETECT */
+/* COUNTRY */
 fetch("https://ipapi.co/json/")
-.then(res => res.json())
-.then(data => {
-  userCountry = data.country;
+.then(res=>res.json())
+.then(data=>{
+  userCountry=data.country;
   updatePaymentUI();
-  showEarnings();
 })
-.catch(()=>{
-  updatePaymentUI();
-  showEarnings();
-});
+.catch(()=>updatePaymentUI());
 
-/* PAYMENT UI */
 function updatePaymentUI(){
-  const qr = document.getElementById("upiQR");
-  const paypal = document.getElementById("paypalBtn");
-  const price = document.getElementById("priceText");
-
-  if(userCountry === "IN"){
-    qr.style.display = "block";
-    paypal.style.display = "none";
-    price.innerText = "💎 Unlock Premium ₹200";
+  if(userCountry==="IN"){
+    upiQR.style.display="block";
+    paypalBtn.style.display="none";
+    priceText.innerText="💎 Unlock Premium ₹200";
   } else {
-    qr.style.display = "none";
-    paypal.style.display = "block";
-    price.innerText = "💎 Unlock Premium $20";
+    upiQR.style.display="none";
+    paypalBtn.style.display="block";
+    priceText.innerText="💎 Unlock Premium $20";
   }
 }
 
-/* VERIFY PAYMENT */
+/* VERIFY */
 function verifyPayment(){
-  const txn = document.getElementById("txn").value;
-
-  if(!txn){
-    alert("Enter Payment ID or Email");
-    return;
-  }
+  const txn=document.getElementById("txn").value;
+  if(!txn){alert("Enter Payment ID");return;}
 
   localStorage.setItem("premium","yes");
-  isPremium = true;
+  isPremium=true;
 
-  let total = Number(localStorage.getItem("earnings") || 0);
+  let total=Number(localStorage.getItem("earnings")||0);
+  total += (userCountry==="IN") ? 200 : 20;
+  localStorage.setItem("earnings",total);
 
-  if(userCountry === "IN"){
-    total += 200;
+  alert("Premium Unlocked ✔");
+}
+
+/* ADMIN VIEW */
+function unlockAdmin(){
+  const pin=document.getElementById("adminPin").value;
+
+  if(pin===ADMIN_PIN){
+    document.getElementById("earnCard").style.display="block";
+    showEarnings();
   } else {
-    total += 20;
+    alert("Wrong PIN");
   }
-
-  localStorage.setItem("earnings", total);
-
-  alert("Payment Verified ✔ Premium Unlocked");
-  showEarnings();
 }
 
 /* SHOW EARNINGS */
 function showEarnings(){
-  let total = Number(localStorage.getItem("earnings") || 0);
-
-  if(userCountry === "IN"){
-    document.getElementById("earningsText").innerText = "₹" + total;
-  } else {
-    document.getElementById("earningsText").innerText = "$" + total;
-  }
+  let total=Number(localStorage.getItem("earnings")||0);
+  earningsText.innerText = (userCountry==="IN"?"₹":"$") + total;
 }
 
 /* PHOTO */
-document.getElementById("photoUpload").addEventListener("change",e=>{
-  const reader=new FileReader();
-  reader.onload=()=>photoData=reader.result;
-  if(e.target.files[0]) reader.readAsDataURL(e.target.files[0]);
+photoUpload.addEventListener("change",e=>{
+  const r=new FileReader();
+  r.onload=()=>photoData=r.result;
+  if(e.target.files[0]) r.readAsDataURL(e.target.files[0]);
 });
 
-/* CHECK PREMIUM */
+/* CHECK */
 function checkPremium(){
   if(!isPremium){
-    alert(userCountry === "IN" ? "Please pay ₹200" : "Please pay $20");
+    alert(userCountry==="IN"?"Pay ₹200":"Pay $20");
     return false;
   }
   return true;
@@ -194,50 +186,40 @@ function checkPremium(){
 
 /* GENERATE */
 function generate(){
-  document.getElementById("resume").innerHTML = `
-    <div class="resume-box" id="resumeBox">
-      <center>
-        ${photoData?`<img src="${photoData}" width="100" style="border-radius:50%">`:""}
-        <h2>${name.value}</h2>
-        <p>${qualification.value}</p>
-      </center>
-
-      <hr>
-
-      <p><b>Experience:</b> ${experience.value}</p>
-      <p><b>Skills:</b> ${skills.value}</p>
-      <p><b>Hobbies:</b> ${hobbies.value}</p>
-
-      <h3>About</h3>
-      <p>${about.value}</p>
-
-      <hr>
-
-      <p><b>Declaration:</b> ${declaration.value}</p>
-      <p><b>Signature:</b> ${signature.value}</p>
-      <p><b>Date:</b> ${new Date().toLocaleDateString()}</p>
-    </div>
-  `;
+  resume.innerHTML=`
+  <div class="resume-box" id="resumeBox">
+    <center>
+      ${photoData?`<img src="${photoData}" width="100" style="border-radius:50%">`:""}
+      <h2>${name.value}</h2>
+      <p>${qualification.value}</p>
+    </center>
+    <hr>
+    <p><b>Experience:</b> ${experience.value}</p>
+    <p><b>Skills:</b> ${skills.value}</p>
+    <p><b>Hobbies:</b> ${hobbies.value}</p>
+    <h3>About</h3>
+    <p>${about.value}</p>
+    <hr>
+    <p><b>Declaration:</b> ${declaration.value}</p>
+    <p><b>Signature:</b> ${signature.value}</p>
+    <p><b>Date:</b> ${new Date().toLocaleDateString()}</p>
+  </div>`;
 }
 
 /* PDF */
 function downloadPDF(){
-  if(!checkPremium()) return;
-  const el=document.getElementById("resumeBox");
-  if(!el){alert("Generate first");return;}
-  html2pdf().from(el).save("resume.pdf");
+  if(!checkPremium())return;
+  html2pdf().from(resumeBox).save("resume.pdf");
 }
 
 /* IMAGE */
 function downloadImage(){
-  if(!checkPremium()) return;
-  const el=document.getElementById("resumeBox");
-  if(!el){alert("Generate first");return;}
-  html2canvas(el).then(canvas=>{
-    let link=document.createElement("a");
-    link.download="resume.png";
-    link.href=canvas.toDataURL();
-    link.click();
+  if(!checkPremium())return;
+  html2canvas(resumeBox).then(c=>{
+    let a=document.createElement("a");
+    a.download="resume.png";
+    a.href=c.toDataURL();
+    a.click();
   });
 }
 
@@ -245,7 +227,7 @@ function downloadImage(){
 function clearData(){
   document.querySelectorAll("input").forEach(i=>i.value="");
   photoData="";
-  document.getElementById("resume").innerHTML="";
+  resume.innerHTML="";
 }
 
 </script>
