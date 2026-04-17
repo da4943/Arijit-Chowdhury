@@ -53,10 +53,12 @@
     <h2 id="priceText">💎 Unlock Premium ₹200</h2>
     <p>Scan & Pay to enable PDF + Image Download</p>
 
+    <!-- UPI -->
     <img id="upiQR" width="200"
       src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=upi://pay?pa=yourupi@bank&pn=AOV%20AI&am=200&cu=INR">
 
-    <a id="paypalBtn" href="#" target="_blank" style="display:none;">
+    <!-- PayPal -->
+    <a id="paypalBtn" href="https://www.paypal.com/paypalme/aovai/20" target="_blank" style="display:none;">
       <button>Pay $20 (International)</button>
     </a>
 
@@ -123,22 +125,8 @@ function updatePaymentUI(){
     qr.style.display = "none";
     paypal.style.display = "block";
     price.innerText = "💎 Unlock Premium $20";
-
-    /* PayPal Link */
-    paypal.href = "https://www.paypal.com/paypalme/aovai/20";
   }
 }
-
-/* AUTO RETURN CHECK (basic) */
-function checkAuto(){
-  const url = new URL(window.location.href);
-  if(url.searchParams.get("paid")==="true"){
-    localStorage.setItem("premium","yes");
-    isPremium = true;
-    alert("Payment Successful ✔");
-  }
-}
-checkAuto();
 
 /* VERIFY */
 function verifyPayment(){
