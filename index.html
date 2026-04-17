@@ -56,7 +56,6 @@
     <img id="upiQR" width="200"
       src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=upi://pay?pa=yourupi@bank&pn=AOV%20AI&am=200&cu=INR">
 
-    <!-- ✅ PayPal RETURN FIX -->
     <a id="paypalBtn" href="#" target="_blank" style="display:none;">
       <button>Pay $20 (International)</button>
     </a>
@@ -125,23 +124,21 @@ function updatePaymentUI(){
     paypal.style.display = "block";
     price.innerText = "💎 Unlock Premium $20";
 
-    /* ✅ AUTO RETURN LINK */
-    paypal.href = "https://www.paypal.com/paypalme/aovai/20?return_url=" + window.location.origin + "?paid=true";
+    /* PayPal Link */
+    paypal.href = "https://www.paypal.com/paypalme/aovai/20";
   }
 }
 
-/* ✅ AUTO UNLOCK AFTER RETURN */
-function checkAutoPayment(){
+/* AUTO RETURN CHECK (basic) */
+function checkAuto(){
   const url = new URL(window.location.href);
-
-  if(url.searchParams.get("paid") === "true"){
+  if(url.searchParams.get("paid")==="true"){
     localStorage.setItem("premium","yes");
     isPremium = true;
-    alert("Payment Successful ✔ Premium Unlocked");
+    alert("Payment Successful ✔");
   }
 }
-
-checkAutoPayment();
+checkAuto();
 
 /* VERIFY */
 function verifyPayment(){
@@ -150,10 +147,8 @@ function verifyPayment(){
     alert("Enter Payment ID or Email");
     return;
   }
-
   localStorage.setItem("premium","yes");
   isPremium = true;
-
   alert("Premium Unlocked ✔");
 }
 
