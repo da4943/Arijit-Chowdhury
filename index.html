@@ -56,7 +56,8 @@
     <img id="upiQR" width="200"
       src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=upi://pay?pa=yourupi@bank&pn=AOV%20AI&am=200&cu=INR">
 
-    <a id="paypalBtn" href="https://www.paypal.com/paypalme/aovai/20" target="_blank" style="display:none;">
+    <!-- ✅ PayPal RETURN FIX -->
+    <a id="paypalBtn" href="#" target="_blank" style="display:none;">
       <button>Pay $20 (International)</button>
     </a>
 
@@ -111,16 +112,36 @@ fetch("https://ipapi.co/json/")
 .catch(()=>updatePaymentUI());
 
 function updatePaymentUI(){
+  const qr = document.getElementById("upiQR");
+  const paypal = document.getElementById("paypalBtn");
+  const price = document.getElementById("priceText");
+
   if(userCountry === "IN"){
-    upiQR.style.display = "block";
-    paypalBtn.style.display = "none";
-    priceText.innerText = "💎 Unlock Premium ₹200";
+    qr.style.display = "block";
+    paypal.style.display = "none";
+    price.innerText = "💎 Unlock Premium ₹200";
   } else {
-    upiQR.style.display = "none";
-    paypalBtn.style.display = "block";
-    priceText.innerText = "💎 Unlock Premium $20";
+    qr.style.display = "none";
+    paypal.style.display = "block";
+    price.innerText = "💎 Unlock Premium $20";
+
+    /* ✅ AUTO RETURN LINK */
+    paypal.href = "https://www.paypal.com/paypalme/aovai/20?return_url=" + window.location.origin + "?paid=true";
   }
 }
+
+/* ✅ AUTO UNLOCK AFTER RETURN */
+function checkAutoPayment(){
+  const url = new URL(window.location.href);
+
+  if(url.searchParams.get("paid") === "true"){
+    localStorage.setItem("premium","yes");
+    isPremium = true;
+    alert("Payment Successful ✔ Premium Unlocked");
+  }
+}
+
+checkAutoPayment();
 
 /* VERIFY */
 function verifyPayment(){
