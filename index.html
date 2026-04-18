@@ -86,7 +86,6 @@
       color:black;
       padding:20px;
       border-radius:12px;
-      position:relative;
     }
 
     .grid{
@@ -97,6 +96,26 @@
 
     @media(max-width:768px){
       .grid{grid-template-columns:1fr}
+    }
+
+    .policy{
+      font-size:12px;
+      color:#bbb;
+      line-height:1.6;
+    }
+
+    .footer{
+      text-align:center;
+      padding:20px;
+      font-size:12px;
+      color:#888;
+      margin-top:20px;
+    }
+
+    .footer a{
+      color:#38bdf8;
+      text-decoration:none;
+      margin:0 5px;
     }
   </style>
 </head>
@@ -125,6 +144,7 @@
   <!-- PREMIUM -->
   <div class="card">
     <h2>💎 Unlock Premium ₹200</h2>
+    <p>Enable AI + Export Features</p>
 
     <img width="200"
       src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=upi://pay?pa=yourupi@bank&pn=AOV%20AI&am=200&cu=INR">
@@ -154,11 +174,9 @@
     <input id="signature" placeholder="Signature">
 
     <button onclick="generate()">Generate Resume</button>
-    <button onclick="askAI()">AI Improve Resume</button>
-    <button onclick="downloadPDF()">Download PDF</button>
+    <button onclick="downloadPDF()" class="btn-pdf">Download PDF</button>
     <button onclick="downloadImage()">Download Image</button>
-    <button onclick="downloadEuroPlusCV()">Europlus CV</button>
-    <button class="btn-clear" onclick="clearData()">Clear Data</button>
+    <button onclick="clearData()" class="btn-clear">Clear Data</button>
   </div>
 
   <!-- OUTPUT -->
@@ -166,115 +184,62 @@
     <div id="resume"></div>
   </div>
 
+  <!-- POLICY (FIXED FOR ADSENSE) -->
+  <div class="card policy" id="policy">
+
+    <h2>Privacy Policy</h2>
+    <p>We collect only user input data for resume generation. All data is stored locally in browser. We do not sell or share any personal data.</p>
+
+    <h2>Terms of Use</h2>
+    <p>This website provides resume creation tools for educational and professional use only. Misuse is strictly prohibited.</p>
+
+    <h2>About Us</h2>
+    <p>AOV AI Resume is an online resume builder tool that helps users create professional CVs instantly using smart formatting.</p>
+
+    <h2>Contact</h2>
+    <p>Email: support@aovairesume.com</p>
+
+  </div>
+
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+  © 2026 AOV AI Resume |
+  <a href="#policy">Privacy</a> |
+  <a href="#policy">Terms</a> |
+  <a href="#policy">Contact</a>
 </div>
 
 <script>
 
-/* ================= CORE ================= */
+let photoData="";
+let isPremium = localStorage.getItem("premium")==="yes";
+let resumeBox = null;
 
-let photoData = "";
-let isPremium = localStorage.getItem("premium") === "yes";
-
-/* ================= PAYMENT ================= */
-
+/* PAYMENT */
 function verifyPayment(){
-  if(!txn.value){
-    alert("Enter Payment ID");
-    return;
-  }
+  if(!txn.value){alert("Enter Payment ID");return;}
   localStorage.setItem("premium","yes");
-  isPremium = true;
+  isPremium=true;
   alert("Premium Activated ✔");
 }
 
-/* ================= PHOTO ================= */
-
-photoUpload.onchange = e=>{
-  const r = new FileReader();
-  if(e.target.files[0]){
-    r.onload = ()=> photoData = r.result;
-    r.readAsDataURL(e.target.files[0]);
-  }
+/* PHOTO */
+photoUpload.onchange=e=>{
+  const r=new FileReader();
+  r.onload=()=>photoData=r.result;
+  r.readAsDataURL(e.target.files[0]);
 };
 
-/* ================= ATS ================= */
-
-function getATS(text){
-  let s = 0;
-  ["skills","experience","project","lead","manage","develop"].forEach(k=>{
-    if(text.toLowerCase().includes(k)) s += 10;
-  });
-  return Math.min(s,100);
-}
-
-/* ================= JOB MATCH ================= */
-
-function getJobs(skills){
-  let s = skills.toLowerCase();
-  let j = [];
-
-  if(s.includes("dev")) j.push("Software Developer");
-  if(s.includes("market")) j.push("Marketing Executive");
-  if(s.includes("sales")) j.push("Sales Executive");
-  if(s.includes("chef")) j.push("Chef");
-  if(s.includes("design")) j.push("UI/UX Designer");
-
-  return j.length ? j.join(", ") : "Improve Skills";
-}
-
-/* ================= AI (SAFE + API READY) ================= */
-
-function askAI(){
-
-  if(!isPremium){
-    alert("Premium required");
-    return;
-  }
-
-  alert(
-    "AI Suggestions:\n\n" +
-    "• Add measurable achievements\n" +
-    "• Use strong action verbs\n" +
-    "• Add projects section\n" +
-    "• Improve clarity of skills\n\n" +
-    "(OpenAI API can be enabled here)"
-  );
-
-  // REAL API READY BLOCK:
-  // fetch("https://api.openai.com/v1/chat/completions", {...})
-}
-
-/* ================= DRAG SYSTEM (STABLE) ================= */
-
-let selected = null;
-
-document.addEventListener("mousedown",(e)=>{
-  const box = e.target.closest(".resume-box");
-  if(box) selected = box;
-});
-
-document.addEventListener("mouseup",(e)=>{
-  const box = e.target.closest(".resume-box");
-  if(selected && box && selected !== box){
-    box.after(selected);
-  }
-  selected = null;
-});
-
-/* ================= GENERATE ================= */
-
+/* GENERATE */
 function generate(){
 
-  const text = name.value + skills.value + experience.value + about.value;
-
-  const ats = getATS(text);
-  const jobs = getJobs(skills.value);
-
-  document.getElementById("resume").innerHTML = `
+  document.getElementById("resume").innerHTML=`
     <div class="resume-box" id="resumeBox">
 
       <center>
-        ${photoData ? `<img src="${photoData}" width="100" style="border-radius:50%">` : ""}
+        ${photoData?`<img src="${photoData}" width="100" style="border-radius:50%">`:""}
         <h2>${name.value}</h2>
         <p>${qualification.value}</p>
       </center>
@@ -293,45 +258,21 @@ function generate(){
       <p><b>Declaration:</b> ${declaration.value}</p>
       <p><b>Signature:</b> ${signature.value}</p>
 
-      <hr>
-
-      <h3>🔥 ATS SCORE: ${ats}/100</h3>
-      <p><b>🎯 Job Match:</b> ${jobs}</p>
-
     </div>
   `;
+
+  resumeBox = document.getElementById("resumeBox");
 }
 
-/* ================= EXPORT SAFE ================= */
-
+/* EXPORT */
 function downloadPDF(){
-  if(!isPremium){
-    alert("Premium required");
-    return;
-  }
-
-  const el = document.getElementById("resumeBox");
-  if(!el){
-    alert("Generate resume first");
-    return;
-  }
-
-  html2pdf().from(el).save("resume.pdf");
+  if(!resumeBox){alert("Generate first");return;}
+  html2pdf().from(resumeBox).save("resume.pdf");
 }
 
 function downloadImage(){
-  if(!isPremium){
-    alert("Premium required");
-    return;
-  }
-
-  const el = document.getElementById("resumeBox");
-  if(!el){
-    alert("Generate resume first");
-    return;
-  }
-
-  html2canvas(el).then(c=>{
+  if(!resumeBox){alert("Generate first");return;}
+  html2canvas(resumeBox).then(c=>{
     let a=document.createElement("a");
     a.download="resume.png";
     a.href=c.toDataURL();
@@ -339,49 +280,11 @@ function downloadImage(){
   });
 }
 
-/* ================= EUROPLUS CV ================= */
-
-function downloadEuroPlusCV(){
-
-  if(!isPremium){
-    alert("Premium required");
-    return;
-  }
-
-  const cv = `
-EUROPLUS CV
-
-Name: ${name.value}
-Age: ${age.value}
-Qualification: ${qualification.value}
-
-Experience:
-${experience.value}
-
-Skills:
-${skills.value}
-
-Hobbies:
-${hobbies.value}
-
-About:
-${about.value}
-
-Date: ${new Date().toLocaleDateString()}
-`;
-
-  const blob = new Blob([cv],{type:"text/plain"});
-  const a = document.createElement("a");
-  a.download = "Europlus_CV.txt";
-  a.href = URL.createObjectURL(blob);
-  a.click();
-}
-
-/* ================= CLEAR ================= */
-
+/* CLEAR */
 function clearData(){
   document.querySelectorAll("input").forEach(i=>i.value="");
-  document.getElementById("resume").innerHTML="";
+  resume.innerHTML="";
+  resumeBox=null;
 }
 
 </script>
