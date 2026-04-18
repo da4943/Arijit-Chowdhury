@@ -85,6 +85,10 @@
     <button onclick="generate()">Generate Resume</button>
     <button class="btn-pdf" onclick="downloadPDF()">Download PDF</button>
     <button onclick="downloadImage()">Download Image</button>
+
+    <!-- ⭐ NEW BUTTON (NO DESIGN CHANGE) -->
+    <button onclick="downloadEuroPlusCV()">Europlus CV</button>
+
     <button class="btn-clear" onclick="clearData()">Clear Data</button>
   </div>
 
@@ -100,51 +104,12 @@ let photoData="";
 let isPremium = localStorage.getItem("premium")==="yes";
 let userCountry="IN";
 
-/* AUTO SAVE SYSTEM 🔥 */
-window.onload=function(){
-  const saved=localStorage.getItem("resumeData");
-  if(saved){
-    const d=JSON.parse(saved);
-    Object.keys(d).forEach(k=>{
-      if(document.getElementById(k)) document.getElementById(k).value=d[k];
-    });
-  }
-}
-
-/* SAVE DATA */
-function saveData(){
-  const data={
-    name:name.value,
-    age:age.value,
-    qualification:qualification.value,
-    experience:experience.value,
-    skills:skills.value,
-    hobbies:hobbies.value,
-    about:about.value,
-    declaration:declaration.value,
-    signature:signature.value
-  };
-  localStorage.setItem("resumeData",JSON.stringify(data));
-}
-
 /* COUNTRY */
 fetch("https://ipapi.co/json/")
 .then(r=>r.json())
 .then(d=>{
   userCountry=d.country;
-  updatePaymentUI();
 });
-
-/* UI */
-function updatePaymentUI(){
-  if(userCountry==="IN"){
-    upiQR.style.display="block";
-    paypalBtn.style.display="none";
-  } else {
-    upiQR.style.display="none";
-    paypalBtn.style.display="block";
-  }
-}
 
 /* PAYMENT */
 function verifyPayment(){
@@ -161,7 +126,7 @@ photoUpload.onchange=e=>{
   r.readAsDataURL(e.target.files[0]);
 };
 
-/* ATS 🔥 */
+/* ATS */
 function getATSScore(text){
   let s=0;
   ["skills","experience","project","team","lead","manage","develop"].forEach(k=>{
@@ -170,18 +135,10 @@ function getATSScore(text){
   return Math.min(s,100);
 }
 
-/* TEMPLATE ENGINE (NO UI CHANGE) */
-function applyTemplate(text){
-  return text; // default same design (future upgrade ready)
-}
-
 /* GENERATE */
 function generate(){
 
-  saveData();
-
   const text = name.value+" "+skills.value+" "+experience.value+" "+about.value;
-
   const ats=getATSScore(text);
 
   document.getElementById("resume").innerHTML=`
@@ -213,20 +170,6 @@ function generate(){
   `;
 }
 
-/* COPY RESUME 🔥 */
-function copyResume(){
-  const el=document.getElementById("resumeBox");
-  if(!el){alert("Generate first");return;}
-  navigator.clipboard.writeText(el.innerText);
-  alert("Resume Copied ✔");
-}
-
-/* WHATSAPP SHARE 🔥 */
-function shareWhatsApp(){
-  const text=`Resume: ${name.value} | Skills: ${skills.value} | Experience: ${experience.value}`;
-  window.open("https://wa.me/?text="+encodeURIComponent(text));
-}
-
 /* PDF */
 function downloadPDF(){
   html2pdf().from(resumeBox).save("resume.pdf");
@@ -242,10 +185,56 @@ function downloadImage(){
   });
 }
 
+/* ⭐ EUROPLUS CV (NEW PREMIUM FEATURE) */
+function downloadEuroPlusCV(){
+
+  if(!isPremium){
+    alert("💎 Premium required to use Europlus CV");
+    return;
+  }
+
+  const cv = `
+EUROPLUS CV
+====================
+
+Name: ${name.value}
+Age: ${age.value}
+Qualification: ${qualification.value}
+
+Experience:
+${experience.value}
+
+Skills:
+${skills.value}
+
+Hobbies:
+${hobbies.value}
+
+About:
+${about.value}
+
+Declaration:
+${declaration.value}
+
+Signature:
+${signature.value}
+
+Date: ${new Date().toLocaleDateString()}
+
+====================
+Powered by AOV AI Resume
+  `;
+
+  const blob = new Blob([cv], {type:"text/plain"});
+  const link = document.createElement("a");
+  link.download = "Europlus_CV.txt";
+  link.href = URL.createObjectURL(blob);
+  link.click();
+}
+
 /* CLEAR */
 function clearData(){
   document.querySelectorAll("input").forEach(i=>i.value="");
-  localStorage.removeItem("resumeData");
   resume.innerHTML="";
 }
 
