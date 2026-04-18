@@ -8,23 +8,95 @@
   <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
 
   <style>
-    body{margin:0;font-family:Arial;background:linear-gradient(135deg,#050816,#0b1220);color:white;}
-    .nav{display:flex;justify-content:space-between;align-items:center;padding:15px 20px;background:#0f172a;}
-    .logo{font-size:20px;font-weight:bold;color:#38bdf8;}
-    .social button{margin-left:10px;padding:10px 14px;border-radius:8px;border:none;font-weight:bold;cursor:pointer;}
+    body{
+      margin:0;
+      font-family:Arial;
+      background:linear-gradient(135deg,#050816,#0b1220);
+      color:white;
+    }
+
+    .nav{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      padding:15px 20px;
+      background:#0f172a;
+    }
+
+    .logo{
+      font-size:20px;
+      font-weight:bold;
+      color:#38bdf8;
+    }
+
+    .social button{
+      margin-left:10px;
+      padding:10px 14px;
+      border-radius:8px;
+      border:none;
+      font-weight:bold;
+      cursor:pointer;
+    }
+
     .google{background:white;color:black}
     .linkedin{background:#0a66c2;color:white}
-    .container{max-width:1000px;margin:auto;padding:15px;}
-    .hero{text-align:center;padding:25px;}
-    .hero h1{font-size:28px;color:#38bdf8;}
-    .card{background:#111827;padding:20px;margin-top:15px;border-radius:15px;}
-    input,button{width:100%;padding:12px;margin-top:10px;border-radius:10px;border:none;}
-    button{background:#38bdf8;font-weight:bold;cursor:pointer;}
+
+    .container{
+      max-width:1000px;
+      margin:auto;
+      padding:15px;
+    }
+
+    .hero{
+      text-align:center;
+      padding:25px;
+    }
+
+    .hero h1{
+      font-size:28px;
+      color:#38bdf8;
+    }
+
+    .card{
+      background:#111827;
+      padding:20px;
+      margin-top:15px;
+      border-radius:15px;
+    }
+
+    input,button{
+      width:100%;
+      padding:12px;
+      margin-top:10px;
+      border-radius:10px;
+      border:none;
+    }
+
+    button{
+      background:#38bdf8;
+      font-weight:bold;
+      cursor:pointer;
+    }
+
     .btn-pdf{background:#f59e0b}
     .btn-clear{background:#ef4444}
-    .resume-box{background:white;color:black;padding:20px;border-radius:12px;}
-    .grid{display:grid;grid-template-columns:1fr 1fr;gap:15px;}
-    @media(max-width:768px){.grid{grid-template-columns:1fr}}
+
+    .resume-box{
+      background:white;
+      color:black;
+      padding:20px;
+      border-radius:12px;
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:15px;
+    }
+
+    @media(max-width:768px){
+      .grid{grid-template-columns:1fr}
+    }
   </style>
 </head>
 
@@ -32,10 +104,12 @@
 
 <div class="nav">
   <div class="logo">AOV AI Resume</div>
+
   <div class="social">
     <a href="https://www.google.com/search?q=jobs" target="_blank">
       <button class="google">Google</button>
     </a>
+
     <a href="https://www.linkedin.com/jobs/" target="_blank">
       <button class="linkedin">LinkedIn</button>
     </a>
@@ -83,10 +157,7 @@
     <button onclick="generate()">Generate Resume</button>
     <button onclick="downloadPDF()">Download PDF</button>
     <button onclick="downloadImage()">Download Image</button>
-
-    <!-- EUROPLUS CV BUTTON (ADDED, DESIGN UNCHANGED) -->
     <button onclick="downloadEuroPlusCV()">Europlus CV</button>
-
     <button class="btn-clear" onclick="clearData()">Clear Data</button>
   </div>
 
@@ -99,67 +170,111 @@
 
 <script>
 
-let photoData="";
-let isPremium = localStorage.getItem("premium")==="yes";
+let photoData = "";
+let isPremium = localStorage.getItem("premium") === "yes";
+
+/* SAVE DATA */
+function saveData(){
+  const data = {
+    name:name.value,
+    age:age.value,
+    qualification:qualification.value,
+    experience:experience.value,
+    skills:skills.value,
+    hobbies:hobbies.value,
+    about:about.value,
+    declaration:declaration.value,
+    signature:signature.value
+  };
+  localStorage.setItem("resumeData", JSON.stringify(data));
+}
+
+/* LOAD DATA */
+window.onload = function(){
+  const saved = localStorage.getItem("resumeData");
+  if(saved){
+    const d = JSON.parse(saved);
+    Object.keys(d).forEach(k=>{
+      if(document.getElementById(k)){
+        document.getElementById(k).value = d[k];
+      }
+    });
+  }
+};
 
 /* PAYMENT */
 function verifyPayment(){
-  if(!txn.value){alert("Enter Payment ID");return;}
+  if(!txn.value){
+    alert("Enter Payment ID");
+    return;
+  }
   localStorage.setItem("premium","yes");
-  isPremium=true;
+  isPremium = true;
   alert("Premium Unlocked ✔");
 }
 
 /* PHOTO */
-photoUpload.onchange=e=>{
-  const r=new FileReader();
-  r.onload=()=>photoData=r.result;
+photoUpload.onchange = e=>{
+  const r = new FileReader();
+  r.onload = ()=> photoData = r.result;
   r.readAsDataURL(e.target.files[0]);
 };
 
-/* ATS ENGINE */
+/* ATS */
 function getATSScore(text){
-  let s=0;
-  ["skills","experience","project","team","lead","manage","develop","communication"].forEach(k=>{
-    if(text.toLowerCase().includes(k)) s+=10;
+  let score = 0;
+  const keys = ["skills","experience","project","team","lead","manage","develop","communication"];
+  keys.forEach(k=>{
+    if(text.toLowerCase().includes(k)) score += 10;
   });
-  return Math.min(s,100);
+  return Math.min(score,100);
 }
 
 /* JOB MATCH */
 function getJobs(skills){
-  let s=skills.toLowerCase();
-  let jobs=[];
+  let s = skills.toLowerCase();
+  let jobs = [];
+
   if(s.includes("developer")) jobs.push("Software Developer");
   if(s.includes("marketing")) jobs.push("Marketing Executive");
-  if(s.includes("chef")) jobs.push("Chef");
   if(s.includes("sales")) jobs.push("Sales Executive");
-  if(jobs.length===0) jobs.push("Add more skills");
+  if(s.includes("chef")) jobs.push("Chef / Cook");
+  if(s.includes("design")) jobs.push("UI/UX Designer");
+  if(s.includes("data")) jobs.push("Data Analyst");
+  if(s.includes("manager")) jobs.push("Operations Manager");
+
+  if(jobs.length === 0) jobs.push("Add more skills for matching");
+
   return jobs.join(", ");
 }
 
-/* AI TIPS */
+/* TIPS */
 function getTips(text){
-  let t=[];
-  if(text.length<120) t.push("Add more details");
-  if(!text.includes("experience")) t.push("Add experience section");
-  if(!text.includes("skills")) t.push("Add skills section");
-  return t.join(" | ");
+  let tips = [];
+  if(text.length < 120) tips.push("Add more details");
+  if(!text.includes("experience")) tips.push("Add experience section");
+  if(!text.includes("skills")) tips.push("Highlight skills");
+  if(!text.includes("project")) tips.push("Add projects");
+  tips.push("Use strong action words");
+  return tips.join(" | ");
 }
 
 /* GENERATE */
 function generate(){
 
-  const text = name.value+" "+skills.value+" "+experience.value+" "+about.value;
+  saveData();
+
+  const text = name.value + skills.value + experience.value + about.value;
+
   const ats = getATSScore(text);
   const jobs = getJobs(skills.value);
   const tips = getTips(text);
 
-  document.getElementById("resume").innerHTML=`
+  document.getElementById("resume").innerHTML = `
     <div class="resume-box" id="resumeBox">
 
       <center>
-        ${photoData?`<img src="${photoData}" width="100" style="border-radius:50%">`:""}
+        ${photoData ? `<img src="${photoData}" width="100" style="border-radius:50%">` : ""}
         <h2>${name.value}</h2>
         <p>${qualification.value}</p>
       </center>
@@ -181,8 +296,8 @@ function generate(){
       <hr>
 
       <h3>🔥 ATS SCORE: ${ats}/100</h3>
-      <p><b>🎯 Jobs:</b> ${jobs}</p>
-      <p><b>💡 Tips:</b> ${tips}</p>
+      <p><b>🎯 Job Match:</b> ${jobs}</p>
+      <p><b>💡 AI Tips:</b> ${tips}</p>
 
     </div>
   `;
@@ -190,24 +305,26 @@ function generate(){
 
 /* PDF */
 function downloadPDF(){
+  if(!isPremium){alert("Premium required");return;}
   html2pdf().from(resumeBox).save("resume.pdf");
 }
 
 /* IMAGE */
 function downloadImage(){
+  if(!isPremium){alert("Premium required");return;}
   html2canvas(resumeBox).then(c=>{
-    let a=document.createElement("a");
-    a.download="resume.png";
-    a.href=c.toDataURL();
+    let a = document.createElement("a");
+    a.download = "resume.png";
+    a.href = c.toDataURL();
     a.click();
   });
 }
 
-/* EUROPLUS CV (PREMIUM FEATURE) */
+/* EUROPLUS CV */
 function downloadEuroPlusCV(){
 
   if(!isPremium){
-    alert("Premium required for Europlus CV");
+    alert("Premium required");
     return;
   }
 
@@ -230,25 +347,20 @@ ${hobbies.value}
 About:
 ${about.value}
 
-Declaration:
-${declaration.value}
-
-Signature:
-${signature.value}
-
 Date: ${new Date().toLocaleDateString()}
   `;
 
-  const blob = new Blob([cv],{type:"text/plain"});
-  const a=document.createElement("a");
-  a.download="Europlus_CV.txt";
-  a.href=URL.createObjectURL(blob);
+  const blob = new Blob([cv], {type:"text/plain"});
+  const a = document.createElement("a");
+  a.download = "Europlus_CV.txt";
+  a.href = URL.createObjectURL(blob);
   a.click();
 }
 
 /* CLEAR */
 function clearData(){
   document.querySelectorAll("input").forEach(i=>i.value="");
+  localStorage.removeItem("resumeData");
   resume.innerHTML="";
 }
 
