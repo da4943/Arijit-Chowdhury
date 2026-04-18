@@ -48,21 +48,19 @@
     <h1>Create Professional Resume in Seconds</h1>
   </div>
 
+  <!-- PREMIUM -->
   <div class="card">
-    <h2 id="priceText">💎 Unlock Premium ₹200</h2>
-    <p>Scan & Pay to enable PDF + Image Download</p>
+    <h2>💎 Unlock Premium ₹200</h2>
+    <p>Scan & Pay to enable PDF + Image + Europlus CV</p>
 
     <img id="upiQR" width="200"
       src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=upi://pay?pa=yourupi@bank&pn=AOV%20AI&am=200&cu=INR">
-
-    <a id="paypalBtn" href="https://www.paypal.com/paypalme/aovai/20" target="_blank" style="display:none;">
-      <button>Pay $20 (International)</button>
-    </a>
 
     <input id="txn" placeholder="Enter Payment ID / Email">
     <button onclick="verifyPayment()">I Paid</button>
   </div>
 
+  <!-- BUILDER -->
   <div class="card">
     <h2>Resume Builder</h2>
 
@@ -77,21 +75,22 @@
     <input id="hobbies" placeholder="Hobbies">
     <input id="about" placeholder="About You">
 
-    <input type="file" id="photoUpload" accept="image/*">
+    <input type="file" id="photoUpload">
 
     <input id="declaration" placeholder="Declaration">
     <input id="signature" placeholder="Signature">
 
     <button onclick="generate()">Generate Resume</button>
-    <button class="btn-pdf" onclick="downloadPDF()">Download PDF</button>
+    <button onclick="downloadPDF()">Download PDF</button>
     <button onclick="downloadImage()">Download Image</button>
 
-    <!-- ⭐ NEW BUTTON (NO DESIGN CHANGE) -->
+    <!-- EUROPLUS CV BUTTON (ADDED, DESIGN UNCHANGED) -->
     <button onclick="downloadEuroPlusCV()">Europlus CV</button>
 
     <button class="btn-clear" onclick="clearData()">Clear Data</button>
   </div>
 
+  <!-- OUTPUT -->
   <div class="card">
     <div id="resume"></div>
   </div>
@@ -102,14 +101,6 @@
 
 let photoData="";
 let isPremium = localStorage.getItem("premium")==="yes";
-let userCountry="IN";
-
-/* COUNTRY */
-fetch("https://ipapi.co/json/")
-.then(r=>r.json())
-.then(d=>{
-  userCountry=d.country;
-});
 
 /* PAYMENT */
 function verifyPayment(){
@@ -126,23 +117,47 @@ photoUpload.onchange=e=>{
   r.readAsDataURL(e.target.files[0]);
 };
 
-/* ATS */
+/* ATS ENGINE */
 function getATSScore(text){
   let s=0;
-  ["skills","experience","project","team","lead","manage","develop"].forEach(k=>{
+  ["skills","experience","project","team","lead","manage","develop","communication"].forEach(k=>{
     if(text.toLowerCase().includes(k)) s+=10;
   });
   return Math.min(s,100);
+}
+
+/* JOB MATCH */
+function getJobs(skills){
+  let s=skills.toLowerCase();
+  let jobs=[];
+  if(s.includes("developer")) jobs.push("Software Developer");
+  if(s.includes("marketing")) jobs.push("Marketing Executive");
+  if(s.includes("chef")) jobs.push("Chef");
+  if(s.includes("sales")) jobs.push("Sales Executive");
+  if(jobs.length===0) jobs.push("Add more skills");
+  return jobs.join(", ");
+}
+
+/* AI TIPS */
+function getTips(text){
+  let t=[];
+  if(text.length<120) t.push("Add more details");
+  if(!text.includes("experience")) t.push("Add experience section");
+  if(!text.includes("skills")) t.push("Add skills section");
+  return t.join(" | ");
 }
 
 /* GENERATE */
 function generate(){
 
   const text = name.value+" "+skills.value+" "+experience.value+" "+about.value;
-  const ats=getATSScore(text);
+  const ats = getATSScore(text);
+  const jobs = getJobs(skills.value);
+  const tips = getTips(text);
 
   document.getElementById("resume").innerHTML=`
     <div class="resume-box" id="resumeBox">
+
       <center>
         ${photoData?`<img src="${photoData}" width="100" style="border-radius:50%">`:""}
         <h2>${name.value}</h2>
@@ -166,6 +181,9 @@ function generate(){
       <hr>
 
       <h3>🔥 ATS SCORE: ${ats}/100</h3>
+      <p><b>🎯 Jobs:</b> ${jobs}</p>
+      <p><b>💡 Tips:</b> ${tips}</p>
+
     </div>
   `;
 }
@@ -185,17 +203,16 @@ function downloadImage(){
   });
 }
 
-/* ⭐ EUROPLUS CV (NEW PREMIUM FEATURE) */
+/* EUROPLUS CV (PREMIUM FEATURE) */
 function downloadEuroPlusCV(){
 
   if(!isPremium){
-    alert("💎 Premium required to use Europlus CV");
+    alert("Premium required for Europlus CV");
     return;
   }
 
   const cv = `
 EUROPLUS CV
-====================
 
 Name: ${name.value}
 Age: ${age.value}
@@ -220,16 +237,13 @@ Signature:
 ${signature.value}
 
 Date: ${new Date().toLocaleDateString()}
-
-====================
-Powered by AOV AI Resume
   `;
 
-  const blob = new Blob([cv], {type:"text/plain"});
-  const link = document.createElement("a");
-  link.download = "Europlus_CV.txt";
-  link.href = URL.createObjectURL(blob);
-  link.click();
+  const blob = new Blob([cv],{type:"text/plain"});
+  const a=document.createElement("a");
+  a.download="Europlus_CV.txt";
+  a.href=URL.createObjectURL(blob);
+  a.click();
 }
 
 /* CLEAR */
