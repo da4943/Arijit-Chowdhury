@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>AOV AI Resume PRO</title>
+  <title>AOV AI Resume PRO - Free AI Resume Builder & CV Generator</title>
+  <meta name="description" content="Create professional resumes instantly using AOV AI Resume Builder. Free CV maker, templates, AI tools, and export PDF resume generator.">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
@@ -29,17 +30,17 @@
       color:#38bdf8;
     }
 
-    .social button{
-      margin-left:10px;
-      padding:10px 14px;
-      border-radius:8px;
+    .menu button{
+      margin-left:8px;
+      padding:8px 12px;
       border:none;
-      font-weight:bold;
+      border-radius:6px;
       cursor:pointer;
+      font-weight:bold;
     }
 
-    .google{background:white;color:black}
-    .linkedin{background:#0a66c2;color:white}
+    .tab{display:none;}
+    .active{display:block;}
 
     .container{
       max-width:1000px;
@@ -47,15 +48,8 @@
       padding:15px;
     }
 
-    .hero{
-      text-align:center;
-      padding:25px;
-    }
-
-    .hero h1{
-      font-size:28px;
-      color:#38bdf8;
-    }
+    .hero{text-align:center;padding:25px;}
+    .hero h1{font-size:28px;color:#38bdf8;}
 
     .card{
       background:#111827;
@@ -78,9 +72,6 @@
       cursor:pointer;
     }
 
-    .btn-pdf{background:#f59e0b}
-    .btn-clear{background:#ef4444}
-
     .resume-box{
       background:white;
       color:black;
@@ -98,25 +89,7 @@
       .grid{grid-template-columns:1fr}
     }
 
-    .policy{
-      font-size:12px;
-      color:#bbb;
-      line-height:1.6;
-    }
-
-    .footer{
-      text-align:center;
-      padding:20px;
-      font-size:12px;
-      color:#888;
-      margin-top:20px;
-    }
-
-    .footer a{
-      color:#38bdf8;
-      text-decoration:none;
-      margin:0 5px;
-    }
+    .policy{font-size:13px;color:#bbb;line-height:1.6;}
   </style>
 </head>
 
@@ -125,35 +98,24 @@
 <div class="nav">
   <div class="logo">AOV AI Resume</div>
 
-  <div class="social">
-    <a href="https://www.google.com/search?q=jobs" target="_blank">
-      <button class="google">Google</button>
-    </a>
-    <a href="https://www.linkedin.com/jobs/" target="_blank">
-      <button class="linkedin">LinkedIn</button>
-    </a>
+  <div class="menu">
+    <button onclick="showTab('home')">Home</button>
+    <button onclick="showTab('blog')">Blog</button>
+    <button onclick="showTab('faq')">FAQ</button>
+    <button onclick="showTab('samples')">Samples</button>
+    <button onclick="showTab('tool')">Tool Info</button>
   </div>
 </div>
 
 <div class="container">
 
+<!-- HOME -->
+<div id="home" class="tab active">
+
   <div class="hero">
     <h1>Create Professional Resume in Seconds</h1>
   </div>
 
-  <!-- PREMIUM -->
-  <div class="card">
-    <h2>💎 Unlock Premium ₹200</h2>
-    <p>Enable AI + Export Features</p>
-
-    <img width="200"
-      src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=upi://pay?pa=yourupi@bank&pn=AOV%20AI&am=200&cu=INR">
-
-    <input id="txn" placeholder="Enter Payment ID / Email">
-    <button onclick="verifyPayment()">Activate Premium</button>
-  </div>
-
-  <!-- BUILDER -->
   <div class="card">
     <h2>Resume Builder</h2>
 
@@ -174,66 +136,90 @@
     <input id="signature" placeholder="Signature">
 
     <button onclick="generate()">Generate Resume</button>
-    <button onclick="downloadPDF()" class="btn-pdf">Download PDF</button>
+    <button onclick="downloadPDF()">Download PDF</button>
     <button onclick="downloadImage()">Download Image</button>
-    <button onclick="clearData()" class="btn-clear">Clear Data</button>
   </div>
 
-  <!-- OUTPUT -->
   <div class="card">
     <div id="resume"></div>
   </div>
 
-  <!-- POLICY (FIXED FOR ADSENSE) -->
-  <div class="card policy" id="policy">
-
-    <h2>Privacy Policy</h2>
-    <p>We collect only user input data for resume generation. All data is stored locally in browser. We do not sell or share any personal data.</p>
-
-    <h2>Terms of Use</h2>
-    <p>This website provides resume creation tools for educational and professional use only. Misuse is strictly prohibited.</p>
-
-    <h2>About Us</h2>
-    <p>AOV AI Resume is an online resume builder tool that helps users create professional CVs instantly using smart formatting.</p>
-
-    <h2>Contact</h2>
-    <p>Email: support@aovairesume.com</p>
-
-  </div>
-
 </div>
 
-<!-- FOOTER -->
-<div class="footer">
-  © 2026 AOV AI Resume |
-  <a href="#policy">Privacy</a> |
-  <a href="#policy">Terms</a> |
-  <a href="#policy">Contact</a>
+<!-- BLOG -->
+<div id="blog" class="tab">
+  <div class="card">
+    <h2>Resume Writing Guide</h2>
+    <p>Learn how to create a professional resume with skills, experience, and achievements.</p>
+
+    <h3>Article 1</h3>
+    <p>Best resume format for 2026 hiring trends.</p>
+
+    <h3>Article 2</h3>
+    <p>Top skills employers look for in India & abroad.</p>
+
+    <h3>Article 3</h3>
+    <p>How to pass ATS resume screening systems.</p>
+  </div>
+</div>
+
+<!-- FAQ -->
+<div id="faq" class="tab">
+  <div class="card">
+    <h2>FAQ</h2>
+    <p><b>How to create resume?</b><br>Fill details and click generate.</p>
+    <p><b>Is this free?</b><br>Yes basic version is free.</p>
+    <p><b>Can I download PDF?</b><br>Yes after generating resume.</p>
+  </div>
+</div>
+
+<!-- SAMPLES -->
+<div id="samples" class="tab">
+  <div class="card">
+    <h2>Sample Resumes</h2>
+    <p>✔ Fresher Resume Format</p>
+    <p>✔ Experienced Professional Resume</p>
+    <p>✔ Business Owner CV Format</p>
+  </div>
+</div>
+
+<!-- TOOL -->
+<div id="tool" class="tab">
+  <div class="card">
+    <h2>About This Tool</h2>
+    <p>AOV AI Resume is a smart resume generator that helps users create professional CVs instantly.</p>
+  </div>
+</div>
+
 </div>
 
 <script>
 
-let photoData="";
-let isPremium = localStorage.getItem("premium")==="yes";
-let resumeBox = null;
-
-/* PAYMENT */
-function verifyPayment(){
-  if(!txn.value){alert("Enter Payment ID");return;}
-  localStorage.setItem("premium","yes");
-  isPremium=true;
-  alert("Premium Activated ✔");
+function showTab(id){
+  document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
 }
 
-/* PHOTO */
+let photoData="";
+let resumeBox=null;
+
+/* IMAGE SAFE */
 photoUpload.onchange=e=>{
+  if(!e.target.files.length) return;
   const r=new FileReader();
   r.onload=()=>photoData=r.result;
   r.readAsDataURL(e.target.files[0]);
 };
 
-/* GENERATE */
+/* GENERATE SAFE */
 function generate(){
+
+  const n = name.value.trim();
+
+  if(!n){
+    alert("Please enter name");
+    return;
+  }
 
   document.getElementById("resume").innerHTML=`
     <div class="resume-box" id="resumeBox">
@@ -246,17 +232,9 @@ function generate(){
 
       <hr>
 
-      <p><b>Experience:</b> ${experience.value}</p>
-      <p><b>Skills:</b> ${skills.value}</p>
-      <p><b>Hobbies:</b> ${hobbies.value}</p>
-
-      <h3>About</h3>
+      <p>${experience.value}</p>
+      <p>${skills.value}</p>
       <p>${about.value}</p>
-
-      <hr>
-
-      <p><b>Declaration:</b> ${declaration.value}</p>
-      <p><b>Signature:</b> ${signature.value}</p>
 
     </div>
   `;
@@ -264,27 +242,27 @@ function generate(){
   resumeBox = document.getElementById("resumeBox");
 }
 
-/* EXPORT */
+/* PDF SAFE */
 function downloadPDF(){
-  if(!resumeBox){alert("Generate first");return;}
+  if(!resumeBox){
+    alert("Generate resume first");
+    return;
+  }
   html2pdf().from(resumeBox).save("resume.pdf");
 }
 
+/* IMAGE SAFE */
 function downloadImage(){
-  if(!resumeBox){alert("Generate first");return;}
+  if(!resumeBox){
+    alert("Generate resume first");
+    return;
+  }
   html2canvas(resumeBox).then(c=>{
     let a=document.createElement("a");
     a.download="resume.png";
     a.href=c.toDataURL();
     a.click();
   });
-}
-
-/* CLEAR */
-function clearData(){
-  document.querySelectorAll("input").forEach(i=>i.value="");
-  resume.innerHTML="";
-  resumeBox=null;
 }
 
 </script>
