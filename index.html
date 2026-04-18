@@ -109,7 +109,6 @@
     <a href="https://www.google.com/search?q=jobs" target="_blank">
       <button class="google">Google</button>
     </a>
-
     <a href="https://www.linkedin.com/jobs/" target="_blank">
       <button class="linkedin">LinkedIn</button>
     </a>
@@ -125,7 +124,7 @@
   <!-- PREMIUM -->
   <div class="card">
     <h2>💎 Unlock Premium ₹200</h2>
-    <p>Scan & Pay to enable PDF + Image + Europlus CV</p>
+    <p>Scan & Pay to enable all premium features</p>
 
     <img id="upiQR" width="200"
       src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=upi://pay?pa=yourupi@bank&pn=AOV%20AI&am=200&cu=INR">
@@ -170,39 +169,17 @@
 
 <script>
 
+/* =========================
+   CORE DATA
+========================= */
+
 let photoData = "";
 let isPremium = localStorage.getItem("premium") === "yes";
 
-/* SAVE DATA */
-function saveData(){
-  const data = {
-    name:name.value,
-    age:age.value,
-    qualification:qualification.value,
-    experience:experience.value,
-    skills:skills.value,
-    hobbies:hobbies.value,
-    about:about.value,
-    declaration:declaration.value,
-    signature:signature.value
-  };
-  localStorage.setItem("resumeData", JSON.stringify(data));
-}
+/* =========================
+   PAYMENT SYSTEM
+========================= */
 
-/* LOAD DATA */
-window.onload = function(){
-  const saved = localStorage.getItem("resumeData");
-  if(saved){
-    const d = JSON.parse(saved);
-    Object.keys(d).forEach(k=>{
-      if(document.getElementById(k)){
-        document.getElementById(k).value = d[k];
-      }
-    });
-  }
-};
-
-/* PAYMENT */
 function verifyPayment(){
   if(!txn.value){
     alert("Enter Payment ID");
@@ -213,24 +190,35 @@ function verifyPayment(){
   alert("Premium Unlocked ✔");
 }
 
-/* PHOTO */
+/* =========================
+   PHOTO UPLOAD
+========================= */
+
 photoUpload.onchange = e=>{
   const r = new FileReader();
   r.onload = ()=> photoData = r.result;
   r.readAsDataURL(e.target.files[0]);
 };
 
-/* ATS */
+/* =========================
+   ATS ENGINE
+========================= */
+
 function getATSScore(text){
   let score = 0;
-  const keys = ["skills","experience","project","team","lead","manage","develop","communication"];
+  const keys = ["skills","experience","project","team","lead","manage","develop","communication","work"];
+
   keys.forEach(k=>{
     if(text.toLowerCase().includes(k)) score += 10;
   });
+
   return Math.min(score,100);
 }
 
-/* JOB MATCH */
+/* =========================
+   JOB MATCH ENGINE
+========================= */
+
 function getJobs(skills){
   let s = skills.toLowerCase();
   let jobs = [];
@@ -243,26 +231,103 @@ function getJobs(skills){
   if(s.includes("data")) jobs.push("Data Analyst");
   if(s.includes("manager")) jobs.push("Operations Manager");
 
-  if(jobs.length === 0) jobs.push("Add more skills for matching");
+  if(jobs.length === 0) jobs.push("Add more skills for better matching");
 
   return jobs.join(", ");
 }
 
-/* TIPS */
+/* =========================
+   AI CV TIPS ENGINE
+========================= */
+
 function getTips(text){
   let tips = [];
-  if(text.length < 120) tips.push("Add more details");
-  if(!text.includes("experience")) tips.push("Add experience section");
-  if(!text.includes("skills")) tips.push("Highlight skills");
-  if(!text.includes("project")) tips.push("Add projects");
-  tips.push("Use strong action words");
+
+  if(text.length < 120) tips.push("Add more professional details");
+  if(!text.includes("experience")) tips.push("Add work experience section");
+  if(!text.includes("skills")) tips.push("Highlight skills section");
+  if(!text.includes("project")) tips.push("Add projects for ATS boost");
+
+  tips.push("Use strong action verbs (managed, led, developed)");
+
   return tips.join(" | ");
 }
 
-/* GENERATE */
-function generate(){
+/* =========================
+   CANVA STYLE DRAG ENGINE (NO UI CHANGE)
+========================= */
 
-  saveData();
+let dragItem = null;
+
+document.addEventListener("mousedown", function(e){
+  if(e.target.closest(".resume-box")){
+    dragItem = e.target.closest("p,h2,h3,center");
+    if(dragItem) dragItem.draggable = true;
+  }
+});
+
+document.addEventListener("dragstart", function(e){
+  if(dragItem){
+    e.dataTransfer.setData("text/plain","");
+  }
+});
+
+document.addEventListener("dragover", function(e){
+  e.preventDefault();
+});
+
+document.addEventListener("drop", function(e){
+  e.preventDefault();
+
+  if(!isPremium){
+    alert("Premium required for Canva drag feature");
+    return;
+  }
+
+  let target = document.elementFromPoint(e.clientX, e.clientY);
+
+  if(target && dragItem && target.closest(".resume-box")){
+    target.before(dragItem);
+  }
+});
+
+/* =========================
+   AI CV CHATBOT (COMMAND BASED)
+========================= */
+
+function aiCVBot(input){
+
+  if(!isPremium){
+    return "Premium required for AI CV Bot";
+  }
+
+  input = input.toLowerCase();
+
+  if(input.includes("improve")){
+    return "Improve by adding achievements, numbers, and stronger action verbs.";
+  }
+
+  if(input.includes("professional")){
+    return "Use formal tone and structured bullet points.";
+  }
+
+  if(input.includes("ats")){
+    return "Add job keywords and technical skills.";
+  }
+
+  if(input.includes("job")){
+    return "Align skills with target job roles.";
+
+  }
+
+  return "Try: improve / professional / ats / job";
+}
+
+/* =========================
+   GENERATE RESUME
+========================= */
+
+function generate(){
 
   const text = name.value + skills.value + experience.value + about.value;
 
@@ -303,24 +368,25 @@ function generate(){
   `;
 }
 
-/* PDF */
+/* =========================
+   EXPORTS
+========================= */
+
 function downloadPDF(){
   if(!isPremium){alert("Premium required");return;}
   html2pdf().from(resumeBox).save("resume.pdf");
 }
 
-/* IMAGE */
 function downloadImage(){
   if(!isPremium){alert("Premium required");return;}
   html2canvas(resumeBox).then(c=>{
-    let a = document.createElement("a");
-    a.download = "resume.png";
-    a.href = c.toDataURL();
+    let a=document.createElement("a");
+    a.download="resume.png";
+    a.href=c.toDataURL();
     a.click();
   });
 }
 
-/* EUROPLUS CV */
 function downloadEuroPlusCV(){
 
   if(!isPremium){
@@ -348,19 +414,21 @@ About:
 ${about.value}
 
 Date: ${new Date().toLocaleDateString()}
-  `;
+`;
 
-  const blob = new Blob([cv], {type:"text/plain"});
-  const a = document.createElement("a");
-  a.download = "Europlus_CV.txt";
-  a.href = URL.createObjectURL(blob);
+  const blob = new Blob([cv],{type:"text/plain"});
+  const a=document.createElement("a");
+  a.download="Europlus_CV.txt";
+  a.href=URL.createObjectURL(blob);
   a.click();
 }
 
-/* CLEAR */
+/* =========================
+   CLEAR
+========================= */
+
 function clearData(){
   document.querySelectorAll("input").forEach(i=>i.value="");
-  localStorage.removeItem("resumeData");
   resume.innerHTML="";
 }
 
