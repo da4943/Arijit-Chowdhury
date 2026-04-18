@@ -97,6 +97,7 @@
     @media(max-width:768px){
       .grid{grid-template-columns:1fr}
     }
+
   </style>
 </head>
 
@@ -126,15 +127,9 @@
     <h2>💎 Unlock Premium ₹200</h2>
     <p>Enable AI + Export Features</p>
 
-    <!-- ✅ FIXED QR SCANNER (VISIBLE + FALLBACK) -->
-    <img id="upiQR" width="200"
+    <img width="200"
       style="background:white;padding:10px;border-radius:10px"
-      src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=upi://pay?pa=yourupi@bank&pn=AOV%20AI&am=200&cu=INR"
-      onerror="this.src='https://via.placeholder.com/200?text=QR+Not+Loaded'">
-
-    <p style="color:#bbb;font-size:12px">
-      Scan using Google Pay / PhonePe / Paytm
-    </p>
+      src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=upi://pay?pa=yourupi@bank&pn=AOV%20AI&am=200&cu=INR">
 
     <input id="txn" placeholder="Enter Payment ID / Email">
     <button onclick="verifyPayment()">Activate Premium</button>
@@ -161,6 +156,10 @@
     <input id="signature" placeholder="Signature">
 
     <button onclick="generate()">Generate Resume</button>
+
+    <!-- ✅ ADDED EUROPLUS BUTTON (FIX) -->
+    <button onclick="downloadEuroPlusCV()">Europlus CV</button>
+
     <button class="btn-pdf" onclick="downloadPDF()">Download PDF</button>
     <button onclick="downloadImage()">Download Image</button>
     <button class="btn-clear" onclick="clearData()">Clear Data</button>
@@ -192,7 +191,6 @@ function verifyPayment(){
 
 /* PHOTO */
 photoUpload.onchange=e=>{
-  if(!e.target.files.length) return;
   const r=new FileReader();
   r.onload=()=>photoData=r.result;
   r.readAsDataURL(e.target.files[0]);
@@ -228,6 +226,32 @@ function generate(){
   `;
 
   resumeBox=document.getElementById("resumeBox");
+}
+
+/* EUROPLUS CV FIXED */
+function downloadEuroPlusCV(){
+  if(!resumeBox){
+    alert("Generate resume first");
+    return;
+  }
+
+  const text = `
+EUROPLUS CV
+
+Name: ${name.value}
+Age: ${age.value}
+Qualification: ${qualification.value}
+Experience: ${experience.value}
+Skills: ${skills.value}
+Hobbies: ${hobbies.value}
+About: ${about.value}
+  `;
+
+  const blob = new Blob([text], {type:"text/plain"});
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "Europlus_CV.txt";
+  a.click();
 }
 
 /* PDF */
