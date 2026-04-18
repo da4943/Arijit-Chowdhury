@@ -124,13 +124,13 @@
   <!-- PREMIUM -->
   <div class="card">
     <h2>💎 Unlock Premium ₹200</h2>
-    <p>Scan & Pay to enable all premium features</p>
+    <p>Enable AI + Export Features</p>
 
-    <img id="upiQR" width="200"
+    <img width="200"
       src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=upi://pay?pa=yourupi@bank&pn=AOV%20AI&am=200&cu=INR">
 
     <input id="txn" placeholder="Enter Payment ID / Email">
-    <button onclick="verifyPayment()">I Paid</button>
+    <button onclick="verifyPayment()">Activate Premium</button>
   </div>
 
   <!-- BUILDER -->
@@ -154,6 +154,7 @@
     <input id="signature" placeholder="Signature">
 
     <button onclick="generate()">Generate Resume</button>
+    <button onclick="askAI()">AI Improve Resume</button>
     <button onclick="downloadPDF()">Download PDF</button>
     <button onclick="downloadImage()">Download Image</button>
     <button onclick="downloadEuroPlusCV()">Europlus CV</button>
@@ -169,13 +170,10 @@
 
 <script>
 
-/* ================= CORE ================= */
-
 let photoData = "";
 let isPremium = localStorage.getItem("premium") === "yes";
 
-/* ================= PAYMENT ================= */
-
+/* PAYMENT */
 function verifyPayment(){
   if(!txn.value){
     alert("Enter Payment ID");
@@ -183,90 +181,82 @@ function verifyPayment(){
   }
   localStorage.setItem("premium","yes");
   isPremium = true;
-  alert("Premium Unlocked ✔");
+  alert("Premium Activated ✔");
 }
 
-/* ================= PHOTO ================= */
-
+/* PHOTO */
 photoUpload.onchange = e=>{
   const r = new FileReader();
   r.onload = ()=> photoData = r.result;
-  r.readAsDataURL(e.target.files[0]);
+  if(e.target.files[0]) r.readAsDataURL(e.target.files[0]);
 };
 
-/* ================= ATS ENGINE ================= */
-
-function getATSScore(text){
-  let score = 0;
-  const keys = ["skills","experience","project","team","lead","manage","develop","communication"];
-
-  keys.forEach(k=>{
-    if(text.toLowerCase().includes(k)) score += 10;
+/* ATS */
+function getATS(text){
+  let s = 0;
+  ["skills","experience","project","lead","manage","develop"].forEach(k=>{
+    if(text.toLowerCase().includes(k)) s += 10;
   });
-
-  return Math.min(score,100);
+  return Math.min(s,100);
 }
 
-/* ================= JOB MATCH ================= */
-
+/* JOB MATCH */
 function getJobs(skills){
   let s = skills.toLowerCase();
-  let jobs = [];
+  let j = [];
 
-  if(s.includes("developer")) jobs.push("Software Developer");
-  if(s.includes("marketing")) jobs.push("Marketing Executive");
-  if(s.includes("sales")) jobs.push("Sales Executive");
-  if(s.includes("chef")) jobs.push("Chef / Cook");
-  if(s.includes("design")) jobs.push("UI/UX Designer");
-  if(s.includes("data")) jobs.push("Data Analyst");
-  if(s.includes("manager")) jobs.push("Operations Manager");
+  if(s.includes("dev")) j.push("Software Developer");
+  if(s.includes("market")) j.push("Marketing Executive");
+  if(s.includes("sales")) j.push("Sales Executive");
+  if(s.includes("chef")) j.push("Chef");
+  if(s.includes("design")) j.push("UI/UX Designer");
 
-  if(jobs.length === 0) jobs.push("Add more skills");
+  if(j.length === 0) j.push("Improve Skills");
 
-  return jobs.join(", ");
+  return j.join(", ");
 }
 
-/* ================= SMART SUGGESTIONS ================= */
+/* AI SUGGESTION */
+function askAI(){
+  if(!isPremium){
+    alert("Premium required");
+    return;
+  }
 
-function getSmartSuggestions(){
-  let tips = [];
-
-  if(skills.value === "") tips.push("Add skills");
-  if(experience.value === "") tips.push("Add experience");
-  if(about.value.length < 20) tips.push("Improve about section");
-  if(!photoData) tips.push("Add photo");
-
-  if(tips.length === 0) tips.push("Resume looks good");
-
-  return tips.join(" | ");
+  alert(
+    "AI Suggestions:\n\n" +
+    "• Add achievements with numbers\n" +
+    "• Use strong action verbs\n" +
+    "• Add projects section\n" +
+    "• Improve skills clarity"
+  );
 }
 
-/* ================= QUALITY SCORE ================= */
+/* DRAG FIXED SYSTEM */
+let selected = null;
 
-function getResumeQualityScore(){
-  let score = 0;
+document.addEventListener("mousedown",(e)=>{
+  const box = e.target.closest(".resume-box");
+  if(box){
+    selected = box;
+  }
+});
 
-  if(name.value) score += 10;
-  if(skills.value) score += 20;
-  if(experience.value) score += 20;
-  if(about.value) score += 20;
-  if(photoData) score += 10;
-  if(declaration.value) score += 10;
-  if(signature.value) score += 10;
+document.addEventListener("mouseup",(e)=>{
+  const box = e.target.closest(".resume-box");
+  if(selected && box && selected !== box){
+    box.after(selected);
+  }
+  selected = null;
+});
 
-  return Math.min(score,100);
-}
-
-/* ================= GENERATE ================= */
-
+/* GENERATE */
 function generate(){
 
-  const text = name.value + skills.value + experience.value + about.value;
+  let text = name.value + skills.value + experience.value + about.value;
 
-  const ats = getATSScore(text);
-  const jobs = getJobs(skills.value);
-  const tips = getSmartSuggestions();
-  const quality = getResumeQualityScore();
+  let ats = getATS(text);
+  let jobs = getJobs(skills.value);
 
   document.getElementById("resume").innerHTML = `
     <div class="resume-box" id="resumeBox">
@@ -294,24 +284,42 @@ function generate(){
       <hr>
 
       <h3>🔥 ATS SCORE: ${ats}/100</h3>
-      <h3>📊 QUALITY SCORE: ${quality}/100</h3>
       <p><b>🎯 Job Match:</b> ${jobs}</p>
-      <p><b>💡 Smart Tips:</b> ${tips}</p>
 
     </div>
   `;
 }
 
-/* ================= EXPORT ================= */
-
+/* PDF */
 function downloadPDF(){
-  if(!isPremium){alert("Premium required");return;}
-  html2pdf().from(resumeBox).save("resume.pdf");
+  if(!isPremium){
+    alert("Premium required");
+    return;
+  }
+
+  const el = document.getElementById("resumeBox");
+  if(!el){
+    alert("Generate resume first");
+    return;
+  }
+
+  html2pdf().from(el).save("resume.pdf");
 }
 
+/* IMAGE */
 function downloadImage(){
-  if(!isPremium){alert("Premium required");return;}
-  html2canvas(resumeBox).then(c=>{
+  if(!isPremium){
+    alert("Premium required");
+    return;
+  }
+
+  const el = document.getElementById("resumeBox");
+  if(!el){
+    alert("Generate resume first");
+    return;
+  }
+
+  html2canvas(el).then(c=>{
     let a = document.createElement("a");
     a.download = "resume.png";
     a.href = c.toDataURL();
@@ -321,7 +329,6 @@ function downloadImage(){
 
 /* EUROPLUS CV */
 function downloadEuroPlusCV(){
-
   if(!isPremium){
     alert("Premium required");
     return;
@@ -356,11 +363,10 @@ Date: ${new Date().toLocaleDateString()}
   a.click();
 }
 
-/* ================= CLEAR ================= */
-
+/* CLEAR */
 function clearData(){
   document.querySelectorAll("input").forEach(i=>i.value="");
-  resume.innerHTML="";
+  document.getElementById("resume").innerHTML="";
 }
 
 </script>
