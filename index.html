@@ -48,16 +48,14 @@
     <h1>Create Professional Resume in Seconds</h1>
   </div>
 
-  <!-- 💎 PREMIUM -->
+  <!-- PREMIUM -->
   <div class="card">
     <h2 id="priceText">💎 Unlock Premium ₹200</h2>
     <p>Scan & Pay to enable PDF + Image Download</p>
 
-    <!-- UPI -->
     <img id="upiQR" width="200"
       src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=upi://pay?pa=yourupi@bank&pn=AOV%20AI&am=200&cu=INR">
 
-    <!-- PayPal -->
     <a id="paypalBtn" href="https://www.paypal.com/paypalme/aovai/20" target="_blank" style="display:none;">
       <button>Pay $20 (International)</button>
     </a>
@@ -76,7 +74,7 @@
       <input id="experience" placeholder="Experience">
     </div>
 
-    <input id="skills" placeholder="Skills (Chef, Waiter, Carpenter, Entrepreneur)">
+    <input id="skills" placeholder="Skills">
     <input id="hobbies" placeholder="Hobbies">
     <input id="about" placeholder="About You">
 
@@ -128,7 +126,7 @@ function updatePaymentUI(){
   }
 }
 
-/* VERIFY */
+/* PAYMENT */
 function verifyPayment(){
   const txn = document.getElementById("txn").value;
   if(!txn){
