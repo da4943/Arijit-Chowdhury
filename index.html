@@ -142,7 +142,7 @@ document.getElementById("photoUpload").addEventListener("change",e=>{
   if(e.target.files[0]) r.readAsDataURL(e.target.files[0]);
 });
 
-/* PREMIUM CHECK */
+/* CHECK */
 function checkPremium(){
   if(!isPremium){
     alert(userCountry==="IN"?"Please pay ₹200":"Please pay $20");
@@ -151,38 +151,65 @@ function checkPremium(){
   return true;
 }
 
-/* ATS SCORING ENGINE 🔥 */
+/* ATS SCORE */
 function getATSScore(text){
-  let score = 0;
+  let score=0;
+  const keys=["experience","skills","project","team","management","leadership","communication","developer","sales","marketing"];
+  keys.forEach(k=>{ if(text.toLowerCase().includes(k)) score+=8; });
+  if(text.length>200) score+=20;
+  if(text.length>400) score+=30;
+  return Math.min(score,100);
+}
 
-  const keywords = [
-    "experience","skills","team","project","management",
-    "communication","leadership","developer","designer",
-    "engineer","sales","marketing","problem solving"
-  ];
+/* JOB MATCH SYSTEM 🔥 */
+function getJobMatch(skillsText){
+  const s = skillsText.toLowerCase();
 
-  keywords.forEach(k=>{
-    if(text.toLowerCase().includes(k)) score += 8;
-  });
+  let jobs = [];
 
-  if(text.length > 200) score += 20;
-  if(text.length > 400) score += 30;
+  if(s.includes("developer") || s.includes("coding") || s.includes("html") || s.includes("javascript")){
+    jobs.push("💻 Software Developer");
+  }
+  if(s.includes("sales") || s.includes("marketing")){
+    jobs.push("📈 Sales & Marketing Executive");
+  }
+  if(s.includes("chef") || s.includes("cooking")){
+    jobs.push("👨‍🍳 Chef / Cook");
+  }
+  if(s.includes("waiter") || s.includes("hotel")){
+    jobs.push("🏨 Hospitality Staff");
+  }
+  if(s.includes("carpenter") || s.includes("electrician")){
+    jobs.push("🔧 Skilled Technician");
+  }
+  if(s.length < 5){
+    jobs.push("📌 Add more skills for better job match");
+  }
 
-  return Math.min(score, 100);
+  return jobs.join("<br>");
+}
+
+/* AI SUGGESTIONS 🔥 */
+function getAISuggestions(text){
+  let tips=[];
+
+  if(text.length<100) tips.push("Add more details in your profile");
+  if(!text.toLowerCase().includes("experience")) tips.push("Mention work experience clearly");
+  if(!text.toLowerCase().includes("skills")) tips.push("Add strong skills section");
+  if(text.toLowerCase().includes("fresher")) tips.push("Highlight internships or projects");
+
+  return tips.length ? tips.map(t=>"• "+t).join("<br>") : "✔ Strong Resume Profile";
 }
 
 /* GENERATE */
 function generate(){
 
   const resumeText =
-    name.value + " " +
-    qualification.value + " " +
-    experience.value + " " +
-    skills.value + " " +
-    hobbies.value + " " +
-    about.value;
+    name.value+" "+qualification.value+" "+experience.value+" "+skills.value+" "+about.value;
 
-  const ats = getATSScore(resumeText);
+  const ats=getATSScore(resumeText);
+  const jobs=getJobMatch(skills.value);
+  const tips=getAISuggestions(resumeText);
 
   document.getElementById("resume").innerHTML=`
     <div class="resume-box" id="resumeBox">
@@ -210,6 +237,12 @@ function generate(){
       <hr>
 
       <h3>🔥 ATS SCORE: ${ats}/100</h3>
+
+      <h3>🎯 Recommended Jobs</h3>
+      <p>${jobs}</p>
+
+      <h3>🧠 AI Suggestions</h3>
+      <p>${tips}</p>
     </div>
   `;
 }
