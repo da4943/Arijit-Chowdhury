@@ -1,228 +1,263 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-<meta charset="UTF-8">
-<title>Leeco AI</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AOV AI Resume PRO</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<style>
-body{
-  margin:0;
-  font-family:Arial, sans-serif;
-  background:#0b0f19;
-  color:white;
-}
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
 
-/* WRAPPER */
-.wrapper{
-  display:flex;
-  height:100vh;
-  overflow:hidden;
-}
+  <style>
+    body{
+      margin:0;
+      font-family:Arial;
+      background:linear-gradient(135deg,#050816,#0b1220);
+      color:white;
+    }
 
-/* SIDEBAR */
-.sidebar{
-  width:260px;
-  background:#0f172a;
-  padding:16px;
-  box-sizing:border-box;
-}
+    .nav{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      padding:15px 20px;
+      background:#0f172a;
+    }
 
-.logo{
-  font-size:22px;
-  font-weight:bold;
-  color:#38bdf8;
-  margin-bottom:20px;
-}
+    .logo{
+      font-size:20px;
+      font-weight:bold;
+      color:#38bdf8;
+    }
 
-.menu button{
-  width:100%;
-  margin-top:10px;
-  padding:12px;
-  border:none;
-  border-radius:8px;
-  background:#111827;
-  color:white;
-  cursor:pointer;
-  transition:0.2s;
-}
+    .social button{
+      margin-left:10px;
+      padding:10px 14px;
+      border-radius:8px;
+      border:none;
+      font-weight:bold;
+      cursor:pointer;
+    }
 
-.menu button:hover{
-  background:#1f2937;
-}
+    .google{background:white;color:black}
+    .linkedin{background:#0a66c2;color:white}
 
-/* MAIN */
-.main{
-  flex:1;
-  display:flex;
-  flex-direction:column;
-}
+    .container{
+      max-width:1000px;
+      margin:auto;
+      padding:15px;
+    }
 
-/* TOPBAR */
-.topbar{
-  padding:14px 18px;
-  background:#0f172a;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  font-weight:bold;
-}
+    .hero{
+      text-align:center;
+      padding:25px;
+    }
 
-/* CHAT AREA */
-.chat{
-  flex:1;
-  padding:18px;
-  overflow-y:auto;
-  box-sizing:border-box;
-}
+    .hero h1{
+      font-size:28px;
+      color:#38bdf8;
+    }
 
-.msg{
-  padding:12px 14px;
-  margin:10px 0;
-  border-radius:10px;
-  max-width:75%;
-  word-wrap:break-word;
-}
+    .card{
+      background:#111827;
+      padding:20px;
+      margin-top:15px;
+      border-radius:15px;
+    }
 
-/* USER MESSAGE */
-.user{
-  background:#38bdf8;
-  color:black;
-  margin-left:auto;
-}
+    input,button{
+      width:100%;
+      padding:12px;
+      margin-top:10px;
+      border-radius:10px;
+      border:none;
+    }
 
-/* AI MESSAGE */
-.ai{
-  background:#1f2937;
-}
+    button{
+      background:#38bdf8;
+      font-weight:bold;
+      cursor:pointer;
+    }
 
-/* INPUT AREA */
-.inputBox{
-  display:flex;
-  padding:12px;
-  background:#0f172a;
-  box-sizing:border-box;
-}
+    .btn-pdf{background:#f59e0b}
+    .btn-clear{background:#ef4444}
 
-input{
-  flex:1;
-  padding:12px;
-  border:none;
-  border-radius:8px;
-  outline:none;
-  font-size:14px;
-}
+    .resume-box{
+      background:white;
+      color:black;
+      padding:20px;
+      border-radius:12px;
+    }
 
-button.send{
-  margin-left:10px;
-  padding:12px 18px;
-  border:none;
-  border-radius:8px;
-  background:#38bdf8;
-  font-weight:bold;
-  cursor:pointer;
-  transition:0.2s;
-}
+    .grid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:15px;
+    }
 
-button.send:hover{
-  background:#22a6f0;
-}
-
-/* MOBILE */
-@media(max-width:768px){
-  .sidebar{
-    display:none;
-  }
-}
-</style>
+    @media(max-width:768px){
+      .grid{grid-template-columns:1fr}
+    }
+  </style>
 </head>
 
 <body>
 
-<div class="wrapper">
+<div class="nav">
+  <div class="logo">AOV AI Resume</div>
 
-  <!-- SIDEBAR -->
-  <div class="sidebar">
-    <div class="logo">Leeco AI</div>
+  <div class="social">
+    <a href="https://www.google.com/search?q=jobs" target="_blank">
+      <button class="google">Google</button>
+    </a>
+    <a href="https://www.linkedin.com/jobs/" target="_blank">
+      <button class="linkedin">LinkedIn</button>
+    </a>
+  </div>
+</div>
 
-    <div class="menu">
-      <button onclick="newChat()">New Chat</button>
-      <button>Resume AI</button>
-      <button>Code Generator</button>
-      <button>Blog Writer</button>
-      <button>Settings</button>
-    </div>
+<div class="container">
+
+  <div class="hero">
+    <h1>Create Professional Resume in Seconds</h1>
   </div>
 
-  <!-- MAIN -->
-  <div class="main">
+  <!-- PREMIUM -->
+  <div class="card">
+    <h2>💎 Unlock Premium ₹200</h2>
+    <p>Enable AI + Export Features</p>
 
-    <div class="topbar">
-      <div>AI Assistant</div>
-      <div>Free Mode</div>
+    <!-- ✅ FIXED QR SCANNER (VISIBLE + FALLBACK) -->
+    <img id="upiQR" width="200"
+      style="background:white;padding:10px;border-radius:10px"
+      src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=upi://pay?pa=yourupi@bank&pn=AOV%20AI&am=200&cu=INR"
+      onerror="this.src='https://via.placeholder.com/200?text=QR+Not+Loaded'">
+
+    <p style="color:#bbb;font-size:12px">
+      Scan using Google Pay / PhonePe / Paytm
+    </p>
+
+    <input id="txn" placeholder="Enter Payment ID / Email">
+    <button onclick="verifyPayment()">Activate Premium</button>
+  </div>
+
+  <!-- BUILDER -->
+  <div class="card">
+    <h2>Resume Builder</h2>
+
+    <div class="grid">
+      <input id="name" placeholder="Full Name">
+      <input id="age" placeholder="Age">
+      <input id="qualification" placeholder="Qualification">
+      <input id="experience" placeholder="Experience">
     </div>
 
-    <!-- CHAT -->
-    <div class="chat" id="chat">
-      <div class="msg ai">Hello 👋 I am Leeco AI. Ask me anything.</div>
-    </div>
+    <input id="skills" placeholder="Skills">
+    <input id="hobbies" placeholder="Hobbies">
+    <input id="about" placeholder="About You">
 
-    <!-- INPUT -->
-    <div class="inputBox">
-      <input id="input" placeholder="Type your message...">
-      <button class="send" onclick="send()">Send</button>
-    </div>
+    <input type="file" id="photoUpload">
 
+    <input id="declaration" placeholder="Declaration">
+    <input id="signature" placeholder="Signature">
+
+    <button onclick="generate()">Generate Resume</button>
+    <button class="btn-pdf" onclick="downloadPDF()">Download PDF</button>
+    <button onclick="downloadImage()">Download Image</button>
+    <button class="btn-clear" onclick="clearData()">Clear Data</button>
+  </div>
+
+  <!-- OUTPUT -->
+  <div class="card">
+    <div id="resume"></div>
   </div>
 
 </div>
 
 <script>
 
-const chat = document.getElementById("chat");
-const input = document.getElementById("input");
+let photoData="";
+let isPremium = localStorage.getItem("premium")==="yes";
+let resumeBox=null;
 
-/* SEND MESSAGE */
-function send(){
-
-  const text = input.value.trim();
-  if(!text) return;
-
-  // USER MESSAGE
-  addMessage(text, "user");
-
-  // AI RESPONSE (frontend demo)
-  setTimeout(()=>{
-    addMessage(generateReply(text), "ai");
-  },500);
-
-  input.value="";
+/* PAYMENT */
+function verifyPayment(){
+  if(!txn.value){
+    alert("Enter Payment ID");
+    return;
+  }
+  localStorage.setItem("premium","yes");
+  isPremium=true;
+  alert("Premium Activated ✔");
 }
 
-/* ADD MESSAGE */
-function addMessage(text, type){
-  const div = document.createElement("div");
-  div.className = "msg " + type;
-  div.innerText = text;
-  chat.appendChild(div);
-  chat.scrollTop = chat.scrollHeight;
+/* PHOTO */
+photoUpload.onchange=e=>{
+  if(!e.target.files.length) return;
+  const r=new FileReader();
+  r.onload=()=>photoData=r.result;
+  r.readAsDataURL(e.target.files[0]);
+};
+
+/* GENERATE */
+function generate(){
+
+  document.getElementById("resume").innerHTML=`
+    <div class="resume-box" id="resumeBox">
+
+      <center>
+        ${photoData?`<img src="${photoData}" width="100" style="border-radius:50%">`:""}
+        <h2>${name.value}</h2>
+        <p>${qualification.value}</p>
+      </center>
+
+      <hr>
+
+      <p><b>Experience:</b> ${experience.value}</p>
+      <p><b>Skills:</b> ${skills.value}</p>
+      <p><b>Hobbies:</b> ${hobbies.value}</p>
+
+      <h3>About</h3>
+      <p>${about.value}</p>
+
+      <hr>
+
+      <p><b>Declaration:</b> ${declaration.value}</p>
+      <p><b>Signature:</b> ${signature.value}</p>
+
+    </div>
+  `;
+
+  resumeBox=document.getElementById("resumeBox");
 }
 
-/* SIMPLE AI LOGIC (FRONTEND ONLY) */
-function generateReply(text){
-  text = text.toLowerCase();
-
-  if(text.includes("hello")) return "Hello! How can I help you today?";
-  if(text.includes("resume")) return "I can help you build a professional resume.";
-  if(text.includes("job")) return "I can suggest job-related guidance for you.";
-  if(text.includes("html")) return "HTML is the structure of web pages.";
-  
-  return "I am a frontend AI demo. Connect backend API for real intelligence.";
+/* PDF */
+function downloadPDF(){
+  if(!resumeBox){
+    alert("Generate resume first");
+    return;
+  }
+  html2pdf().from(resumeBox).save("resume.pdf");
 }
 
-/* NEW CHAT */
-function newChat(){
-  chat.innerHTML = `<div class="msg ai">New chat started. Ask me anything 👋</div>`;
+/* IMAGE */
+function downloadImage(){
+  if(!resumeBox){
+    alert("Generate resume first");
+    return;
+  }
+  html2canvas(resumeBox).then(c=>{
+    let a=document.createElement("a");
+    a.download="resume.png";
+    a.href=c.toDataURL();
+    a.click();
+  });
+}
+
+/* CLEAR */
+function clearData(){
+  document.querySelectorAll("input").forEach(i=>i.value="");
+  document.getElementById("resume").innerHTML="";
+  resumeBox=null;
 }
 
 </script>
