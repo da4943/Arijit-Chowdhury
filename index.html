@@ -7,6 +7,30 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
 
+  <!-- Firebase (MODERN SDK) -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, onAuthStateChanged, signOut }
+    from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+    /* 🔴 YOUR FIREBASE CONFIG (REPLACE LATER) */
+    const firebaseConfig = {
+      apiKey: "YOUR_API_KEY",
+      authDomain: "YOUR_PROJECT.firebaseapp.com",
+      projectId: "YOUR_PROJECT_ID",
+      appId: "YOUR_APP_ID"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    window.firebaseAuth = auth;
+    window.firebaseLogin = signInWithEmailAndPassword;
+    window.firebaseSignup = createUserWithEmailAndPassword;
+    window.firebaseLogout = signOut;
+    window.firebaseOnAuth = onAuthStateChanged;
+  </script>
+
   <style>
     body{
       margin:0;
@@ -86,7 +110,6 @@
       color:black;
       padding:20px;
       border-radius:12px;
-      position:relative;
     }
 
     .grid{
@@ -99,32 +122,36 @@
       .grid{grid-template-columns:1fr}
     }
 
-    /* ===== CANVAS EDITOR ===== */
-    .draggable{
-      position:relative;
-      cursor:move;
-      padding:5px;
-      display:inline-block;
+    /* LOGIN MODAL */
+    .modal{
+      display:none;
+      position:fixed;
+      top:0;left:0;
+      width:100%;
+      height:100%;
+      background:rgba(0,0,0,0.7);
     }
 
-    .resizer{
-      width:10px;
-      height:10px;
-      background:red;
-      position:absolute;
-      right:0;
-      bottom:0;
-      cursor:se-resize;
+    .modal-box{
+      width:300px;
+      margin:100px auto;
+      background:#111827;
+      padding:20px;
+      border-radius:12px;
     }
   </style>
 </head>
 
 <body>
 
+<!-- NAV -->
 <div class="nav">
   <div class="logo">AOV AI Resume</div>
 
   <div class="social">
+    <button onclick="openLogin()">Login</button>
+    <button onclick="logout()">Logout</button>
+
     <a href="https://www.google.com/search?q=jobs" target="_blank">
       <button class="google">Google</button>
     </a>
@@ -138,14 +165,13 @@
 
   <div class="hero">
     <h1>Create Professional Resume in Seconds</h1>
+    <p id="userStatus">Not logged in</p>
   </div>
 
   <!-- PREMIUM -->
   <div class="card">
     <h2>💎 Unlock Premium ₹200</h2>
-
-    <img width="200"
-      src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=upi://pay?pa=yourupi@bank&pn=AOV%20AI&am=200&cu=INR">
+    <p>Enable AI + Export Features</p>
 
     <input id="txn" placeholder="Enter Payment ID / Email">
     <button onclick="verifyPayment()">Activate Premium</button>
@@ -172,141 +198,133 @@
     <input id="signature" placeholder="Signature">
 
     <button onclick="generate()">Generate Resume</button>
-    <button onclick="downloadEuroPlusCV()">Europlus CV</button>
     <button class="btn-pdf" onclick="downloadPDF()">Download PDF</button>
     <button onclick="downloadImage()">Download Image</button>
     <button class="btn-clear" onclick="clearData()">Clear Data</button>
   </div>
 
-  <!-- OUTPUT -->
   <div class="card">
     <div id="resume"></div>
   </div>
 
 </div>
 
+<!-- LOGIN MODAL -->
+<div class="modal" id="loginModal">
+  <div class="modal-box">
+
+    <h3>Login</h3>
+
+    <input id="email" placeholder="Email">
+    <input id="password" type="password" placeholder="Password">
+
+    <button onclick="login()">Login</button>
+    <button onclick="signup()">Sign Up</button>
+    <button onclick="closeLogin()">Close</button>
+
+  </div>
+</div>
+
 <script>
 
 let photoData="";
 let resumeBox=null;
+let currentUser=null;
 
-/* SAFE ACCESS */
-const $ = id => document.getElementById(id);
+/* LOGIN UI */
+function openLogin(){
+  document.getElementById("loginModal").style.display="block";
+}
 
-/* PREMIUM */
-function verifyPayment(){
-  if(!$("txn").value){
-    alert("Enter Payment ID");
-    return;
+function closeLogin(){
+  document.getElementById("loginModal").style.display="none";
+}
+
+/* FIREBASE LOGIN */
+async function login(){
+  try{
+    const user = await firebaseLogin(
+      firebaseAuth,
+      email.value,
+      password.value
+    );
+    alert("Login Success");
+    closeLogin();
+  }catch(e){
+    alert(e.message);
   }
+}
+
+/* SIGNUP */
+async function signup(){
+  try{
+    const user = await firebaseSignup(
+      firebaseAuth,
+      email.value,
+      password.value
+    );
+    alert("Account Created");
+    closeLogin();
+  }catch(e){
+    alert(e.message);
+  }
+}
+
+/* LOGOUT */
+async function logout(){
+  await firebaseLogout(firebaseAuth);
+  alert("Logged out");
+}
+
+/* USER STATE */
+firebaseOnAuth(firebaseAuth,(user)=>{
+  currentUser=user;
+  document.getElementById("userStatus").innerText =
+    user ? "Logged in: " + user.email : "Not logged in";
+});
+
+/* PAYMENT */
+function verifyPayment(){
+  if(!txn.value){alert("Enter Payment ID");return;}
   localStorage.setItem("premium","yes");
   alert("Premium Activated ✔");
 }
 
 /* PHOTO */
-$("photoUpload").onchange = e=>{
+photoUpload.onchange=e=>{
   const r=new FileReader();
   r.onload=()=>photoData=r.result;
   r.readAsDataURL(e.target.files[0]);
 };
 
-/* ATS SCORE */
-function getATS(text){
-  let score=0;
-  ["skills","experience","lead","manage","develop","project"].forEach(k=>{
-    if(text.toLowerCase().includes(k)) score+=15;
-  });
-  return Math.min(score,100);
-}
-
 /* GENERATE */
 function generate(){
-
-  const name=$("name").value;
-  const age=$("age").value;
-  const qualification=$("qualification").value;
-  const experience=$("experience").value;
-  const skills=$("skills").value;
-  const hobbies=$("hobbies").value;
-  const about=$("about").value;
-  const declaration=$("declaration").value;
-  const signature=$("signature").value;
-
-  const ats = getATS(skills+" "+experience);
-
   document.getElementById("resume").innerHTML=`
     <div class="resume-box" id="resumeBox">
-
-      <div class="draggable" onmousedown="drag(this)">
-        ${photoData?`<img src="${photoData}" width="100">`:""}
-      </div>
-
-      <h2 class="draggable">${name}</h2>
-      <p class="draggable">${qualification}</p>
+      <center>
+        ${photoData?`<img src="${photoData}" width="100" style="border-radius:50%">`:""}
+        <h2>${name.value}</h2>
+        <p>${qualification.value}</p>
+      </center>
 
       <hr>
-
-      <p class="draggable"><b>Experience:</b> ${experience}</p>
-      <p class="draggable"><b>Skills:</b> ${skills}</p>
-      <p class="draggable"><b>Hobbies:</b> ${hobbies}</p>
-
-      <p class="draggable"><b>About:</b> ${about}</p>
-
-      <hr>
-
-      <p class="draggable"><b>Declaration:</b> ${declaration}</p>
-      <p class="draggable"><b>Signature:</b> ${signature}</p>
-
-      <h3>ATS SCORE: ${ats}/100</h3>
-
+      <p>${experience.value}</p>
+      <p>${skills.value}</p>
+      <p>${about.value}</p>
     </div>
   `;
-
-  resumeBox=$("resumeBox");
-}
-
-/* DRAG SYSTEM (SIMPLE CANVA STYLE) */
-function drag(el){
-  let offsetX, offsetY;
-
-  el.onmousedown = function(e){
-    offsetX = e.clientX - el.offsetLeft;
-    offsetY = e.clientY - el.offsetTop;
-
-    document.onmousemove = function(e){
-      el.style.position="absolute";
-      el.style.left=(e.clientX-offsetX)+"px";
-      el.style.top=(e.clientY-offsetY)+"px";
-    };
-
-    document.onmouseup = function(){
-      document.onmousemove=null;
-    };
-  };
-}
-
-/* EUROPLUS */
-function downloadEuroPlusCV(){
-  if(!resumeBox){ alert("Generate first"); return; }
-
-  const blob=new Blob([resumeBox.innerText],{type:"text/plain"});
-  const a=document.createElement("a");
-  a.href=URL.createObjectURL(blob);
-  a.download="Europlus_CV.txt";
-  a.click();
+  resumeBox=document.getElementById("resumeBox");
 }
 
 /* PDF */
 function downloadPDF(){
-  if(!resumeBox){ alert("Generate first"); return; }
-
+  if(!resumeBox){alert("Generate first");return;}
   html2pdf().from(resumeBox).save("resume.pdf");
 }
 
 /* IMAGE */
 function downloadImage(){
-  if(!resumeBox){ alert("Generate first"); return; }
-
+  if(!resumeBox){alert("Generate first");return;}
   html2canvas(resumeBox).then(c=>{
     let a=document.createElement("a");
     a.download="resume.png";
@@ -320,7 +338,6 @@ function clearData(){
   document.querySelectorAll("input").forEach(i=>i.value="");
   document.getElementById("resume").innerHTML="";
   resumeBox=null;
-  photoData="";
 }
 
 </script>
