@@ -86,6 +86,7 @@
       color:black;
       padding:20px;
       border-radius:12px;
+      position:relative;
     }
 
     .grid{
@@ -96,6 +97,24 @@
 
     @media(max-width:768px){
       .grid{grid-template-columns:1fr}
+    }
+
+    /* ===== CANVAS EDITOR ===== */
+    .draggable{
+      position:relative;
+      cursor:move;
+      padding:5px;
+      display:inline-block;
+    }
+
+    .resizer{
+      width:10px;
+      height:10px;
+      background:red;
+      position:absolute;
+      right:0;
+      bottom:0;
+      cursor:se-resize;
     }
   </style>
 </head>
@@ -121,18 +140,18 @@
     <h1>Create Professional Resume in Seconds</h1>
   </div>
 
+  <!-- PREMIUM -->
   <div class="card">
     <h2>💎 Unlock Premium ₹200</h2>
-    <p>Enable AI + Export Features</p>
 
     <img width="200"
-      style="background:white;padding:10px;border-radius:10px"
       src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=upi://pay?pa=yourupi@bank&pn=AOV%20AI&am=200&cu=INR">
 
     <input id="txn" placeholder="Enter Payment ID / Email">
     <button onclick="verifyPayment()">Activate Premium</button>
   </div>
 
+  <!-- BUILDER -->
   <div class="card">
     <h2>Resume Builder</h2>
 
@@ -159,6 +178,7 @@
     <button class="btn-clear" onclick="clearData()">Clear Data</button>
   </div>
 
+  <!-- OUTPUT -->
   <div class="card">
     <div id="resume"></div>
   </div>
@@ -167,16 +187,15 @@
 
 <script>
 
-let photoData = "";
-let resumeBox = null;
+let photoData="";
+let resumeBox=null;
 
-/* SAFE GET INPUT */
+/* SAFE ACCESS */
 const $ = id => document.getElementById(id);
 
 /* PREMIUM */
 function verifyPayment(){
-  const txn = $("txn");
-  if(!txn || !txn.value){
+  if(!$("txn").value){
     alert("Enter Payment ID");
     return;
   }
@@ -186,91 +205,112 @@ function verifyPayment(){
 
 /* PHOTO */
 $("photoUpload").onchange = e=>{
-  if(!e.target.files.length) return;
-  const r = new FileReader();
-  r.onload = ()=> photoData = r.result;
+  const r=new FileReader();
+  r.onload=()=>photoData=r.result;
   r.readAsDataURL(e.target.files[0]);
 };
+
+/* ATS SCORE */
+function getATS(text){
+  let score=0;
+  ["skills","experience","lead","manage","develop","project"].forEach(k=>{
+    if(text.toLowerCase().includes(k)) score+=15;
+  });
+  return Math.min(score,100);
+}
 
 /* GENERATE */
 function generate(){
 
-  const name = $("name").value;
-  const age = $("age").value;
-  const qualification = $("qualification").value;
-  const experience = $("experience").value;
-  const skills = $("skills").value;
-  const hobbies = $("hobbies").value;
-  const about = $("about").value;
-  const declaration = $("declaration").value;
-  const signature = $("signature").value;
+  const name=$("name").value;
+  const age=$("age").value;
+  const qualification=$("qualification").value;
+  const experience=$("experience").value;
+  const skills=$("skills").value;
+  const hobbies=$("hobbies").value;
+  const about=$("about").value;
+  const declaration=$("declaration").value;
+  const signature=$("signature").value;
 
-  document.getElementById("resume").innerHTML = `
+  const ats = getATS(skills+" "+experience);
+
+  document.getElementById("resume").innerHTML=`
     <div class="resume-box" id="resumeBox">
 
-      <center>
-        ${photoData ? `<img src="${photoData}" width="100" style="border-radius:50%">` : ""}
-        <h2>${name}</h2>
-        <p>${qualification}</p>
-      </center>
+      <div class="draggable" onmousedown="drag(this)">
+        ${photoData?`<img src="${photoData}" width="100">`:""}
+      </div>
+
+      <h2 class="draggable">${name}</h2>
+      <p class="draggable">${qualification}</p>
 
       <hr>
 
-      <p><b>Experience:</b> ${experience}</p>
-      <p><b>Skills:</b> ${skills}</p>
-      <p><b>Hobbies:</b> ${hobbies}</p>
+      <p class="draggable"><b>Experience:</b> ${experience}</p>
+      <p class="draggable"><b>Skills:</b> ${skills}</p>
+      <p class="draggable"><b>Hobbies:</b> ${hobbies}</p>
 
-      <h3>About</h3>
-      <p>${about}</p>
+      <p class="draggable"><b>About:</b> ${about}</p>
 
       <hr>
 
-      <p><b>Declaration:</b> ${declaration}</p>
-      <p><b>Signature:</b> ${signature}</p>
+      <p class="draggable"><b>Declaration:</b> ${declaration}</p>
+      <p class="draggable"><b>Signature:</b> ${signature}</p>
+
+      <h3>ATS SCORE: ${ats}/100</h3>
 
     </div>
   `;
 
-  resumeBox = $("resumeBox");
+  resumeBox=$("resumeBox");
+}
+
+/* DRAG SYSTEM (SIMPLE CANVA STYLE) */
+function drag(el){
+  let offsetX, offsetY;
+
+  el.onmousedown = function(e){
+    offsetX = e.clientX - el.offsetLeft;
+    offsetY = e.clientY - el.offsetTop;
+
+    document.onmousemove = function(e){
+      el.style.position="absolute";
+      el.style.left=(e.clientX-offsetX)+"px";
+      el.style.top=(e.clientY-offsetY)+"px";
+    };
+
+    document.onmouseup = function(){
+      document.onmousemove=null;
+    };
+  };
 }
 
 /* EUROPLUS */
 function downloadEuroPlusCV(){
-  if(!resumeBox){
-    alert("Generate resume first");
-    return;
-  }
+  if(!resumeBox){ alert("Generate first"); return; }
 
-  const text = resumeBox.innerText;
-
-  const blob = new Blob([text], {type:"text/plain"});
-  const a = document.createElement("a");
-  a.href = URL.createObjectURL(blob);
-  a.download = "Europlus_CV.txt";
+  const blob=new Blob([resumeBox.innerText],{type:"text/plain"});
+  const a=document.createElement("a");
+  a.href=URL.createObjectURL(blob);
+  a.download="Europlus_CV.txt";
   a.click();
 }
 
 /* PDF */
 function downloadPDF(){
-  if(!resumeBox){
-    alert("Generate resume first");
-    return;
-  }
+  if(!resumeBox){ alert("Generate first"); return; }
 
   html2pdf().from(resumeBox).save("resume.pdf");
 }
 
 /* IMAGE */
 function downloadImage(){
-  if(!resumeBox){
-    alert("Generate resume first");
-    return;
-  }
+  if(!resumeBox){ alert("Generate first"); return; }
 
   html2canvas(resumeBox).then(c=>{
-    let a = document.createElement("a");
-    a.download = "resume.png";
-    a.href = c.toDataURL();
+    let a=document.createElement("a");
+    a.download="resume.png";
+    a.href=c.toDataURL();
     a.click();
   });
 }
@@ -278,9 +318,9 @@ function downloadImage(){
 /* CLEAR */
 function clearData(){
   document.querySelectorAll("input").forEach(i=>i.value="");
-  document.getElementById("resume").innerHTML = "";
-  resumeBox = null;
-  photoData = "";
+  document.getElementById("resume").innerHTML="";
+  resumeBox=null;
+  photoData="";
 }
 
 </script>
