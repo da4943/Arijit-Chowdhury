@@ -86,6 +86,27 @@
       color:black;
       padding:20px;
       border-radius:12px;
+      position:relative;
+      overflow:hidden;
+    }
+
+    /* CANVA GRID OVERLAY (hidden visual helper) */
+    .grid-overlay{
+      position:absolute;
+      top:0;
+      left:0;
+      width:100%;
+      height:100%;
+      background-image:
+        linear-gradient(rgba(0,0,0,0.05) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,0,0,0.05) 1px, transparent 1px);
+      background-size:20px 20px;
+      pointer-events:none;
+      display:none;
+    }
+
+    .grid-active .grid-overlay{
+      display:block;
     }
 
     .grid{
@@ -124,7 +145,6 @@
   <!-- PREMIUM -->
   <div class="card">
     <h2>💎 Unlock Premium ₹200</h2>
-    <p>Enable AI + Export Features</p>
 
     <img width="200"
       src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=upi://pay?pa=yourupi@bank&pn=AOV%20AI&am=200&cu=INR">
@@ -135,7 +155,7 @@
 
   <!-- BUILDER -->
   <div class="card">
-    <h2>Resume Builder</h2>
+    <h2>Resume Builder (Canva Engine Enabled)</h2>
 
     <div class="grid">
       <input id="name" placeholder="Full Name">
@@ -154,7 +174,8 @@
     <input id="signature" placeholder="Signature">
 
     <button onclick="generate()">Generate Resume</button>
-    <button onclick="askAI()">AI Improve Resume</button>
+    <button onclick="askAI()">AI Resume Generator</button>
+    <button onclick="toggleGrid()">Toggle Canva Grid</button>
     <button onclick="downloadPDF()">Download PDF</button>
     <button onclick="downloadImage()">Download Image</button>
     <button onclick="downloadEuroPlusCV()">Europlus CV</button>
@@ -170,85 +191,88 @@
 
 <script>
 
-let photoData = "";
-let isPremium = localStorage.getItem("premium") === "yes";
+let photoData="";
+let isPremium = localStorage.getItem("premium")==="yes";
 
 /* PAYMENT */
 function verifyPayment(){
-  if(!txn.value){
-    alert("Enter Payment ID");
-    return;
-  }
+  if(!txn.value){alert("Enter Payment ID");return;}
   localStorage.setItem("premium","yes");
-  isPremium = true;
+  isPremium=true;
   alert("Premium Activated ✔");
 }
 
 /* PHOTO */
-photoUpload.onchange = e=>{
-  const r = new FileReader();
-  r.onload = ()=> photoData = r.result;
-  if(e.target.files[0]) r.readAsDataURL(e.target.files[0]);
+photoUpload.onchange=e=>{
+  const r=new FileReader();
+  r.onload=()=>photoData=r.result;
+  r.readAsDataURL(e.target.files[0]);
 };
 
 /* ATS */
 function getATS(text){
-  let s = 0;
+  let s=0;
   ["skills","experience","project","lead","manage","develop"].forEach(k=>{
-    if(text.toLowerCase().includes(k)) s += 10;
+    if(text.toLowerCase().includes(k)) s+=10;
   });
   return Math.min(s,100);
 }
 
-/* JOB MATCH */
+/* JOBS */
 function getJobs(skills){
-  let s = skills.toLowerCase();
-  let j = [];
-
+  let s=skills.toLowerCase();
+  let j=[];
   if(s.includes("dev")) j.push("Software Developer");
   if(s.includes("market")) j.push("Marketing Executive");
   if(s.includes("sales")) j.push("Sales Executive");
   if(s.includes("chef")) j.push("Chef");
   if(s.includes("design")) j.push("UI/UX Designer");
-
-  if(j.length === 0) j.push("Improve Skills");
-
+  if(j.length===0) j.push("Improve Skills");
   return j.join(", ");
 }
 
-/* AI SUGGESTION */
-function askAI(){
+/* REAL AI CHATGPT API READY */
+async function askAI(){
+
   if(!isPremium){
     alert("Premium required");
     return;
   }
 
-  alert(
-    "AI Suggestions:\n\n" +
-    "• Add achievements with numbers\n" +
-    "• Use strong action verbs\n" +
-    "• Add projects section\n" +
-    "• Improve skills clarity"
-  );
+  const prompt = `
+Improve this resume professionally:
+
+Name: ${name.value}
+Skills: ${skills.value}
+Experience: ${experience.value}
+About: ${about.value}
+`;
+
+  alert("AI processing... (connect API key to enable real AI)");
+
+  // REAL OPENAI API (ENABLE LATER)
+  /*
+  const res = await fetch("https://api.openai.com/v1/chat/completions", {
+    method:"POST",
+    headers:{
+      "Content-Type":"application/json",
+      "Authorization":"Bearer YOUR_API_KEY"
+    },
+    body:JSON.stringify({
+      model:"gpt-4o-mini",
+      messages:[{role:"user", content:prompt}]
+    })
+  });
+
+  const data = await res.json();
+  alert(data.choices[0].message.content);
+  */
 }
 
-/* DRAG FIXED SYSTEM */
-let selected = null;
-
-document.addEventListener("mousedown",(e)=>{
-  const box = e.target.closest(".resume-box");
-  if(box){
-    selected = box;
-  }
-});
-
-document.addEventListener("mouseup",(e)=>{
-  const box = e.target.closest(".resume-box");
-  if(selected && box && selected !== box){
-    box.after(selected);
-  }
-  selected = null;
-});
+/* CANVA GRID TOGGLE */
+function toggleGrid(){
+  document.getElementById("resumeBox")?.classList.toggle("grid-active");
+}
 
 /* GENERATE */
 function generate(){
@@ -258,11 +282,13 @@ function generate(){
   let ats = getATS(text);
   let jobs = getJobs(skills.value);
 
-  document.getElementById("resume").innerHTML = `
+  document.getElementById("resume").innerHTML=`
     <div class="resume-box" id="resumeBox">
 
+      <div class="grid-overlay"></div>
+
       <center>
-        ${photoData ? `<img src="${photoData}" width="100" style="border-radius:50%">` : ""}
+        ${photoData?`<img src="${photoData}" width="100" style="border-radius:50%">`:""}
         <h2>${name.value}</h2>
         <p>${qualification.value}</p>
       </center>
@@ -290,49 +316,25 @@ function generate(){
   `;
 }
 
-/* PDF */
+/* EXPORT */
 function downloadPDF(){
-  if(!isPremium){
-    alert("Premium required");
-    return;
-  }
-
-  const el = document.getElementById("resumeBox");
-  if(!el){
-    alert("Generate resume first");
-    return;
-  }
-
-  html2pdf().from(el).save("resume.pdf");
+  if(!isPremium){alert("Premium required");return;}
+  html2pdf().from(resumeBox).save("resume.pdf");
 }
 
-/* IMAGE */
 function downloadImage(){
-  if(!isPremium){
-    alert("Premium required");
-    return;
-  }
-
-  const el = document.getElementById("resumeBox");
-  if(!el){
-    alert("Generate resume first");
-    return;
-  }
-
-  html2canvas(el).then(c=>{
-    let a = document.createElement("a");
-    a.download = "resume.png";
-    a.href = c.toDataURL();
+  if(!isPremium){alert("Premium required");return;}
+  html2canvas(resumeBox).then(c=>{
+    let a=document.createElement("a");
+    a.download="resume.png";
+    a.href=c.toDataURL();
     a.click();
   });
 }
 
-/* EUROPLUS CV */
+/* EUROPLUS */
 function downloadEuroPlusCV(){
-  if(!isPremium){
-    alert("Premium required");
-    return;
-  }
+  if(!isPremium){alert("Premium required");return;}
 
   const cv = `
 EUROPLUS CV
@@ -340,26 +342,16 @@ EUROPLUS CV
 Name: ${name.value}
 Age: ${age.value}
 Qualification: ${qualification.value}
-
-Experience:
-${experience.value}
-
-Skills:
-${skills.value}
-
-Hobbies:
-${hobbies.value}
-
-About:
-${about.value}
-
-Date: ${new Date().toLocaleDateString()}
+Experience: ${experience.value}
+Skills: ${skills.value}
+Hobbies: ${hobbies.value}
+About: ${about.value}
 `;
 
-  const blob = new Blob([cv],{type:"text/plain"});
-  const a = document.createElement("a");
-  a.download = "Europlus_CV.txt";
-  a.href = URL.createObjectURL(blob);
+  const blob=new Blob([cv],{type:"text/plain"});
+  const a=document.createElement("a");
+  a.download="Europlus_CV.txt";
+  a.href=URL.createObjectURL(blob);
   a.click();
 }
 
