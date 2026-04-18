@@ -48,7 +48,6 @@
     <h1>Create Professional Resume in Seconds</h1>
   </div>
 
-  <!-- PREMIUM -->
   <div class="card">
     <h2 id="priceText">💎 Unlock Premium ₹200</h2>
     <p>Scan & Pay to enable PDF + Image Download</p>
@@ -98,8 +97,35 @@
 <script>
 
 let photoData="";
-let isPremium = localStorage.getItem("premium") === "yes";
-let userCountry = "IN";
+let isPremium = localStorage.getItem("premium")==="yes";
+let userCountry="IN";
+
+/* AUTO SAVE SYSTEM 🔥 */
+window.onload=function(){
+  const saved=localStorage.getItem("resumeData");
+  if(saved){
+    const d=JSON.parse(saved);
+    Object.keys(d).forEach(k=>{
+      if(document.getElementById(k)) document.getElementById(k).value=d[k];
+    });
+  }
+}
+
+/* SAVE DATA */
+function saveData(){
+  const data={
+    name:name.value,
+    age:age.value,
+    qualification:qualification.value,
+    experience:experience.value,
+    skills:skills.value,
+    hobbies:hobbies.value,
+    about:about.value,
+    declaration:declaration.value,
+    signature:signature.value
+  };
+  localStorage.setItem("resumeData",JSON.stringify(data));
+}
 
 /* COUNTRY */
 fetch("https://ipapi.co/json/")
@@ -107,109 +133,56 @@ fetch("https://ipapi.co/json/")
 .then(d=>{
   userCountry=d.country;
   updatePaymentUI();
-})
-.catch(updatePaymentUI);
+});
 
+/* UI */
 function updatePaymentUI(){
-  const qr=document.getElementById("upiQR");
-  const paypal=document.getElementById("paypalBtn");
-  const price=document.getElementById("priceText");
-
   if(userCountry==="IN"){
-    qr.style.display="block";
-    paypal.style.display="none";
-    price.innerText="💎 Unlock Premium ₹200";
+    upiQR.style.display="block";
+    paypalBtn.style.display="none";
   } else {
-    qr.style.display="none";
-    paypal.style.display="block";
-    price.innerText="💎 Unlock Premium $20";
+    upiQR.style.display="none";
+    paypalBtn.style.display="block";
   }
 }
 
 /* PAYMENT */
 function verifyPayment(){
-  const txn=document.getElementById("txn").value;
-  if(!txn){alert("Enter Payment ID");return;}
+  if(!txn.value){alert("Enter Payment ID");return;}
   localStorage.setItem("premium","yes");
   isPremium=true;
   alert("Premium Unlocked ✔");
 }
 
 /* PHOTO */
-document.getElementById("photoUpload").addEventListener("change",e=>{
+photoUpload.onchange=e=>{
   const r=new FileReader();
   r.onload=()=>photoData=r.result;
-  if(e.target.files[0]) r.readAsDataURL(e.target.files[0]);
-});
+  r.readAsDataURL(e.target.files[0]);
+};
 
-/* CHECK */
-function checkPremium(){
-  if(!isPremium){
-    alert(userCountry==="IN"?"Please pay ₹200":"Please pay $20");
-    return false;
-  }
-  return true;
-}
-
-/* ATS SCORE */
+/* ATS 🔥 */
 function getATSScore(text){
-  let score=0;
-  const keys=["experience","skills","project","team","management","leadership","communication","developer","sales","marketing"];
-  keys.forEach(k=>{ if(text.toLowerCase().includes(k)) score+=8; });
-  if(text.length>200) score+=20;
-  if(text.length>400) score+=30;
-  return Math.min(score,100);
+  let s=0;
+  ["skills","experience","project","team","lead","manage","develop"].forEach(k=>{
+    if(text.toLowerCase().includes(k)) s+=10;
+  });
+  return Math.min(s,100);
 }
 
-/* JOB MATCH SYSTEM 🔥 */
-function getJobMatch(skillsText){
-  const s = skillsText.toLowerCase();
-
-  let jobs = [];
-
-  if(s.includes("developer") || s.includes("coding") || s.includes("html") || s.includes("javascript")){
-    jobs.push("💻 Software Developer");
-  }
-  if(s.includes("sales") || s.includes("marketing")){
-    jobs.push("📈 Sales & Marketing Executive");
-  }
-  if(s.includes("chef") || s.includes("cooking")){
-    jobs.push("👨‍🍳 Chef / Cook");
-  }
-  if(s.includes("waiter") || s.includes("hotel")){
-    jobs.push("🏨 Hospitality Staff");
-  }
-  if(s.includes("carpenter") || s.includes("electrician")){
-    jobs.push("🔧 Skilled Technician");
-  }
-  if(s.length < 5){
-    jobs.push("📌 Add more skills for better job match");
-  }
-
-  return jobs.join("<br>");
-}
-
-/* AI SUGGESTIONS 🔥 */
-function getAISuggestions(text){
-  let tips=[];
-
-  if(text.length<100) tips.push("Add more details in your profile");
-  if(!text.toLowerCase().includes("experience")) tips.push("Mention work experience clearly");
-  if(!text.toLowerCase().includes("skills")) tips.push("Add strong skills section");
-  if(text.toLowerCase().includes("fresher")) tips.push("Highlight internships or projects");
-
-  return tips.length ? tips.map(t=>"• "+t).join("<br>") : "✔ Strong Resume Profile";
+/* TEMPLATE ENGINE (NO UI CHANGE) */
+function applyTemplate(text){
+  return text; // default same design (future upgrade ready)
 }
 
 /* GENERATE */
 function generate(){
 
-  const resumeText =
-    name.value+" "+qualification.value+" "+experience.value+" "+skills.value+" "+about.value;
+  saveData();
 
-  const ats=getATSScore(resumeText);
-  const jobs=getJobMatch(skills.value);
-  const tips=getAISuggestions(resumeText);
+  const text = name.value+" "+skills.value+" "+experience.value+" "+about.value;
+
+  const ats=getATSScore(text);
 
   document.getElementById("resume").innerHTML=`
     <div class="resume-box" id="resumeBox">
@@ -232,35 +205,36 @@ function generate(){
 
       <p><b>Declaration:</b> ${declaration.value}</p>
       <p><b>Signature:</b> ${signature.value}</p>
-      <p><b>Date:</b> ${new Date().toLocaleDateString()}</p>
 
       <hr>
 
       <h3>🔥 ATS SCORE: ${ats}/100</h3>
-
-      <h3>🎯 Recommended Jobs</h3>
-      <p>${jobs}</p>
-
-      <h3>🧠 AI Suggestions</h3>
-      <p>${tips}</p>
     </div>
   `;
 }
 
-/* PDF */
-function downloadPDF(){
-  if(!checkPremium()) return;
+/* COPY RESUME 🔥 */
+function copyResume(){
   const el=document.getElementById("resumeBox");
   if(!el){alert("Generate first");return;}
-  html2pdf().from(el).save("resume.pdf");
+  navigator.clipboard.writeText(el.innerText);
+  alert("Resume Copied ✔");
+}
+
+/* WHATSAPP SHARE 🔥 */
+function shareWhatsApp(){
+  const text=`Resume: ${name.value} | Skills: ${skills.value} | Experience: ${experience.value}`;
+  window.open("https://wa.me/?text="+encodeURIComponent(text));
+}
+
+/* PDF */
+function downloadPDF(){
+  html2pdf().from(resumeBox).save("resume.pdf");
 }
 
 /* IMAGE */
 function downloadImage(){
-  if(!checkPremium()) return;
-  const el=document.getElementById("resumeBox");
-  if(!el){alert("Generate first");return;}
-  html2canvas(el).then(c=>{
+  html2canvas(resumeBox).then(c=>{
     let a=document.createElement("a");
     a.download="resume.png";
     a.href=c.toDataURL();
@@ -271,8 +245,8 @@ function downloadImage(){
 /* CLEAR */
 function clearData(){
   document.querySelectorAll("input").forEach(i=>i.value="");
-  photoData="";
-  document.getElementById("resume").innerHTML="";
+  localStorage.removeItem("resumeData");
+  resume.innerHTML="";
 }
 
 </script>
