@@ -12,22 +12,26 @@
   <script src="https://www.paypal.com/sdk/js?client-id=ATxSvTwRQxtN5NBu5Kj8GAjZCDRzCpb_aoO_L_vB9IAF-p179MOTDCtUhVEYGG1B-2P-n47P6BL4B&currency=USD"></script>
 
   <style>
-    body{margin:0;font-family:Arial;background:linear-gradient(135deg,#050816,#0b1220);color:white;}
+    body{
+      margin:0;
+      font-family:Arial;
+      background:linear-gradient(135deg,#050816,#0b1220);
+      color:white;
+    }
 
     .nav{
       display:flex;
       justify-content:space-between;
       align-items:center;
-      padding:15px 20px;
+      padding:15px;
       background:#0f172a;
     }
 
-    .logo{font-size:20px;font-weight:bold;color:#38bdf8;}
-
-    .social{display:flex;align-items:center;gap:10px;}
+    .logo{color:#38bdf8;font-size:20px;font-weight:bold;}
 
     .social button{
-      padding:10px 14px;
+      margin-left:8px;
+      padding:10px;
       border:none;
       border-radius:8px;
       font-weight:bold;
@@ -37,52 +41,93 @@
     .google{background:white;color:black}
     .linkedin{background:#0a66c2;color:white}
 
-    .container{max-width:1000px;margin:auto;padding:15px;}
+    .container{
+      max-width:1000px;
+      margin:auto;
+      padding:15px;
+    }
 
-    .hero{text-align:center;padding:25px;}
-    .hero h1{font-size:28px;color:#38bdf8;}
+    .card{
+      background:#111827;
+      padding:20px;
+      border-radius:15px;
+      margin-top:15px;
+    }
 
-    .card{background:#111827;padding:20px;margin-top:15px;border-radius:15px;}
+    /* =========================
+       🔥 MODERN BUILDER DESIGN
+    ==========================*/
 
-    input,button{
+    .builder-title{
+      font-size:22px;
+      color:#38bdf8;
+      text-align:center;
+      margin-bottom:15px;
+    }
+
+    .builder-grid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:15px;
+    }
+
+    .field-box{
+      background:#0b1220;
+      padding:15px;
+      border-radius:12px;
+      border:1px solid #1f2937;
+      transition:0.3s;
+    }
+
+    .field-box:hover{
+      transform:scale(1.02);
+      border-color:#38bdf8;
+    }
+
+    .field-title{
+      font-size:13px;
+      color:#9ca3af;
+      margin-bottom:5px;
+    }
+
+    input{
+      width:100%;
+      padding:12px;
+      border-radius:10px;
+      border:none;
+      outline:none;
+      background:#111827;
+      color:white;
+    }
+
+    .full-width{
+      grid-column:span 2;
+    }
+
+    button{
       width:100%;
       padding:12px;
       margin-top:10px;
-      border-radius:10px;
       border:none;
+      border-radius:10px;
+      font-weight:bold;
+      cursor:pointer;
+      background:#38bdf8;
     }
-
-    button{background:#38bdf8;font-weight:bold;cursor:pointer;}
 
     .btn-pdf{background:#f59e0b}
     .btn-clear{background:#ef4444}
 
-    .resume-box{background:white;color:black;padding:20px;border-radius:12px;}
-
-    .grid{display:grid;grid-template-columns:1fr 1fr;gap:15px;}
-    @media(max-width:768px){.grid{grid-template-columns:1fr}}
-
-    /* LOGIN FIX */
-    .modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);}
-    .modal-box{width:300px;margin:100px auto;background:#111827;padding:20px;border-radius:12px;}
-
-    /* VERIFIED BADGE */
-    .verified{
-      display:flex;
-      align-items:center;
-      gap:6px;
-      color:#22c55e;
-      font-size:13px;
-      margin-top:5px;
+    .resume-box{
+      background:white;
+      color:black;
+      padding:20px;
+      border-radius:12px;
     }
 
-    .qr-box{
-      text-align:center;
-      margin-top:10px;
-      background:#0b1220;
-      padding:10px;
-      border-radius:10px;
-      border:1px solid #1f2937;
+    @media(max-width:768px){
+      .builder-grid{grid-template-columns:1fr;}
+      .full-width{grid-column:auto;}
     }
 
   </style>
@@ -90,18 +135,11 @@
 
 <body>
 
-<!-- NAV -->
 <div class="nav">
   <div class="logo">AOV AI Resume</div>
-
   <div class="social">
-    <button onclick="openLogin()">Login</button>
-
-    <!-- ✅ FIXED SIGNUP BUTTON -->
-    <button onclick="signup()">Signup</button>
-
-    <button onclick="logout()">Logout</button>
-
+    <button>Login</button>
+    <button>Logout</button>
     <button class="google"><i class="bi bi-google"></i> Google</button>
     <button class="linkedin"><i class="bi bi-linkedin"></i> LinkedIn</button>
   </div>
@@ -109,50 +147,72 @@
 
 <div class="container">
 
-  <div class="hero">
-    <h1>Create Professional Resume in Seconds</h1>
-    <p id="userStatus">Not logged in</p>
-  </div>
-
-  <!-- PAYMENT -->
   <div class="card">
-    <h2>💎 Premium ₹200</h2>
+    <h2 class="builder-title">🔥 Resume Builder Pro</h2>
 
-    <div class="verified">
-      <i class="bi bi-patch-check-fill"></i> Verified Payment System
+    <div class="builder-grid">
+
+      <div class="field-box">
+        <div class="field-title">Full Name</div>
+        <input id="name" placeholder="Enter Name">
+      </div>
+
+      <div class="field-box">
+        <div class="field-title">Father Name</div>
+        <input id="father" placeholder="Enter Father Name">
+      </div>
+
+      <div class="field-box">
+        <div class="field-title">Phone Number</div>
+        <input id="phone" placeholder="Enter Phone">
+      </div>
+
+      <div class="field-box">
+        <div class="field-title">Email ID</div>
+        <input id="email" placeholder="Enter Email">
+      </div>
+
+      <div class="field-box">
+        <div class="field-title">Age</div>
+        <input id="age" placeholder="Enter Age">
+      </div>
+
+      <div class="field-box">
+        <div class="field-title">Address</div>
+        <input id="address" placeholder="Enter Address">
+      </div>
+
+      <div class="field-box">
+        <div class="field-title">Qualification</div>
+        <input id="qualification" placeholder="Enter Qualification">
+      </div>
+
+      <div class="field-box">
+        <div class="field-title">Experience</div>
+        <input id="experience" placeholder="Enter Experience">
+      </div>
+
+      <div class="field-box full-width">
+        <div class="field-title">Skills</div>
+        <input id="skills" placeholder="Enter Skills (comma separated)">
+      </div>
+
+      <div class="field-box full-width">
+        <div class="field-title">Hobbies</div>
+        <input id="hobbies" placeholder="Enter Hobbies">
+      </div>
+
+      <div class="field-box full-width">
+        <div class="field-title">About You</div>
+        <input id="about" placeholder="Write about yourself">
+      </div>
+
     </div>
-
-    <div class="qr-box">
-      <img width="180"
-        src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=upi://pay">
-      <p>Scan & Pay via UPI (India Users)</p>
-    </div>
-
-    <div id="paypal-button-container"></div>
-  </div>
-
-  <!-- BUILDER -->
-  <div class="card">
-    <h2>Resume Builder</h2>
-
-    <div class="grid">
-      <input id="name" placeholder="Full Name">
-      <input id="father" placeholder="Father Name">
-      <input id="phone" placeholder="Phone Number">
-      <input id="email" placeholder="Email ID">
-      <input id="age" placeholder="Age">
-      <input id="address" placeholder="Address">
-      <input id="qualification" placeholder="Qualification">
-      <input id="experience" placeholder="Experience">
-    </div>
-
-    <input id="skills" placeholder="Skills">
-    <input id="hobbies" placeholder="Hobbies">
-    <input id="about" placeholder="About You">
 
     <button onclick="generate()">Generate Resume</button>
     <button class="btn-pdf" onclick="downloadPDF()">Download PDF</button>
     <button class="btn-clear" onclick="clearData()">Clear Data</button>
+
   </div>
 
   <div class="card">
@@ -161,65 +221,10 @@
 
 </div>
 
-<!-- LOGIN -->
-<div class="modal" id="loginModal">
-  <div class="modal-box">
-    <h3>Login</h3>
-
-    <input id="email" placeholder="Email">
-    <input id="password" type="password" placeholder="Password">
-
-    <button onclick="login()">Login</button>
-    <button onclick="signup()">Signup</button>
-    <button onclick="closeLogin()">Close</button>
-  </div>
-</div>
-
 <script>
 
 let resumeBox=null;
 
-/* LOGIN */
-function openLogin(){document.getElementById("loginModal").style.display="block";}
-function closeLogin(){document.getElementById("loginModal").style.display="none";}
-
-async function login(){
-  try{
-    await firebaseLogin(firebaseAuth,email.value,password.value);
-    alert("Login Success");
-    closeLogin();
-  }catch(e){alert(e.message);}
-}
-
-async function signup(){
-  try{
-    await firebaseSignup(firebaseAuth,email.value,password.value);
-    alert("Signup Success");
-    closeLogin();
-  }catch(e){alert(e.message);}
-}
-
-async function logout(){
-  await firebaseLogout(firebaseAuth);
-  alert("Logged out");
-}
-
-/* PAYPAL */
-paypal.Buttons({
-  createOrder:(data,actions)=>{
-    return actions.order.create({
-      purchase_units:[{amount:{value:"200"}}]
-    });
-  },
-  onApprove:(data,actions)=>{
-    return actions.order.capture().then(()=>{
-      alert("Payment Success ✔");
-      localStorage.setItem("premium","yes");
-    });
-  }
-}).render('#paypal-button-container');
-
-/* RESUME */
 function generate(){
   document.getElementById("resume").innerHTML=`
     <div class="resume-box">
@@ -240,7 +245,7 @@ function generate(){
 
 function downloadPDF(){
   if(!resumeBox){alert("Generate first");return;}
-  html2pdf().from(resumeBox).save();
+  html2pdf().from(resumeBox).save("resume.pdf");
 }
 
 function clearData(){
