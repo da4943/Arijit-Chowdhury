@@ -7,7 +7,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
 
-  <!-- FIREBASE -->
+  <!-- Firebase -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
     import {
@@ -22,7 +22,7 @@
       apiKey: "AIzaSyBpJQ44k1gokp3sSZggyESC7HpvqssClEE",
       authDomain: "aov-ai-jobs-c697d.firebaseapp.com",
       projectId: "aov-ai-jobs-c697d",
-      storageBucket: "aov-ai-jobs-c697d.appspot.com",
+      storageBucket: "aov-ai-jobs-c697d.firebasestorage.app",
       messagingSenderId: "898401199585",
       appId: "1:898401199585:web:59e6fdeba0568d6255dea0"
     };
@@ -38,25 +38,112 @@
   </script>
 
   <style>
-    body{margin:0;font-family:Arial;background:linear-gradient(135deg,#050816,#0b1220);color:white;}
-    .nav{display:flex;justify-content:space-between;align-items:center;padding:15px 20px;background:#0f172a;}
-    .logo{font-size:20px;font-weight:bold;color:#38bdf8;}
-    .social button{margin-left:10px;padding:10px 14px;border-radius:8px;border:none;font-weight:bold;cursor:pointer;}
+    body{
+      margin:0;
+      font-family:Arial;
+      background:linear-gradient(135deg,#050816,#0b1220);
+      color:white;
+    }
+
+    .nav{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      padding:15px 20px;
+      background:#0f172a;
+    }
+
+    .logo{
+      font-size:20px;
+      font-weight:bold;
+      color:#38bdf8;
+    }
+
+    .social button{
+      margin-left:10px;
+      padding:10px 14px;
+      border-radius:8px;
+      border:none;
+      font-weight:bold;
+      cursor:pointer;
+    }
+
     .google{background:white;color:black}
     .linkedin{background:#0a66c2;color:white}
-    .container{max-width:1000px;margin:auto;padding:15px;}
-    .hero{text-align:center;padding:25px;}
-    .hero h1{font-size:28px;color:#38bdf8;}
-    .card{background:#111827;padding:20px;margin-top:15px;border-radius:15px;}
-    input,button{width:100%;padding:12px;margin-top:10px;border-radius:10px;border:none;}
-    button{background:#38bdf8;font-weight:bold;cursor:pointer;}
+
+    .container{
+      max-width:1000px;
+      margin:auto;
+      padding:15px;
+    }
+
+    .hero{
+      text-align:center;
+      padding:25px;
+    }
+
+    .hero h1{
+      font-size:28px;
+      color:#38bdf8;
+    }
+
+    .card{
+      background:#111827;
+      padding:20px;
+      margin-top:15px;
+      border-radius:15px;
+    }
+
+    input,button{
+      width:100%;
+      padding:12px;
+      margin-top:10px;
+      border-radius:10px;
+      border:none;
+    }
+
+    button{
+      background:#38bdf8;
+      font-weight:bold;
+      cursor:pointer;
+    }
+
     .btn-pdf{background:#f59e0b}
     .btn-clear{background:#ef4444}
-    .resume-box{background:white;color:black;padding:20px;border-radius:12px;}
-    .grid{display:grid;grid-template-columns:1fr 1fr;gap:15px;}
-    @media(max-width:768px){.grid{grid-template-columns:1fr}}
-    .modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);}
-    .modal-box{width:300px;margin:100px auto;background:#111827;padding:20px;border-radius:12px;}
+
+    .resume-box{
+      background:white;
+      color:black;
+      padding:20px;
+      border-radius:12px;
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:15px;
+    }
+
+    @media(max-width:768px){
+      .grid{grid-template-columns:1fr}
+    }
+
+    .modal{
+      display:none;
+      position:fixed;
+      top:0;left:0;
+      width:100%;
+      height:100%;
+      background:rgba(0,0,0,0.7);
+    }
+
+    .modal-box{
+      width:300px;
+      margin:100px auto;
+      background:#111827;
+      padding:20px;
+      border-radius:12px;
+    }
   </style>
 </head>
 
@@ -69,11 +156,9 @@
     <button onclick="openLogin()">Login</button>
     <button onclick="logout()">Logout</button>
 
-    <!-- RESTORED -->
     <a href="https://www.google.com/search?q=jobs" target="_blank">
       <button class="google">Google</button>
     </a>
-
     <a href="https://www.linkedin.com/jobs/" target="_blank">
       <button class="linkedin">LinkedIn</button>
     </a>
@@ -87,17 +172,16 @@
     <p id="userStatus">Not logged in</p>
   </div>
 
-  <!-- PREMIUM WITH QR -->
+  <!-- PREMIUM -->
   <div class="card">
     <h2>💎 Unlock Premium ₹200</h2>
+    <p>Scan QR and send screenshot to WhatsApp for activation</p>
 
-    <!-- QR RESTORED -->
     <img width="200"
       style="background:white;padding:10px;border-radius:10px"
       src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=upi://pay?pa=yourupi@bank&pn=AOV%20AI&am=200&cu=INR">
 
-    <input id="txn" placeholder="Enter Payment ID / Email">
-    <button onclick="verifyPayment()">Activate Premium</button>
+    <button onclick="verifyPayment()">I Paid (Send Screenshot)</button>
   </div>
 
   <!-- BUILDER -->
@@ -121,10 +205,6 @@
     <input id="signature" placeholder="Signature">
 
     <button onclick="generate()">Generate Resume</button>
-
-    <!-- EUROPLUS RESTORED -->
-    <button onclick="downloadEuroPlusCV()">Europlus CV</button>
-
     <button class="btn-pdf" onclick="downloadPDF()">Download PDF</button>
     <button onclick="downloadImage()">Download Image</button>
     <button class="btn-clear" onclick="clearData()">Clear Data</button>
@@ -139,8 +219,11 @@
 <!-- LOGIN -->
 <div class="modal" id="loginModal">
   <div class="modal-box">
+    <h3>Login</h3>
+
     <input id="email" placeholder="Email">
     <input id="password" type="password" placeholder="Password">
+
     <button onclick="login()">Login</button>
     <button onclick="signup()">Sign Up</button>
     <button onclick="closeLogin()">Close</button>
@@ -153,23 +236,23 @@ let photoData="";
 let resumeBox=null;
 
 /* LOGIN */
-function openLogin(){loginModal.style.display="block";}
-function closeLogin(){loginModal.style.display="none";}
+function openLogin(){ document.getElementById("loginModal").style.display="block"; }
+function closeLogin(){ document.getElementById("loginModal").style.display="none"; }
 
 async function login(){
   try{
-    await firebaseLogin(firebaseAuth,email.value,password.value);
+    await firebaseLogin(firebaseAuth, email.value, password.value);
     alert("Login Success");
     closeLogin();
-  }catch(e){alert(e.message);}
+  }catch(e){ alert(e.message); }
 }
 
 async function signup(){
   try{
-    await firebaseSignup(firebaseAuth,email.value,password.value);
+    await firebaseSignup(firebaseAuth, email.value, password.value);
     alert("Account Created");
     closeLogin();
-  }catch(e){alert(e.message);}
+  }catch(e){ alert(e.message); }
 }
 
 async function logout(){
@@ -177,10 +260,15 @@ async function logout(){
   alert("Logged out");
 }
 
-/* AUTH STATE */
 firebaseOnAuth(firebaseAuth,(user)=>{
-  userStatus.innerText = user ? "Logged in: "+user.email : "Not logged in";
+  document.getElementById("userStatus").innerText =
+    user ? "Logged in: " + user.email : "Not logged in";
 });
+
+/* MANUAL PAYMENT */
+function verifyPayment(){
+  window.open("https://wa.me/91XXXXXXXXXX?text=I%20have%20paid%20for%20AOV%20AI%20Resume%20Premium.%20Here%20is%20my%20screenshot", "_blank");
+}
 
 /* PHOTO */
 photoUpload.onchange=e=>{
@@ -192,7 +280,7 @@ photoUpload.onchange=e=>{
 
 /* GENERATE */
 function generate(){
-  resume.innerHTML=`
+  document.getElementById("resume").innerHTML=`
     <div class="resume-box" id="resumeBox">
       <center>
         ${photoData?`<img src="${photoData}" width="100" style="border-radius:50%">`:""}
@@ -200,35 +288,20 @@ function generate(){
         <p>${qualification.value}</p>
       </center>
       <hr>
-      <p><b>Experience:</b> ${experience.value}</p>
-      <p><b>Skills:</b> ${skills.value}</p>
-      <p><b>Hobbies:</b> ${hobbies.value}</p>
+      <p>${experience.value}</p>
+      <p>${skills.value}</p>
       <p>${about.value}</p>
-      <hr>
-      <p>${declaration.value}</p>
-      <p>${signature.value}</p>
     </div>
   `;
   resumeBox=document.getElementById("resumeBox");
 }
 
-/* EUROPLUS */
-function downloadEuroPlusCV(){
-  const text=`EUROPLUS CV\nName:${name.value}\nQualification:${qualification.value}`;
-  const blob=new Blob([text]);
-  const a=document.createElement("a");
-  a.href=URL.createObjectURL(blob);
-  a.download="Europlus.txt";
-  a.click();
-}
-
-/* PDF */
+/* DOWNLOAD */
 function downloadPDF(){
   if(!resumeBox){alert("Generate first");return;}
   html2pdf().from(resumeBox).save("resume.pdf");
 }
 
-/* IMAGE */
 function downloadImage(){
   if(!resumeBox){alert("Generate first");return;}
   html2canvas(resumeBox).then(c=>{
@@ -239,17 +312,10 @@ function downloadImage(){
   });
 }
 
-/* PAYMENT */
-function verifyPayment(){
-  if(!txn.value){alert("Enter Payment ID");return;}
-  localStorage.setItem("premium","yes");
-  alert("Premium Activated ✔");
-}
-
 /* CLEAR */
 function clearData(){
   document.querySelectorAll("input").forEach(i=>i.value="");
-  resume.innerHTML="";
+  document.getElementById("resume").innerHTML="";
   resumeBox=null;
 }
 
