@@ -4,16 +4,20 @@
   <title>AOV AI Resume PRO</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+  <!-- PDF -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
 
+  <!-- ICON -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
 
+  <!-- PAYPAL -->
   <script src="https://www.paypal.com/sdk/js?client-id=ATxSvTwRQxtN5NBu5Kj8GAjZCDRzCpb_aoO_L_vB9IAF-p179MOTDCtUhVEYGG1B-2P-n47P6BL4B&currency=USD"></script>
 
+  <!-- FIREBASE -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import {
+    import { 
       getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword,
       onAuthStateChanged, signOut
     } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
@@ -25,7 +29,10 @@
     const firebaseConfig = {
       apiKey: "AIzaSyBpJQ44k1gokp3sSZggyESC7HpvqssClEE",
       authDomain: "aov-ai-jobs-c697d.firebaseapp.com",
-      projectId: "aov-ai-jobs-c697d"
+      projectId: "aov-ai-jobs-c697d",
+      storageBucket: "aov-ai-jobs-c697d.firebasestorage.app",
+      messagingSenderId: "898401199585",
+      appId: "1:898401199585:web:59e6fdeba0568d6255dea0"
     };
 
     const app = initializeApp(firebaseConfig);
@@ -46,22 +53,42 @@
 
   <style>
     body{margin:0;font-family:Arial;background:linear-gradient(135deg,#050816,#0b1220);color:white;}
-    .nav{display:flex;justify-content:space-between;align-items:center;padding:15px;background:#0f172a;}
-    .logo{color:#38bdf8;font-size:20px;font-weight:bold;}
-    .social{display:flex;gap:10px;}
-    .social button{padding:10px;border-radius:8px;border:none;font-weight:bold;cursor:pointer;}
-
+    .nav{display:flex;justify-content:space-between;align-items:center;padding:15px 20px;background:#0f172a;}
+    .logo{font-size:20px;font-weight:bold;color:#38bdf8;}
+    .social{display:flex;gap:10px;align-items:center;}
+    .social button{padding:10px 14px;border:none;border-radius:8px;font-weight:bold;cursor:pointer;}
     .google{background:white;color:black}
     .linkedin{background:#0a66c2;color:white}
 
     .container{max-width:1000px;margin:auto;padding:15px;}
+    .hero{text-align:center;padding:25px;}
+    .hero h1{color:#38bdf8;}
+
     .card{background:#111827;padding:20px;margin-top:15px;border-radius:15px;}
 
-    input,button{width:100%;padding:12px;margin-top:10px;border-radius:10px;border:none;}
+    input,button{
+      width:100%;
+      padding:12px;
+      margin-top:10px;
+      border-radius:10px;
+      border:none;
+    }
+
     button{background:#38bdf8;font-weight:bold;cursor:pointer;}
+    .btn-pdf{background:#f59e0b}
+    .btn-clear{background:#ef4444}
 
     .resume-box{background:white;color:black;padding:20px;border-radius:12px;}
-    .grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:15px;}
+    @media(max-width:768px){.grid{grid-template-columns:1fr}}
+
+    .admin-box{
+      background:#0f172a;
+      padding:15px;
+      margin-top:15px;
+      border-radius:10px;
+    }
   </style>
 </head>
 
@@ -69,45 +96,55 @@
 
 <div class="nav">
   <div class="logo">AOV AI Resume</div>
+
   <div class="social">
-    <button onclick="loadPayments()" id="adminBtn" style="display:none;">Admin</button>
+    <button onclick="loadPayments()">Admin</button>
     <button onclick="logout()">Logout</button>
+
+    <button class="google"><i class="bi bi-google"></i> Google</button>
+    <button class="linkedin"><i class="bi bi-linkedin"></i> LinkedIn</button>
   </div>
 </div>
 
 <div class="container">
 
-  <div class="card">
-    <h2>💎 Pay $20</h2>
+  <div class="hero">
+    <h1>Create Professional Resume</h1>
+    <p id="userStatus">Not logged in</p>
+  </div>
 
+  <!-- PAYPAL -->
+  <div class="card">
+    <h2>💎 Premium Unlock ($20 One-Time)</h2>
     <div id="paypal-button-container"></div>
   </div>
 
+  <!-- BUILDER -->
   <div class="card">
     <h2>Resume Builder</h2>
 
     <div class="grid">
       <input id="name" placeholder="Full Name">
+      <input id="age" placeholder="Age">
       <input id="qualification" placeholder="Qualification">
+      <input id="experience" placeholder="Experience">
     </div>
 
     <input id="skills" placeholder="Skills">
-    <input id="about" placeholder="About">
+    <input id="about" placeholder="About You">
 
-    <button onclick="generate()">Generate</button>
-    <button onclick="downloadPDF()">Download PDF</button>
-
-    <!-- HIDDEN BUTTON (ONLY ADMIN SEES) -->
-    <button id="clearBtn" onclick="clearData()" style="display:none;background:#ef4444;">Clear Data</button>
+    <button onclick="generate()">Generate Resume</button>
+    <button class="btn-pdf" onclick="downloadPDF()">Download PDF</button>
   </div>
 
+  <!-- RESUME -->
   <div class="card">
     <div id="resume"></div>
   </div>
 
-  <!-- ADMIN PANEL (HIDDEN) -->
-  <div class="card" id="adminPanel" style="display:none;">
-    <h2>Who Paid (Admin Only)</h2>
+  <!-- ADMIN PANEL -->
+  <div class="card">
+    <h2>📊 Who Paid (Admin Panel)</h2>
     <div id="paymentsList"></div>
   </div>
 
@@ -115,20 +152,18 @@
 
 <script>
 
-const ADMIN_EMAIL = "youradminemail@gmail.com";
-
 let resumeBox=null;
 
 /* PAYPAL */
 paypal.Buttons({
-  createOrder:(d,a)=>{
-    return a.order.create({
-      purchase_units:[{amount:{value:'20'}}]
+  createOrder: (data, actions)=>{
+    return actions.order.create({
+      purchase_units:[{ amount:{ value:'20' } }]
     });
   },
 
-  onApprove:(d,a)=>{
-    return a.order.capture().then(async(details)=>{
+  onApprove: (data, actions)=>{
+    return actions.order.capture().then(async (details)=>{
 
       const user = firebaseAuth.currentUser;
 
@@ -137,72 +172,62 @@ paypal.Buttons({
           email:user.email,
           paymentId:details.id,
           status:"paid",
+          amount:"20",
           time:new Date().toISOString()
         });
 
-        alert("Payment Success ✔");
+        alert("Payment Success ✔ Stored in Database");
       }
 
     });
   }
+
 }).render("#paypal-button-container");
 
 
 /* AUTH */
 firebaseOnAuth(firebaseAuth,(user)=>{
-
-  if(user){
-    if(user.email === ADMIN_EMAIL){
-      document.getElementById("adminBtn").style.display="block";
-      document.getElementById("adminPanel").style.display="block";
-      document.getElementById("clearBtn").style.display="block";
-    }
-  }
-
+  userStatus.innerText = user ? "Logged in: "+user.email : "Not logged in";
 });
 
-/* LOAD PAYMENTS (ADMIN ONLY) */
+/* ADMIN - LOAD ALL PAYMENTS */
 async function loadPayments(){
-
   const snap = await getDocs(collection(db,"payments"));
-
   let html="";
 
-  snap.forEach(d=>{
-    const x=d.data();
+  snap.forEach(doc=>{
+    const d = doc.data();
     html += `
-      <p>
-        <b>${x.email}</b><br>
-        ${x.paymentId}<br>
-        ${x.time}
-      </p><hr>
+      <div class="admin-box">
+        <b>Email:</b> ${d.email}<br>
+        <b>Status:</b> ${d.status}<br>
+        <b>Payment ID:</b> ${d.paymentId}<br>
+        <b>Time:</b> ${d.time}
+      </div>
     `;
   });
 
-  paymentsList.innerHTML = html || "No payments";
+  paymentsList.innerHTML = html || "No payments yet";
 }
+
 
 /* RESUME */
 function generate(){
   document.getElementById("resume").innerHTML=`
-    <div class="resume-box">
+    <div class="resume-box" id="resumeBox">
       <h2>${name.value}</h2>
       <p>${qualification.value}</p>
+      <p>${experience.value}</p>
       <p>${skills.value}</p>
       <p>${about.value}</p>
     </div>
   `;
+  resumeBox=document.getElementById("resumeBox");
 }
 
 /* PDF */
 function downloadPDF(){
-  html2pdf().from(document.querySelector(".resume-box")).save();
-}
-
-/* CLEAR (ADMIN ONLY SHOWN) */
-function clearData(){
-  document.querySelectorAll("input").forEach(i=>i.value="");
-  document.getElementById("resume").innerHTML="";
+  html2pdf().from(resumeBox).save("resume.pdf");
 }
 
 /* LOGOUT */
