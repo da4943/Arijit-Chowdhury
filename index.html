@@ -11,72 +11,39 @@
   <!-- ICON -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
 
-  <!-- PAYPAL (LIVE ONLY) -->
+  <!-- PAYPAL SDK (LIVE) -->
   <script src="https://www.paypal.com/sdk/js?client-id=ATxSvTwRQxtN5NBu5Kj8GAjZCDRzCpb_aoO_L_vB9IAF-p179MOTDCtUhVEYGG1B-2P-n47P6BL4B&currency=USD"></script>
-
-  <!-- FIREBASE -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import {
-      getAuth,
-      signInWithEmailAndPassword,
-      createUserWithEmailAndPassword,
-      onAuthStateChanged,
-      signOut
-    } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-
-    import {
-      getFirestore,
-      doc,
-      setDoc,
-      getDoc
-    } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-
-    const firebaseConfig = {
-      apiKey: "AIzaSyBpJQ44k1gokp3sSZggyESC7HpvqssClEE",
-      authDomain: "aov-ai-jobs-c697d.firebaseapp.com",
-      projectId: "aov-ai-jobs-c697d",
-      storageBucket: "aov-ai-jobs-c697d.firebasestorage.app",
-      messagingSenderId: "898401199585",
-      appId: "1:898401199585:web:59e6fdeba0568d6255dea0"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
-
-    window.firebaseAuth = auth;
-    window.firebaseLogin = signInWithEmailAndPassword;
-    window.firebaseSignup = createUserWithEmailAndPassword;
-    window.firebaseLogout = signOut;
-    window.firebaseOnAuth = onAuthStateChanged;
-    window.db = db;
-    window.setDoc = setDoc;
-    window.getDoc = getDoc;
-    window.doc = doc;
-  </script>
 
   <style>
     body{margin:0;font-family:Arial;background:linear-gradient(135deg,#050816,#0b1220);color:white;}
     .nav{display:flex;justify-content:space-between;align-items:center;padding:15px 20px;background:#0f172a;}
     .logo{font-size:20px;font-weight:bold;color:#38bdf8;}
     .social{display:flex;align-items:center;gap:10px;}
-    .social button{padding:10px 14px;border-radius:8px;border:none;font-weight:bold;cursor:pointer;display:flex;align-items:center;gap:6px;}
+    .social button{padding:10px 14px;border:none;border-radius:8px;font-weight:bold;cursor:pointer;}
     .google{background:white;color:black}
     .linkedin{background:#0a66c2;color:white}
+
     .container{max-width:1000px;margin:auto;padding:15px;}
     .hero{text-align:center;padding:25px;}
     .hero h1{font-size:28px;color:#38bdf8;}
     .card{background:#111827;padding:20px;margin-top:15px;border-radius:15px;}
-    input,button{width:100%;padding:12px;margin-top:10px;border-radius:10px;border:none;}
+
+    input,button{
+      width:100%;
+      padding:12px;
+      margin-top:10px;
+      border-radius:10px;
+      border:none;
+    }
+
     button{background:#38bdf8;font-weight:bold;cursor:pointer;}
     .btn-pdf{background:#f59e0b}
     .btn-clear{background:#ef4444}
+
     .resume-box{background:white;color:black;padding:20px;border-radius:12px;}
+
     .grid{display:grid;grid-template-columns:1fr 1fr;gap:15px;}
     @media(max-width:768px){.grid{grid-template-columns:1fr}}
-    .modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);}
-    .modal-box{width:300px;margin:100px auto;background:#111827;padding:20px;border-radius:12px;}
   </style>
 </head>
 
@@ -86,16 +53,16 @@
   <div class="logo">AOV AI Resume</div>
 
   <div class="social">
-    <button onclick="openLogin()">Login</button>
-    <button onclick="logout()">Logout</button>
+    <button>Login</button>
+    <button>Logout</button>
 
-    <a href="https://www.google.com/search?q=jobs" target="_blank">
-      <button class="google"><i class="bi bi-google"></i> Google</button>
-    </a>
+    <button class="google">
+      <i class="bi bi-google"></i> Google
+    </button>
 
-    <a href="https://www.linkedin.com/jobs/" target="_blank">
-      <button class="linkedin"><i class="bi bi-linkedin"></i> LinkedIn</button>
-    </a>
+    <button class="linkedin">
+      <i class="bi bi-linkedin"></i> LinkedIn
+    </button>
   </div>
 </div>
 
@@ -106,10 +73,10 @@
     <p id="userStatus">Not logged in</p>
   </div>
 
-  <!-- PAYPAL -->
+  <!-- PREMIUM -->
   <div class="card">
-    <h2>💎 Unlock Premium ₹200</h2>
-    <p>Pay via PayPal to activate premium instantly</p>
+    <h2>💎 Unlock Premium ($20 One-Time)</h2>
+    <p>Secure PayPal payment</p>
 
     <div id="paypal-button-container"></div>
   </div>
@@ -143,82 +110,36 @@
 
 </div>
 
-<!-- LOGIN -->
-<div class="modal" id="loginModal">
-  <div class="modal-box">
-    <h3>Login</h3>
-    <input id="email" placeholder="Email">
-    <input id="password" type="password" placeholder="Password">
-    <button onclick="login()">Login</button>
-    <button onclick="signup()">Sign Up</button>
-    <button onclick="closeLogin()">Close</button>
-  </div>
-</div>
-
 <script>
 
 let photoData="";
 let resumeBox=null;
 
-/* PAYPAL */
+/* PAYPAL ONE-TIME PAYMENT */
 paypal.Buttons({
-  createOrder: (data, actions) => {
+
+  createOrder: function(data, actions) {
     return actions.order.create({
       purchase_units: [{
-        amount: { value: '200' }
+        amount: {
+          value: '20'
+        }
       }]
     });
   },
 
-  onApprove: (data, actions) => {
-    return actions.order.capture().then(async () => {
+  onApprove: function(data, actions) {
+    return actions.order.capture().then(function() {
 
       alert("Payment Successful ✔ Premium Activated");
 
-      const user = firebaseAuth.currentUser;
-
-      if(user){
-        await setDoc(doc(db,"payments",user.uid),{
-          email:user.email,
-          status:"approved"
-        });
-
-        localStorage.setItem("premium","yes");
-      }
+      localStorage.setItem("premium","yes");
 
     });
   }
+
 }).render('#paypal-button-container');
 
-/* LOGIN */
-function openLogin(){document.getElementById("loginModal").style.display="block";}
-function closeLogin(){document.getElementById("loginModal").style.display="none";}
-
-async function login(){
-  try{
-    await firebaseLogin(firebaseAuth,email.value,password.value);
-    alert("Login Success");
-    closeLogin();
-  }catch(e){alert(e.message);}
-}
-
-async function signup(){
-  try{
-    await firebaseSignup(firebaseAuth,email.value,password.value);
-    alert("Account Created");
-    closeLogin();
-  }catch(e){alert(e.message);}
-}
-
-async function logout(){
-  await firebaseLogout(firebaseAuth);
-  alert("Logged out");
-}
-
-/* AUTH */
-firebaseOnAuth(firebaseAuth,(user)=>{
-  userStatus.innerText = user ? "Logged in: "+user.email : "Not logged in";
-});
 
 /* PHOTO */
 photoUpload.onchange=e=>{
@@ -227,7 +148,7 @@ photoUpload.onchange=e=>{
   r.readAsDataURL(e.target.files[0]);
 };
 
-/* RESUME */
+/* GENERATE */
 function generate(){
   document.getElementById("resume").innerHTML=`
     <div class="resume-box" id="resumeBox">
@@ -245,7 +166,7 @@ function generate(){
   resumeBox=document.getElementById("resumeBox");
 }
 
-/* DOWNLOAD */
+/* DOWNLOAD PDF */
 function downloadPDF(){
   if(localStorage.getItem("premium")!=="yes"){
     alert("Premium required");
@@ -254,6 +175,7 @@ function downloadPDF(){
   html2pdf().from(resumeBox).save("resume.pdf");
 }
 
+/* DOWNLOAD IMAGE */
 function downloadImage(){
   html2canvas(resumeBox).then(c=>{
     let a=document.createElement("a");
@@ -263,6 +185,7 @@ function downloadImage(){
   });
 }
 
+/* CLEAR */
 function clearData(){
   document.querySelectorAll("input").forEach(i=>i.value="");
   document.getElementById("resume").innerHTML="";
