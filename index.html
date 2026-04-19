@@ -4,13 +4,14 @@
   <title>AOV AI Resume PRO</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+  <!-- PDF -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
 
-  <!-- ICON LIBRARY -->
-  <script src="https://kit.fontawesome.com/4c8b0d1a2b.js" crossorigin="anonymous"></script>
+  <!-- ICON FIX (NO FONT AWESOME ISSUE) -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
 
-  <!-- Firebase -->
+  <!-- FIREBASE + FIRESTORE -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
     import {
@@ -20,6 +21,13 @@
       onAuthStateChanged,
       signOut
     } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+    import {
+      getFirestore,
+      doc,
+      setDoc,
+      getDoc
+    } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyBpJQ44k1gokp3sSZggyESC7HpvqssClEE",
@@ -32,38 +40,28 @@
 
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
+    const db = getFirestore(app);
 
     window.firebaseAuth = auth;
     window.firebaseLogin = signInWithEmailAndPassword;
     window.firebaseSignup = createUserWithEmailAndPassword;
     window.firebaseLogout = signOut;
     window.firebaseOnAuth = onAuthStateChanged;
+    window.db = db;
+    window.setDoc = setDoc;
+    window.getDoc = getDoc;
+    window.doc = doc;
   </script>
 
   <style>
-    body{
-      margin:0;
-      font-family:Arial;
-      background:linear-gradient(135deg,#050816,#0b1220);
-      color:white;
-    }
+    body{margin:0;font-family:Arial;background:linear-gradient(135deg,#050816,#0b1220);color:white;}
 
-    .nav{
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      padding:15px 20px;
-      background:#0f172a;
-    }
+    .nav{display:flex;justify-content:space-between;align-items:center;padding:15px 20px;background:#0f172a;}
+    .logo{font-size:20px;font-weight:bold;color:#38bdf8;}
 
-    .logo{
-      font-size:20px;
-      font-weight:bold;
-      color:#38bdf8;
-    }
+    .social{display:flex;align-items:center;gap:10px;}
 
     .social button{
-      margin-left:10px;
       padding:10px 14px;
       border-radius:8px;
       border:none;
@@ -71,84 +69,37 @@
       cursor:pointer;
       display:flex;
       align-items:center;
-      gap:8px;
+      gap:6px;
     }
 
     .google{background:white;color:black}
     .linkedin{background:#0a66c2;color:white}
 
-    .container{
-      max-width:1000px;
-      margin:auto;
-      padding:15px;
-    }
+    .container{max-width:1000px;margin:auto;padding:15px;}
+    .hero{text-align:center;padding:25px;}
+    .hero h1{font-size:28px;color:#38bdf8;}
 
-    .hero{
-      text-align:center;
-      padding:25px;
-    }
+    .card{background:#111827;padding:20px;margin-top:15px;border-radius:15px;}
 
-    .hero h1{
-      font-size:28px;
-      color:#38bdf8;
-    }
+    input,button{width:100%;padding:12px;margin-top:10px;border-radius:10px;border:none;}
 
-    .card{
-      background:#111827;
-      padding:20px;
-      margin-top:15px;
-      border-radius:15px;
-    }
-
-    input,button{
-      width:100%;
-      padding:12px;
-      margin-top:10px;
-      border-radius:10px;
-      border:none;
-    }
-
-    button{
-      background:#38bdf8;
-      font-weight:bold;
-      cursor:pointer;
-    }
-
+    button{background:#38bdf8;font-weight:bold;cursor:pointer;}
     .btn-pdf{background:#f59e0b}
     .btn-clear{background:#ef4444}
 
-    .resume-box{
-      background:white;
-      color:black;
-      padding:20px;
-      border-radius:12px;
-    }
+    .resume-box{background:white;color:black;padding:20px;border-radius:12px;}
 
-    .grid{
-      display:grid;
-      grid-template-columns:1fr 1fr;
-      gap:15px;
-    }
-
-    @media(max-width:768px){
-      .grid{grid-template-columns:1fr}
-    }
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:15px;}
+    @media(max-width:768px){.grid{grid-template-columns:1fr}}
 
     .modal{
-      display:none;
-      position:fixed;
-      top:0;left:0;
-      width:100%;
-      height:100%;
+      display:none;position:fixed;top:0;left:0;width:100%;height:100%;
       background:rgba(0,0,0,0.7);
     }
 
     .modal-box{
-      width:300px;
-      margin:100px auto;
-      background:#111827;
-      padding:20px;
-      border-radius:12px;
+      width:300px;margin:100px auto;background:#111827;
+      padding:20px;border-radius:12px;
     }
   </style>
 </head>
@@ -164,13 +115,13 @@
 
     <a href="https://www.google.com/search?q=jobs" target="_blank">
       <button class="google">
-        <i class="fab fa-google"></i> Google
+        <i class="bi bi-google"></i> Google
       </button>
     </a>
 
     <a href="https://www.linkedin.com/jobs/" target="_blank">
       <button class="linkedin">
-        <i class="fab fa-linkedin"></i> LinkedIn
+        <i class="bi bi-linkedin"></i> LinkedIn
       </button>
     </a>
   </div>
@@ -247,23 +198,23 @@ let photoData="";
 let resumeBox=null;
 
 /* LOGIN */
-function openLogin(){ document.getElementById("loginModal").style.display="block"; }
-function closeLogin(){ document.getElementById("loginModal").style.display="none"; }
+function openLogin(){document.getElementById("loginModal").style.display="block";}
+function closeLogin(){document.getElementById("loginModal").style.display="none";}
 
 async function login(){
   try{
-    await firebaseLogin(firebaseAuth, email.value, password.value);
+    await firebaseLogin(firebaseAuth,email.value,password.value);
     alert("Login Success");
     closeLogin();
-  }catch(e){ alert(e.message); }
+  }catch(e){alert(e.message);}
 }
 
 async function signup(){
   try{
-    await firebaseSignup(firebaseAuth, email.value, password.value);
+    await firebaseSignup(firebaseAuth,email.value,password.value);
     alert("Account Created");
     closeLogin();
-  }catch(e){ alert(e.message); }
+  }catch(e){alert(e.message);}
 }
 
 async function logout(){
@@ -271,19 +222,41 @@ async function logout(){
   alert("Logged out");
 }
 
-firebaseOnAuth(firebaseAuth,(user)=>{
-  document.getElementById("userStatus").innerText =
-    user ? "Logged in: " + user.email : "Not logged in";
+/* AUTH + PREMIUM CHECK */
+firebaseOnAuth(firebaseAuth, async(user)=>{
+  if(user){
+    userStatus.innerText="Logged in: "+user.email;
+
+    const snap = await getDoc(doc(db,"payments",user.uid));
+    if(snap.exists() && snap.data().status==="approved"){
+      localStorage.setItem("premium","yes");
+    }else{
+      localStorage.removeItem("premium");
+    }
+  }else{
+    userStatus.innerText="Not logged in";
+  }
 });
 
-/* WHATSAPP VERIFY */
-function verifyPayment(){
-  window.open("https://wa.me/91XXXXXXXXXX", "_blank");
+/* PAYMENT */
+async function verifyPayment(){
+  if(!firebaseAuth.currentUser){
+    alert("Login first");
+    return;
+  }
+
+  const user = firebaseAuth.currentUser;
+
+  await setDoc(doc(db,"payments",user.uid),{
+    email:user.email,
+    status:"pending"
+  });
+
+  window.open("https://wa.me/91XXXXXXXXXX","_blank");
 }
 
 /* PHOTO */
 photoUpload.onchange=e=>{
-  if(!e.target.files.length) return;
   const r=new FileReader();
   r.onload=()=>photoData=r.result;
   r.readAsDataURL(e.target.files[0]);
@@ -307,8 +280,12 @@ function generate(){
   resumeBox=document.getElementById("resumeBox");
 }
 
-/* DOWNLOAD */
+/* DOWNLOAD LOCK */
 function downloadPDF(){
+  if(localStorage.getItem("premium")!=="yes"){
+    alert("Premium required");
+    return;
+  }
   if(!resumeBox){alert("Generate first");return;}
   html2pdf().from(resumeBox).save("resume.pdf");
 }
@@ -323,7 +300,6 @@ function downloadImage(){
   });
 }
 
-/* CLEAR */
 function clearData(){
   document.querySelectorAll("input").forEach(i=>i.value="");
   document.getElementById("resume").innerHTML="";
