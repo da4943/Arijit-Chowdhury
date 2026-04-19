@@ -8,10 +8,10 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
 
-  <!-- ICON FIX (NO FONT AWESOME ISSUE) -->
+  <!-- ICON -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
 
-  <!-- FIREBASE + FIRESTORE -->
+  <!-- FIREBASE -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
     import {
@@ -55,52 +55,25 @@
 
   <style>
     body{margin:0;font-family:Arial;background:linear-gradient(135deg,#050816,#0b1220);color:white;}
-
     .nav{display:flex;justify-content:space-between;align-items:center;padding:15px 20px;background:#0f172a;}
     .logo{font-size:20px;font-weight:bold;color:#38bdf8;}
-
     .social{display:flex;align-items:center;gap:10px;}
-
-    .social button{
-      padding:10px 14px;
-      border-radius:8px;
-      border:none;
-      font-weight:bold;
-      cursor:pointer;
-      display:flex;
-      align-items:center;
-      gap:6px;
-    }
-
+    .social button{padding:10px 14px;border-radius:8px;border:none;font-weight:bold;cursor:pointer;display:flex;align-items:center;gap:6px;}
     .google{background:white;color:black}
     .linkedin{background:#0a66c2;color:white}
-
     .container{max-width:1000px;margin:auto;padding:15px;}
     .hero{text-align:center;padding:25px;}
     .hero h1{font-size:28px;color:#38bdf8;}
-
     .card{background:#111827;padding:20px;margin-top:15px;border-radius:15px;}
-
     input,button{width:100%;padding:12px;margin-top:10px;border-radius:10px;border:none;}
-
     button{background:#38bdf8;font-weight:bold;cursor:pointer;}
     .btn-pdf{background:#f59e0b}
     .btn-clear{background:#ef4444}
-
     .resume-box{background:white;color:black;padding:20px;border-radius:12px;}
-
     .grid{display:grid;grid-template-columns:1fr 1fr;gap:15px;}
     @media(max-width:768px){.grid{grid-template-columns:1fr}}
-
-    .modal{
-      display:none;position:fixed;top:0;left:0;width:100%;height:100%;
-      background:rgba(0,0,0,0.7);
-    }
-
-    .modal-box{
-      width:300px;margin:100px auto;background:#111827;
-      padding:20px;border-radius:12px;
-    }
+    .modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.7);}
+    .modal-box{width:300px;margin:100px auto;background:#111827;padding:20px;border-radius:12px;}
   </style>
 </head>
 
@@ -114,15 +87,11 @@
     <button onclick="logout()">Logout</button>
 
     <a href="https://www.google.com/search?q=jobs" target="_blank">
-      <button class="google">
-        <i class="bi bi-google"></i> Google
-      </button>
+      <button class="google"><i class="bi bi-google"></i> Google</button>
     </a>
 
     <a href="https://www.linkedin.com/jobs/" target="_blank">
-      <button class="linkedin">
-        <i class="bi bi-linkedin"></i> LinkedIn
-      </button>
+      <button class="linkedin"><i class="bi bi-linkedin"></i> LinkedIn</button>
     </a>
   </div>
 </div>
@@ -134,7 +103,6 @@
     <p id="userStatus">Not logged in</p>
   </div>
 
-  <!-- PREMIUM -->
   <div class="card">
     <h2>💎 Unlock Premium ₹200</h2>
     <p>Scan QR and send screenshot to WhatsApp for activation</p>
@@ -146,7 +114,6 @@
     <button onclick="verifyPayment()">I Paid (Send Screenshot)</button>
   </div>
 
-  <!-- BUILDER -->
   <div class="card">
     <h2>Resume Builder</h2>
 
@@ -178,14 +145,11 @@
 
 </div>
 
-<!-- LOGIN -->
 <div class="modal" id="loginModal">
   <div class="modal-box">
     <h3>Login</h3>
-
     <input id="email" placeholder="Email">
     <input id="password" type="password" placeholder="Password">
-
     <button onclick="login()">Login</button>
     <button onclick="signup()">Sign Up</button>
     <button onclick="closeLogin()">Close</button>
@@ -222,10 +186,12 @@ async function logout(){
   alert("Logged out");
 }
 
-/* AUTH + PREMIUM CHECK */
+/* AUTH */
 firebaseOnAuth(firebaseAuth, async(user)=>{
+  const statusEl = document.getElementById("userStatus");
+
   if(user){
-    userStatus.innerText="Logged in: "+user.email;
+    statusEl.innerText="Logged in: "+user.email;
 
     const snap = await getDoc(doc(db,"payments",user.uid));
     if(snap.exists() && snap.data().status==="approved"){
@@ -233,8 +199,10 @@ firebaseOnAuth(firebaseAuth, async(user)=>{
     }else{
       localStorage.removeItem("premium");
     }
+
   }else{
-    userStatus.innerText="Not logged in";
+    statusEl.innerText="Not logged in";
+    localStorage.removeItem("premium");
   }
 });
 
@@ -252,11 +220,13 @@ async function verifyPayment(){
     status:"pending"
   });
 
-  window.open("https://wa.me/91XXXXXXXXXX","_blank");
+  window.open("https://wa.me/919975076459?text=I%20have%20paid%20for%20AOV%20AI%20Resume%20Premium.%20Please%20activate%20my%20account.","_blank");
 }
 
 /* PHOTO */
 photoUpload.onchange=e=>{
+  if(!e.target.files.length) return;
+
   const r=new FileReader();
   r.onload=()=>photoData=r.result;
   r.readAsDataURL(e.target.files[0]);
@@ -280,7 +250,7 @@ function generate(){
   resumeBox=document.getElementById("resumeBox");
 }
 
-/* DOWNLOAD LOCK */
+/* DOWNLOAD */
 function downloadPDF(){
   if(localStorage.getItem("premium")!=="yes"){
     alert("Premium required");
