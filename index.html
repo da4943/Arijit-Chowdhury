@@ -7,6 +7,9 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
 
+  <!-- ICON LIBRARY -->
+  <script src="https://kit.fontawesome.com/4c8b0d1a2b.js" crossorigin="anonymous"></script>
+
   <!-- Firebase -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
@@ -66,6 +69,9 @@
       border:none;
       font-weight:bold;
       cursor:pointer;
+      display:flex;
+      align-items:center;
+      gap:8px;
     }
 
     .google{background:white;color:black}
@@ -157,10 +163,15 @@
     <button onclick="logout()">Logout</button>
 
     <a href="https://www.google.com/search?q=jobs" target="_blank">
-      <button class="google">Google</button>
+      <button class="google">
+        <i class="fab fa-google"></i> Google
+      </button>
     </a>
+
     <a href="https://www.linkedin.com/jobs/" target="_blank">
-      <button class="linkedin">LinkedIn</button>
+      <button class="linkedin">
+        <i class="fab fa-linkedin"></i> LinkedIn
+      </button>
     </a>
   </div>
 </div>
@@ -265,9 +276,9 @@ firebaseOnAuth(firebaseAuth,(user)=>{
     user ? "Logged in: " + user.email : "Not logged in";
 });
 
-/* MANUAL PAYMENT */
+/* WHATSAPP VERIFY */
 function verifyPayment(){
-  window.open("https://wa.me/91XXXXXXXXXX?text=I%20have%20paid%20for%20AOV%20AI%20Resume%20Premium.%20Here%20is%20my%20screenshot", "_blank");
+  window.open("https://wa.me/91XXXXXXXXXX", "_blank");
 }
 
 /* PHOTO */
