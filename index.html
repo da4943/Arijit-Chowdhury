@@ -11,21 +11,59 @@
   <!-- ICON -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
 
-  <!-- PAYPAL SDK (LIVE) -->
+  <!-- PAYPAL -->
   <script src="https://www.paypal.com/sdk/js?client-id=ATxSvTwRQxtN5NBu5Kj8GAjZCDRzCpb_aoO_L_vB9IAF-p179MOTDCtUhVEYGG1B-2P-n47P6BL4B&currency=USD"></script>
+
+  <!-- FIREBASE -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { 
+      getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword,
+      onAuthStateChanged, signOut
+    } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+    import {
+      getFirestore, doc, setDoc, getDocs, collection
+    } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyBpJQ44k1gokp3sSZggyESC7HpvqssClEE",
+      authDomain: "aov-ai-jobs-c697d.firebaseapp.com",
+      projectId: "aov-ai-jobs-c697d",
+      storageBucket: "aov-ai-jobs-c697d.firebasestorage.app",
+      messagingSenderId: "898401199585",
+      appId: "1:898401199585:web:59e6fdeba0568d6255dea0"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    window.firebaseAuth = auth;
+    window.firebaseLogin = signInWithEmailAndPassword;
+    window.firebaseSignup = createUserWithEmailAndPassword;
+    window.firebaseLogout = signOut;
+    window.firebaseOnAuth = onAuthStateChanged;
+    window.db = db;
+    window.setDoc = setDoc;
+    window.getDocs = getDocs;
+    window.collection = collection;
+    window.doc = doc;
+  </script>
 
   <style>
     body{margin:0;font-family:Arial;background:linear-gradient(135deg,#050816,#0b1220);color:white;}
     .nav{display:flex;justify-content:space-between;align-items:center;padding:15px 20px;background:#0f172a;}
     .logo{font-size:20px;font-weight:bold;color:#38bdf8;}
-    .social{display:flex;align-items:center;gap:10px;}
+    .social{display:flex;gap:10px;align-items:center;}
     .social button{padding:10px 14px;border:none;border-radius:8px;font-weight:bold;cursor:pointer;}
     .google{background:white;color:black}
     .linkedin{background:#0a66c2;color:white}
 
     .container{max-width:1000px;margin:auto;padding:15px;}
     .hero{text-align:center;padding:25px;}
-    .hero h1{font-size:28px;color:#38bdf8;}
+    .hero h1{color:#38bdf8;}
+
     .card{background:#111827;padding:20px;margin-top:15px;border-radius:15px;}
 
     input,button{
@@ -44,6 +82,13 @@
 
     .grid{display:grid;grid-template-columns:1fr 1fr;gap:15px;}
     @media(max-width:768px){.grid{grid-template-columns:1fr}}
+
+    .admin-box{
+      background:#0f172a;
+      padding:15px;
+      margin-top:15px;
+      border-radius:10px;
+    }
   </style>
 </head>
 
@@ -53,31 +98,24 @@
   <div class="logo">AOV AI Resume</div>
 
   <div class="social">
-    <button>Login</button>
-    <button>Logout</button>
+    <button onclick="loadPayments()">Admin</button>
+    <button onclick="logout()">Logout</button>
 
-    <button class="google">
-      <i class="bi bi-google"></i> Google
-    </button>
-
-    <button class="linkedin">
-      <i class="bi bi-linkedin"></i> LinkedIn
-    </button>
+    <button class="google"><i class="bi bi-google"></i> Google</button>
+    <button class="linkedin"><i class="bi bi-linkedin"></i> LinkedIn</button>
   </div>
 </div>
 
 <div class="container">
 
   <div class="hero">
-    <h1>Create Professional Resume in Seconds</h1>
+    <h1>Create Professional Resume</h1>
     <p id="userStatus">Not logged in</p>
   </div>
 
-  <!-- PREMIUM -->
+  <!-- PAYPAL -->
   <div class="card">
-    <h2>💎 Unlock Premium ($20 One-Time)</h2>
-    <p>Secure PayPal payment</p>
-
+    <h2>💎 Premium Unlock ($20 One-Time)</h2>
     <div id="paypal-button-container"></div>
   </div>
 
@@ -93,71 +131,92 @@
     </div>
 
     <input id="skills" placeholder="Skills">
-    <input id="hobbies" placeholder="Hobbies">
     <input id="about" placeholder="About You">
-
-    <input type="file" id="photoUpload">
 
     <button onclick="generate()">Generate Resume</button>
     <button class="btn-pdf" onclick="downloadPDF()">Download PDF</button>
-    <button onclick="downloadImage()">Download Image</button>
-    <button class="btn-clear" onclick="clearData()">Clear Data</button>
   </div>
 
+  <!-- RESUME -->
   <div class="card">
     <div id="resume"></div>
+  </div>
+
+  <!-- ADMIN PANEL -->
+  <div class="card">
+    <h2>📊 Who Paid (Admin Panel)</h2>
+    <div id="paymentsList"></div>
   </div>
 
 </div>
 
 <script>
 
-let photoData="";
 let resumeBox=null;
 
-/* PAYPAL ONE-TIME PAYMENT */
+/* PAYPAL */
 paypal.Buttons({
-
-  createOrder: function(data, actions) {
+  createOrder: (data, actions)=>{
     return actions.order.create({
-      purchase_units: [{
-        amount: {
-          value: '20'
-        }
-      }]
+      purchase_units:[{ amount:{ value:'20' } }]
     });
   },
 
-  onApprove: function(data, actions) {
-    return actions.order.capture().then(function() {
+  onApprove: (data, actions)=>{
+    return actions.order.capture().then(async (details)=>{
 
-      alert("Payment Successful ✔ Premium Activated");
+      const user = firebaseAuth.currentUser;
 
-      localStorage.setItem("premium","yes");
+      if(user){
+        await setDoc(doc(db,"payments",user.uid),{
+          email:user.email,
+          paymentId:details.id,
+          status:"paid",
+          amount:"20",
+          time:new Date().toISOString()
+        });
+
+        alert("Payment Success ✔ Stored in Database");
+      }
 
     });
   }
 
-}).render('#paypal-button-container');
+}).render("#paypal-button-container");
 
 
-/* PHOTO */
-photoUpload.onchange=e=>{
-  const r=new FileReader();
-  r.onload=()=>photoData=r.result;
-  r.readAsDataURL(e.target.files[0]);
-};
+/* AUTH */
+firebaseOnAuth(firebaseAuth,(user)=>{
+  userStatus.innerText = user ? "Logged in: "+user.email : "Not logged in";
+});
 
-/* GENERATE */
+/* ADMIN - LOAD ALL PAYMENTS */
+async function loadPayments(){
+  const snap = await getDocs(collection(db,"payments"));
+  let html="";
+
+  snap.forEach(doc=>{
+    const d = doc.data();
+    html += `
+      <div class="admin-box">
+        <b>Email:</b> ${d.email}<br>
+        <b>Status:</b> ${d.status}<br>
+        <b>Payment ID:</b> ${d.paymentId}<br>
+        <b>Time:</b> ${d.time}
+      </div>
+    `;
+  });
+
+  paymentsList.innerHTML = html || "No payments yet";
+}
+
+
+/* RESUME */
 function generate(){
   document.getElementById("resume").innerHTML=`
     <div class="resume-box" id="resumeBox">
-      <center>
-        ${photoData?`<img src="${photoData}" width="100" style="border-radius:50%">`:""}
-        <h2>${name.value}</h2>
-        <p>${qualification.value}</p>
-      </center>
-      <hr>
+      <h2>${name.value}</h2>
+      <p>${qualification.value}</p>
       <p>${experience.value}</p>
       <p>${skills.value}</p>
       <p>${about.value}</p>
@@ -166,30 +225,15 @@ function generate(){
   resumeBox=document.getElementById("resumeBox");
 }
 
-/* DOWNLOAD PDF */
+/* PDF */
 function downloadPDF(){
-  if(localStorage.getItem("premium")!=="yes"){
-    alert("Premium required");
-    return;
-  }
   html2pdf().from(resumeBox).save("resume.pdf");
 }
 
-/* DOWNLOAD IMAGE */
-function downloadImage(){
-  html2canvas(resumeBox).then(c=>{
-    let a=document.createElement("a");
-    a.download="resume.png";
-    a.href=c.toDataURL();
-    a.click();
-  });
-}
-
-/* CLEAR */
-function clearData(){
-  document.querySelectorAll("input").forEach(i=>i.value="");
-  document.getElementById("resume").innerHTML="";
-  resumeBox=null;
+/* LOGOUT */
+async function logout(){
+  await firebaseLogout(firebaseAuth);
+  alert("Logged out");
 }
 
 </script>
