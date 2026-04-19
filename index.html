@@ -11,8 +11,8 @@
   <!-- ICON -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
 
-  <!-- 🔴 PAYPAL -->
-  <script src="https://www.paypal.com/sdk/js?client-id=YOUR_CLIENT_ID&currency=INR"></script>
+  <!-- ✅ PAYPAL (YOUR CLIENT ID ADDED) -->
+  <script src="https://www.paypal.com/sdk/js?client-id=AY__X_6Z1SJSTRr91KXr7zTgu_t8YsIQj9gdDLxdkanub7A4BVX5ENgFOgMlsFcsxMdrsa9m_Q0THl7gst&currency=INR"></script>
 
   <!-- FIREBASE -->
   <script type="module">
@@ -29,9 +29,7 @@
       getFirestore,
       doc,
       setDoc,
-      getDoc,
-      collection,
-      onSnapshot
+      getDoc
     } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
     const firebaseConfig = {
@@ -56,8 +54,6 @@
     window.setDoc = setDoc;
     window.getDoc = getDoc;
     window.doc = doc;
-    window.collection = collection;
-    window.onSnapshot = onSnapshot;
   </script>
 
   <style>
@@ -110,19 +106,17 @@
     <p id="userStatus">Not logged in</p>
   </div>
 
-  <!-- PREMIUM -->
   <div class="card">
     <h2>💎 Unlock Premium ₹200</h2>
     <p>Scan QR or Pay via PayPal</p>
 
-    <!-- QR -->
     <img width="200"
       style="background:white;padding:10px;border-radius:10px"
       src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=upi://pay?pa=yourupi@bank&pn=AOV%20AI&am=200&cu=INR">
 
     <button onclick="verifyPayment()">I Paid (Send Screenshot)</button>
 
-    <!-- 🔥 PAYPAL BUTTON -->
+    <!-- ✅ PAYPAL BUTTON -->
     <div id="paypal-button" style="margin-top:15px;"></div>
   </div>
 
@@ -218,7 +212,7 @@ firebaseOnAuth(firebaseAuth, async(user)=>{
   }
 });
 
-/* PAYPAL BUTTON */
+/* ✅ PAYPAL AUTO PAYMENT */
 paypal.Buttons({
   createOrder: function(data, actions) {
     return actions.order.create({
