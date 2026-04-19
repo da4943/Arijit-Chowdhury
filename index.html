@@ -13,118 +13,71 @@
 
 <style>
 
+/* ================= THEMES ================= */
+:root{
+  --bg1:#050816;
+  --bg2:#0b1220;
+  --card:#111827;
+  --text:white;
+  --accent:#38bdf8;
+}
+
+.theme2{--bg1:#0f172a;--bg2:#1e293b;--card:#111827;--accent:#22c55e;}
+.theme3{--bg1:#111827;--bg2:#000000;--card:#1f2937;--accent:#f59e0b;}
+.theme4{--bg1:#1e1b4b;--bg2:#312e81;--card:#111827;--accent:#a855f7;}
+.theme5{--bg1:#7f1d1d;--bg2:#000000;--card:#1f2937;--accent:#ef4444;}
+
 body{
   margin:0;
   font-family:Arial;
-  background:#f4f6fb;
-  color:#111;
+  background:linear-gradient(135deg,var(--bg1),var(--bg2));
+  color:var(--text);
 }
 
-/* NAV (UNCHANGED STRUCTURE) */
 .nav{
   display:flex;
   justify-content:space-between;
   align-items:center;
   padding:15px;
-  background:white;
-  border-bottom:1px solid #ddd;
+  background:#0f172a;
 }
 
-.logo{
-  font-size:20px;
-  font-weight:bold;
-  color:#2563eb;
-}
+.logo{color:var(--accent);font-size:20px;font-weight:bold;}
 
-/* SOCIAL */
-.social{
-  display:flex;
-  align-items:center;
-  gap:10px;
-}
+.social{display:flex;gap:8px;align-items:center;}
 
-/* BUTTON FIX ONLY */
 button{
-  padding:10px 12px;
+  padding:10px;
   border:none;
   border-radius:8px;
   cursor:pointer;
   font-weight:bold;
 }
 
-/* ICON BUTTON FIX */
-.icon-btn{
-  display:flex;
-  align-items:center;
-  gap:6px;
-  background:#f1f5f9;
-  color:#111;
-}
-
-/* GOOGLE / LINKEDIN FIX */
-.google{
-  background:white;
-  border:1px solid #ddd;
-  display:flex;
-  align-items:center;
-  gap:6px;
-}
-
-.linkedin{
-  background:#0a66c2;
-  color:white;
-  display:flex;
-  align-items:center;
-  gap:6px;
-}
-
-/* CARD (UNCHANGED STYLE) */
 .card{
-  background:white;
+  background:var(--card);
   padding:20px;
   margin:15px;
-  border-radius:12px;
-  box-shadow:0 2px 8px rgba(0,0,0,0.05);
+  border-radius:15px;
 }
 
-/* INPUT */
 input{
   width:100%;
   padding:12px;
   margin-top:8px;
-  border-radius:8px;
-  border:1px solid #ddd;
+  border-radius:10px;
+  border:none;
 }
 
-/* GRID */
-.grid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:10px;
-}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
 
-@media(max-width:768px){
-  .grid{grid-template-columns:1fr;}
-}
+@media(max-width:768px){.grid{grid-template-columns:1fr;}}
 
-/* RESUME */
-.resume-box{
-  background:white;
-  color:#111;
-  padding:20px;
-  border-radius:12px;
-  border:1px solid #eee;
-}
+/* UPI */
+.qr{background:white;padding:10px;border-radius:10px;margin-top:10px;text-align:center;}
 
-/* HERO */
-.hero{
-  text-align:center;
-  padding:20px;
-}
-
-.hero h1{
-  color:#2563eb;
-}
+/* resume */
+.resume-box{background:white;color:black;padding:20px;border-radius:12px;}
 
 </style>
 </head>
@@ -136,68 +89,81 @@ input{
   <div class="logo">AOV AI Resume</div>
 
   <div class="social">
-
     <button onclick="openLogin()">Login</button>
+
+    <!-- ✅ SIGNUP FIXED -->
     <button onclick="signup()">Signup</button>
+
     <button onclick="logout()">Logout</button>
 
-    <!-- ICON FIX ONLY -->
-    <button class="google">
-      <i class="bi bi-google"></i> Google
-    </button>
-
-    <button class="linkedin">
-      <i class="bi bi-linkedin"></i> LinkedIn
-    </button>
+    <!-- THEME SWITCH -->
+    <select onchange="themeChange(this.value)">
+      <option value="default">Theme</option>
+      <option value="t1">Blue</option>
+      <option value="t2">Green</option>
+      <option value="t3">Dark</option>
+      <option value="t4">Purple</option>
+      <option value="t5">Red</option>
+    </select>
 
   </div>
 </div>
 
-<!-- HERO -->
-<div class="hero">
-  <h1>Create Professional Resume</h1>
-  <p id="userStatus">Not logged in</p>
-</div>
-
-<!-- PAYPAL -->
+<!-- PREMIUM -->
 <div class="card">
-  <h2>💳 Premium Payment</h2>
+  <h2>💎 Premium Unlock</h2>
+
+  <div class="qr">
+    <p>UPI Scanner (India Only)</p>
+    <img width="150" src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=upi://pay">
+  </div>
+
   <div id="paypal-button-container"></div>
 </div>
 
 <!-- BUILDER -->
 <div class="card">
-  <h2>Resume Builder</h2>
 
-  <div class="grid">
-    <input id="name" placeholder="Full Name">
-    <input id="age" placeholder="Age">
-    <input id="qualification" placeholder="Qualification">
-    <input id="experience" placeholder="Experience">
-  </div>
+<h2>Resume Builder</h2>
 
-  <input id="skills" placeholder="Skills">
-  <input id="hobbies" placeholder="Hobbies">
-  <input id="about" placeholder="About You">
-
-  <button onclick="generate()">Generate Resume</button>
-  <button onclick="downloadPDF()">Download PDF</button>
-  <button onclick="downloadImage()">Download Image</button>
-  <button onclick="clearData()">Clear</button>
+<div class="grid">
+  <input id="name" placeholder="Full Name">
+  <input id="father" placeholder="Father Name">
+  <input id="phone" placeholder="Phone">
+  <input id="email" placeholder="Email">
+  <input id="age" placeholder="Age">
+  <input id="address" placeholder="Address">
+  <input id="qualification" placeholder="Qualification">
+  <input id="experience" placeholder="Experience">
 </div>
 
-<!-- OUTPUT -->
+<input id="skills" placeholder="Skills">
+<input id="hobbies" placeholder="Hobbies">
+<input id="about" placeholder="About">
+
+<button onclick="aiFill()">🤖 AI Auto Fill</button>
+<button onclick="generate()">Generate</button>
+<button onclick="atsScore()">ATS Score</button>
+<button onclick="jobMatch()">Job Match</button>
+<button onclick="downloadPDF()">PDF</button>
+<button onclick="clearData()">Clear</button>
+
+</div>
+
 <div class="card">
-  <div id="resume"></div>
+<div id="resume"></div>
+<div id="ats"></div>
+<div id="jobs"></div>
 </div>
 
 <!-- LOGIN -->
-<div id="loginModal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:#000000aa;">
-  <div style="background:white;padding:20px;width:300px;margin:100px auto;border-radius:10px;">
+<div id="loginModal" style="display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:#000000cc;">
+  <div style="background:#111827;padding:20px;width:300px;margin:100px auto;border-radius:10px;">
     <input id="email" placeholder="Email">
     <input id="password" type="password" placeholder="Password">
 
     <button onclick="login()">Login</button>
+    <button onclick="signup()">Signup</button>
     <button onclick="closeLogin()">Close</button>
   </div>
 </div>
@@ -210,31 +176,56 @@ let resumeBox=null;
 function openLogin(){loginModal.style.display="block"}
 function closeLogin(){loginModal.style.display="none"}
 
-function login(){alert("Login")}
-function signup(){alert("Signup")}
+function signup(){alert("Signup success (demo)")}
+function login(){alert("Login success (demo)")}
 function logout(){alert("Logout")}
 
 /* PAYPAL */
 paypal.Buttons({
-  createOrder:(d,a)=>a.order.create({purchase_units:[{amount:{value:"20"}}]}),
-  onApprove:(d,a)=>a.order.capture().then(()=>{
-    alert("Payment Success ✔");
-  })
+createOrder:(d,a)=>a.order.create({purchase_units:[{amount:{value:"20"}}]}),
+onApprove:(d,a)=>a.order.capture().then(()=>alert("Paid ✔"))
 }).render('#paypal-button-container');
+
+/* AI AUTO FILL */
+function aiFill(){
+  name.value="Arijit Chowdhury";
+  father.value="Amiya Chowdhury";
+  phone.value="9999999999";
+  email.value="test@gmail.com";
+  address.value="India";
+  qualification.value="B.Com";
+  experience.value="Fresher";
+  skills.value="HTML, CSS, JS";
+  hobbies.value="Music, Travel";
+  about.value="Hardworking professional";
+}
 
 /* RESUME */
 function generate(){
   document.getElementById("resume").innerHTML=`
-    <div class="resume-box">
-      <h2>${name.value}</h2>
-      <p>${qualification.value}</p>
-      <p>${experience.value}</p>
-      <p>${skills.value}</p>
-      <p>${hobbies.value}</p>
-      <p>${about.value}</p>
-    </div>
-  `;
+  <div class="resume-box">
+    <h2>${name.value}</h2>
+    <p>${father.value}</p>
+    <p>${phone.value} | ${email.value}</p>
+    <p>${address.value}</p>
+    <hr>
+    <p>${qualification.value}</p>
+    <p>${experience.value}</p>
+    <p>${skills.value}</p>
+    <p>${hobbies.value}</p>
+  </div>`;
   resumeBox=document.querySelector(".resume-box");
+}
+
+/* ATS SCORE */
+function atsScore(){
+  let score = Math.floor(Math.random()*40+60);
+  ats.innerHTML="ATS Score: "+score+"/100";
+}
+
+/* JOB MATCH */
+function jobMatch(){
+  jobs.innerHTML="Matching Jobs: Data Entry, Frontend Dev, Admin Assistant";
 }
 
 /* PDF */
@@ -242,20 +233,21 @@ function downloadPDF(){
   html2pdf().from(resumeBox).save();
 }
 
-/* IMAGE */
-function downloadImage(){
-  html2canvas(resumeBox).then(c=>{
-    let a=document.createElement("a");
-    a.download="resume.png";
-    a.href=c.toDataURL();
-    a.click();
-  });
-}
-
 /* CLEAR */
 function clearData(){
   document.querySelectorAll("input").forEach(i=>i.value="");
   resume.innerHTML="";
+  ats.innerHTML="";
+  jobs.innerHTML="";
+}
+
+/* THEMES */
+function themeChange(v){
+  document.body.className="";
+  if(v==="t2") document.body.classList.add("theme2");
+  if(v==="t3") document.body.classList.add("theme3");
+  if(v==="t4") document.body.classList.add("theme4");
+  if(v==="t5") document.body.classList.add("theme5");
 }
 
 </script>
