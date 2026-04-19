@@ -11,8 +11,8 @@
   <!-- ICON -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
 
-  <!-- ✅ PAYPAL (YOUR CLIENT ID ADDED) -->
-  <script src="https://www.paypal.com/sdk/js?client-id=AY__X_6Z1SJSTRr91KXr7zTgu_t8YsIQj9gdDLxdkanub7A4BVX5ENgFOgMlsFcsxMdrsa9m_Q0THl7gst&currency=INR"></script>
+  <!-- PAYPAL SDK (LIVE) -->
+  <script src="https://www.paypal.com/sdk/js?client-id=ATxSvTwRQxtN5NBu5Kj8GAjZCDRzCpb_aoO_L_vB9IAF-p179MOTDCtUhVEYGG1B-2P-n47P6BL4B&currency=USD"></script>
 
   <!-- FIREBASE -->
   <script type="module">
@@ -106,20 +106,15 @@
     <p id="userStatus">Not logged in</p>
   </div>
 
+  <!-- PREMIUM -->
   <div class="card">
     <h2>💎 Unlock Premium ₹200</h2>
-    <p>Scan QR or Pay via PayPal</p>
+    <p>Pay via PayPal to activate premium instantly</p>
 
-    <img width="200"
-      style="background:white;padding:10px;border-radius:10px"
-      src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=upi://pay?pa=yourupi@bank&pn=AOV%20AI&am=200&cu=INR">
-
-    <button onclick="verifyPayment()">I Paid (Send Screenshot)</button>
-
-    <!-- ✅ PAYPAL BUTTON -->
-    <div id="paypal-button" style="margin-top:15px;"></div>
+    <div id="paypal-button-container"></div>
   </div>
 
+  <!-- BUILDER -->
   <div class="card">
     <h2>Resume Builder</h2>
 
@@ -136,9 +131,6 @@
 
     <input type="file" id="photoUpload">
 
-    <input id="declaration" placeholder="Declaration">
-    <input id="signature" placeholder="Signature">
-
     <button onclick="generate()">Generate Resume</button>
     <button class="btn-pdf" onclick="downloadPDF()">Download PDF</button>
     <button onclick="downloadImage()">Download Image</button>
@@ -151,6 +143,7 @@
 
 </div>
 
+<!-- LOGIN -->
 <div class="modal" id="loginModal">
   <div class="modal-box">
     <h3>Login</h3>
@@ -166,6 +159,36 @@
 
 let photoData="";
 let resumeBox=null;
+
+/* PAYPAL BUTTON */
+paypal.Buttons({
+  createOrder: function(data, actions) {
+    return actions.order.create({
+      purchase_units: [{
+        amount: { value: '200' }
+      }]
+    });
+  },
+
+  onApprove: function(data, actions) {
+    return actions.order.capture().then(async function(details) {
+
+      alert("Payment Successful ✔ Premium Activated");
+
+      const user = firebaseAuth.currentUser;
+
+      if(user){
+        await setDoc(doc(db,"payments",user.uid),{
+          email:user.email,
+          status:"approved"
+        });
+
+        localStorage.setItem("premium","yes");
+      }
+
+    });
+  }
+}).render('#paypal-button-container');
 
 /* LOGIN */
 function openLogin(){document.getElementById("loginModal").style.display="block";}
@@ -193,61 +216,12 @@ async function logout(){
 }
 
 /* AUTH */
-firebaseOnAuth(firebaseAuth, async(user)=>{
-  const statusEl = document.getElementById("userStatus");
-
-  if(user){
-    statusEl.innerText="Logged in: "+user.email;
-
-    const snap = await getDoc(doc(db,"payments",user.uid));
-    if(snap.exists() && snap.data().status==="approved"){
-      localStorage.setItem("premium","yes");
-    }else{
-      localStorage.removeItem("premium");
-    }
-
-  }else{
-    statusEl.innerText="Not logged in";
-    localStorage.removeItem("premium");
-  }
+firebaseOnAuth(firebaseAuth,(user)=>{
+  userStatus.innerText = user ? "Logged in: "+user.email : "Not logged in";
 });
-
-/* ✅ PAYPAL AUTO PAYMENT */
-paypal.Buttons({
-  createOrder: function(data, actions) {
-    return actions.order.create({
-      purchase_units: [{ amount: { value: '200' } }]
-    });
-  },
-  onApprove: function(data, actions) {
-    return actions.order.capture().then(function(details) {
-      alert("Payment Successful ✅");
-      localStorage.setItem("premium","yes");
-    });
-  }
-}).render('#paypal-button');
-
-/* PAYMENT */
-async function verifyPayment(){
-  if(!firebaseAuth.currentUser){
-    alert("Login first");
-    return;
-  }
-
-  const user = firebaseAuth.currentUser;
-
-  await setDoc(doc(db,"payments",user.uid),{
-    email:user.email,
-    status:"pending"
-  });
-
-  window.open("https://wa.me/919975076459","_blank");
-}
 
 /* PHOTO */
 photoUpload.onchange=e=>{
-  if(!e.target.files.length) return;
-
   const r=new FileReader();
   r.onload=()=>photoData=r.result;
   r.readAsDataURL(e.target.files[0]);
@@ -277,12 +251,10 @@ function downloadPDF(){
     alert("Premium required");
     return;
   }
-  if(!resumeBox){alert("Generate first");return;}
   html2pdf().from(resumeBox).save("resume.pdf");
 }
 
 function downloadImage(){
-  if(!resumeBox){alert("Generate first");return;}
   html2canvas(resumeBox).then(c=>{
     let a=document.createElement("a");
     a.download="resume.png";
