@@ -11,6 +11,9 @@
   <!-- ICON -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
 
+  <!-- 🔴 PAYPAL -->
+  <script src="https://www.paypal.com/sdk/js?client-id=YOUR_CLIENT_ID&currency=INR"></script>
+
   <!-- FIREBASE -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
@@ -107,15 +110,20 @@
     <p id="userStatus">Not logged in</p>
   </div>
 
+  <!-- PREMIUM -->
   <div class="card">
     <h2>💎 Unlock Premium ₹200</h2>
-    <p>Scan QR and send screenshot to WhatsApp for activation</p>
+    <p>Scan QR or Pay via PayPal</p>
 
+    <!-- QR -->
     <img width="200"
       style="background:white;padding:10px;border-radius:10px"
       src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=upi://pay?pa=yourupi@bank&pn=AOV%20AI&am=200&cu=INR">
 
     <button onclick="verifyPayment()">I Paid (Send Screenshot)</button>
+
+    <!-- 🔥 PAYPAL BUTTON -->
+    <div id="paypal-button" style="margin-top:15px;"></div>
   </div>
 
   <div class="card">
@@ -210,30 +218,20 @@ firebaseOnAuth(firebaseAuth, async(user)=>{
   }
 });
 
-/* 🔔 ADMIN ALERT SYSTEM */
-function playAlertSound(){
-  const audio = new Audio("https://actions.google.com/sounds/v1/alarms/beep_short.ogg");
-  audio.play();
-}
-
-function startAdminListener(){
-  const paymentsRef = collection(db,"payments");
-
-  onSnapshot(paymentsRef,(snapshot)=>{
-    snapshot.docChanges().forEach((change)=>{
-      if(change.type==="added"){
-        const data = change.doc.data();
-
-        if(data.status==="pending"){
-          playAlertSound();
-          alert("💰 New Payment Request\nUser: "+data.email);
-        }
-      }
+/* PAYPAL BUTTON */
+paypal.Buttons({
+  createOrder: function(data, actions) {
+    return actions.order.create({
+      purchase_units: [{ amount: { value: '200' } }]
     });
-  });
-}
-
-startAdminListener();
+  },
+  onApprove: function(data, actions) {
+    return actions.order.capture().then(function(details) {
+      alert("Payment Successful ✅");
+      localStorage.setItem("premium","yes");
+    });
+  }
+}).render('#paypal-button');
 
 /* PAYMENT */
 async function verifyPayment(){
@@ -249,7 +247,7 @@ async function verifyPayment(){
     status:"pending"
   });
 
-  window.open("https://wa.me/919975076459?text=I%20have%20paid%20for%20AOV%20AI%20Resume%20Premium.%20Please%20activate%20my%20account.","_blank");
+  window.open("https://wa.me/919975076459","_blank");
 }
 
 /* PHOTO */
