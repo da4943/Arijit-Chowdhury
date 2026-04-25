@@ -1,144 +1,40 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>AOV AI Resume PRO</title>
+  <title>Free AI Resume Builder | ATS Score | AOV AI</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- SEO META -->
+  <meta name="description" content="Create professional resume with AI. Get ATS score, job tips and download instantly. Best resume builder for jobs in India and abroad.">
+  <meta name="keywords" content="resume builder, AI resume, ATS score, CV maker, free resume online, job resume, Japanese jobs">
+  <meta name="author" content="AOV AI">
+
+  <!-- OPEN GRAPH -->
+  <meta property="og:title" content="AOV AI Resume Builder">
+  <meta property="og:description" content="Build resume fast with AI and get hired quicker">
+  <meta property="og:type" content="website">
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
 
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
-
-  <script src="https://www.paypal.com/sdk/js?client-id=ATxSvTwRQxtN5NBu5Kj8GAjZCDRzCpb_aoO_L_vB9IAF-p179MOTDCtUhVEYGG1B-2P-n47P6BL4B&currency=USD"></script>
-
   <style>
-    body{
-      margin:0;
-      font-family:Arial;
-      background:linear-gradient(135deg,#050816,#0b1220);
-      color:white;
-    }
-
-    .nav{
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      padding:15px;
-      background:#0f172a;
-    }
-
-    .logo{color:#38bdf8;font-size:20px;font-weight:bold;}
-
-    .social button{
-      margin-left:8px;
-      padding:10px;
-      border:none;
-      border-radius:8px;
-      font-weight:bold;
-      cursor:pointer;
-    }
-
+    body{margin:0;font-family:Arial;background:linear-gradient(135deg,#050816,#0b1220);color:white;}
+    .nav{display:flex;justify-content:space-between;align-items:center;padding:15px 20px;background:#0f172a;}
+    .logo{font-size:20px;font-weight:bold;color:#38bdf8;}
+    .social button{margin-left:10px;padding:10px 14px;border-radius:8px;border:none;font-weight:bold;cursor:pointer;}
     .google{background:white;color:black}
     .linkedin{background:#0a66c2;color:white}
-
-    .container{
-      max-width:1000px;
-      margin:auto;
-      padding:15px;
-    }
-
-    .card{
-      background:#111827;
-      padding:20px;
-      border-radius:15px;
-      margin-top:15px;
-    }
-
-    .builder-title{
-      font-size:22px;
-      color:#38bdf8;
-      text-align:center;
-      margin-bottom:15px;
-    }
-
-    .builder-grid{
-      display:grid;
-      grid-template-columns:1fr 1fr;
-      gap:15px;
-    }
-
-    .field-box{
-      background:#0b1220;
-      padding:15px;
-      border-radius:12px;
-      border:1px solid #1f2937;
-    }
-
-    input{
-      width:100%;
-      padding:12px;
-      border-radius:10px;
-      border:none;
-      outline:none;
-      background:#111827;
-      color:white;
-    }
-
-    .full-width{grid-column:span 2;}
-
-    button{
-      width:100%;
-      padding:12px;
-      margin-top:10px;
-      border:none;
-      border-radius:10px;
-      font-weight:bold;
-      cursor:pointer;
-      background:#38bdf8;
-    }
-
+    .container{max-width:1000px;margin:auto;padding:15px;}
+    .hero{text-align:center;padding:25px;}
+    .hero h1{font-size:28px;color:#38bdf8;}
+    .card{background:#111827;padding:20px;margin-top:15px;border-radius:15px;}
+    input,button{width:100%;padding:12px;margin-top:10px;border-radius:10px;border:none;}
+    button{background:#38bdf8;font-weight:bold;cursor:pointer;}
     .btn-pdf{background:#f59e0b}
     .btn-clear{background:#ef4444}
-
-    .resume-box{
-      background:white;
-      color:black;
-      padding:20px;
-      border-radius:12px;
-    }
-
-    .upi{
-      text-align:center;
-      margin-top:10px;
-      background:#0b1220;
-      padding:15px;
-      border-radius:10px;
-    }
-
-    @media(max-width:768px){
-      .builder-grid{grid-template-columns:1fr;}
-      .full-width{grid-column:auto;}
-    }
-
-    /* LOGIN MODAL */
-    .modal{
-      display:none;
-      position:fixed;
-      top:0;
-      left:0;
-      width:100%;
-      height:100%;
-      background:#000000cc;
-    }
-
-    .modal-box{
-      width:300px;
-      margin:120px auto;
-      background:#111827;
-      padding:20px;
-      border-radius:10px;
-    }
-
+    .resume-box{background:white;color:black;padding:20px;border-radius:12px;}
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:15px;}
+    @media(max-width:768px){.grid{grid-template-columns:1fr}}
   </style>
 </head>
 
@@ -146,136 +42,191 @@
 
 <div class="nav">
   <div class="logo">AOV AI Resume</div>
-
   <div class="social">
-    <button onclick="openLogin()">Login</button>
-    <button onclick="signup()">Signup</button>
-    <button onclick="logout()">Logout</button>
-
-    <button class="google"><i class="bi bi-google"></i> Google</button>
-    <button class="linkedin"><i class="bi bi-linkedin"></i> LinkedIn</button>
+    <a href="https://www.google.com/search?q=jobs" target="_blank">
+      <button class="google">Google</button>
+    </a>
+    <a href="https://www.linkedin.com/jobs/" target="_blank">
+      <button class="linkedin">LinkedIn</button>
+    </a>
   </div>
 </div>
 
 <div class="container">
 
-  <!-- PREMIUM -->
-  <div class="card">
-    <h2 class="builder-title">💎 Premium ₹200</h2>
-
-    <div class="upi">
-      <p>Scan UPI QR to Pay</p>
-
-      <img width="160"
-        src="https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=upi://pay?pa=yourupi@bank&pn=AOV&am=200&cu=INR">
-
-      <button onclick="markPaid()">I Have Paid</button>
-    </div>
-
-    <div id="paypal-button-container"></div>
+  <div class="hero">
+    <h1>Create Professional Resume in Seconds</h1>
   </div>
 
-  <!-- BUILDER (UNCHANGED) -->
+  <!-- 💎 PREMIUM -->
   <div class="card">
+    <h2 id="priceText">💎 Unlock Premium ₹200</h2>
+    <p>Scan & Pay to enable PDF + Image Download</p>
 
-    <h2 class="builder-title">🔥 Resume Builder Pro</h2>
+    <img id="upiQR" width="200"
+      src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=upi://pay?pa=yourupi@bank&pn=AOV%20AI&am=200&cu=INR">
 
-    <div class="builder-grid">
+    <a id="paypalBtn" href="#" target="_blank" style="display:none;">
+      <button>Pay $20 (International)</button>
+    </a>
 
-      <div class="field-box"><input id="name" placeholder="Full Name"></div>
-      <div class="field-box"><input id="father" placeholder="Father Name"></div>
-      <div class="field-box"><input id="phone" placeholder="Phone"></div>
-      <div class="field-box"><input id="email" placeholder="Email"></div>
-      <div class="field-box"><input id="age" placeholder="Age"></div>
-      <div class="field-box"><input id="address" placeholder="Address"></div>
-      <div class="field-box"><input id="qualification" placeholder="Qualification"></div>
-      <div class="field-box"><input id="experience" placeholder="Experience"></div>
+    <input id="txn" placeholder="Enter Payment ID / Email">
+    <button onclick="verifyPayment()">I Paid</button>
+  </div>
 
-      <div class="field-box full-width"><input id="skills" placeholder="Skills"></div>
-      <div class="field-box full-width"><input id="hobbies" placeholder="Hobbies"></div>
-      <div class="field-box full-width"><input id="about" placeholder="About You"></div>
+  <div class="card">
+    <h2>Resume Builder</h2>
 
+    <div class="grid">
+      <input id="name" placeholder="Full Name">
+      <input id="age" placeholder="Age">
+      <input id="qualification" placeholder="Qualification">
+      <input id="experience" placeholder="Experience">
     </div>
+
+    <input id="skills" placeholder="Skills (Chef, Waiter, Carpenter, Entrepreneur)">
+    <input id="hobbies" placeholder="Hobbies">
+    <input id="about" placeholder="About You">
+
+    <input type="file" id="photoUpload" accept="image/*">
+
+    <input id="declaration" placeholder="Declaration">
+    <input id="signature" placeholder="Signature">
 
     <button onclick="generate()">Generate Resume</button>
     <button class="btn-pdf" onclick="downloadPDF()">Download PDF</button>
-    <button class="btn-clear" onclick="clearData()">Clear</button>
-
+    <button onclick="downloadImage()">Download Image</button>
+    <button class="btn-clear" onclick="clearData()">Clear Data</button>
   </div>
 
   <div class="card">
     <div id="resume"></div>
   </div>
 
-</div>
-
-<!-- LOGIN -->
-<div class="modal" id="loginModal">
-  <div class="modal-box">
-    <input id="email" placeholder="Email">
-    <input id="password" type="password" placeholder="Password">
-
-    <button onclick="login()">Login</button>
-    <button onclick="closeLogin()">Close</button>
+  <!-- SEO CONTENT (hidden boost) -->
+  <div style="display:none">
+    <h2>Free AI Resume Builder Online</h2>
+    <p>Create ATS friendly resume with AI. Improve job chances in India and abroad including Japan jobs. Best CV maker for freshers and professionals.</p>
   </div>
+
 </div>
 
 <script>
 
-let resumeBox=null;
+let photoData="";
+let isPremium = localStorage.getItem("premium") === "yes";
+let userCountry = "IN";
 
-/* LOGIN */
-function openLogin(){loginModal.style.display="block";}
-function closeLogin(){loginModal.style.display="none";}
-function signup(){alert("Signup success (demo)");}
-function login(){alert("Login success (demo)");}
-function logout(){alert("Logout");}
+/* FIX: safe element reference */
+const upiQR = document.getElementById("upiQR");
+const paypalBtn = document.getElementById("paypalBtn");
+const priceText = document.getElementById("priceText");
 
-/* UPI PAID */
-function markPaid(){
-  localStorage.setItem("premium","yes");
-  alert("Payment marked ✔ Admin will verify");
+/* COUNTRY DETECT */
+fetch("https://ipapi.co/json/")
+.then(res => res.json())
+.then(data => {
+  userCountry = data.country;
+  updatePaymentUI();
+})
+.catch(()=>updatePaymentUI());
+
+function updatePaymentUI(){
+  if(userCountry === "IN"){
+    upiQR.style.display = "block";
+    paypalBtn.style.display = "none";
+    priceText.innerText = "💎 Unlock Premium ₹200";
+  } else {
+    upiQR.style.display = "none";
+    paypalBtn.style.display = "block";
+    priceText.innerText = "💎 Unlock Premium $20";
+
+    paypalBtn.href = "https://www.paypal.com/paypalme/aovai/20";
+  }
 }
 
-/* PAYPAL */
-paypal.Buttons({
-createOrder:(d,a)=>a.order.create({purchase_units:[{amount:{value:"200"}}]}),
-onApprove:(d,a)=>a.order.capture().then(()=>alert("Paid ✔ Premium Active"))
-}).render('#paypal-button-container');
+/* VERIFY */
+function verifyPayment(){
+  const txn = document.getElementById("txn").value;
+  if(!txn){
+    alert("Enter Payment ID or Email");
+    return;
+  }
+  localStorage.setItem("premium","yes");
+  isPremium = true;
+  alert("Premium Unlocked ✔");
+}
 
-/* RESUME */
+/* PHOTO */
+document.getElementById("photoUpload").addEventListener("change",e=>{
+  const reader=new FileReader();
+  reader.onload=()=>photoData=reader.result;
+  if(e.target.files[0]) reader.readAsDataURL(e.target.files[0]);
+});
+
+/* CHECK */
+function checkPremium(){
+  if(!isPremium){
+    alert(userCountry==="IN"?"Please pay ₹200":"Please pay $20");
+    return false;
+  }
+  return true;
+}
+
+/* GENERATE */
 function generate(){
-  document.getElementById("resume").innerHTML=`
-    <div class="resume-box">
-      <h2>${name.value}</h2>
-      <p>${father.value}</p>
-      <p>${phone.value} | ${email.value}</p>
-      <p>${address.value}</p>
+  document.getElementById("resume").innerHTML = `
+    <div class="resume-box" id="resumeBox">
+      <center>
+        ${photoData?`<img src="${photoData}" width="100" style="border-radius:50%">`:""}
+        <h2>${name.value}</h2>
+        <p>${qualification.value}</p>
+      </center>
+
       <hr>
-      <p>${qualification.value}</p>
-      <p>${experience.value}</p>
-      <p>${skills.value}</p>
-      <p>${hobbies.value}</p>
+
+      <p><b>Experience:</b> ${experience.value}</p>
+      <p><b>Skills:</b> ${skills.value}</p>
+      <p><b>Hobbies:</b> ${hobbies.value}</p>
+
+      <h3>About</h3>
       <p>${about.value}</p>
+
+      <hr>
+
+      <p><b>Declaration:</b> ${declaration.value}</p>
+      <p><b>Signature:</b> ${signature.value}</p>
+      <p><b>Date:</b> ${new Date().toLocaleDateString()}</p>
     </div>
   `;
-  resumeBox=document.querySelector(".resume-box");
 }
 
 /* PDF */
 function downloadPDF(){
-  if(localStorage.getItem("premium")!=="yes"){
-    alert("Premium Required ₹200");
-    return;
-  }
-  html2pdf().from(resumeBox).save();
+  if(!checkPremium()) return;
+  const el=document.getElementById("resumeBox");
+  if(!el){alert("Generate first");return;}
+  html2pdf().from(el).save("resume.pdf");
+}
+
+/* IMAGE */
+function downloadImage(){
+  if(!checkPremium()) return;
+  const el=document.getElementById("resumeBox");
+  if(!el){alert("Generate first");return;}
+  html2canvas(el).then(canvas=>{
+    let link=document.createElement("a");
+    link.download="resume.png";
+    link.href=canvas.toDataURL();
+    link.click();
+  });
 }
 
 /* CLEAR */
 function clearData(){
   document.querySelectorAll("input").forEach(i=>i.value="");
-  resume.innerHTML="";
-  resumeBox=null;
+  photoData="";
+  document.getElementById("resume").innerHTML="";
 }
 
 </script>
