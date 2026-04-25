@@ -7,8 +7,6 @@
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
-
-  <!-- DRAG LIBRARY -->
   <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
 
   <style>
@@ -58,6 +56,7 @@
 
 <div class="hero"><h1>Create Professional Resume in Seconds</h1></div>
 
+<!-- PREMIUM -->
 <div class="card">
   <h2 id="priceText">💎 Unlock Premium ₹200</h2>
   <img id="upiQR" width="200"
@@ -69,6 +68,7 @@
   <button onclick="verifyPayment()">I Paid</button>
 </div>
 
+<!-- BUILDER -->
 <div class="card">
 <h2>Resume Builder</h2>
 
@@ -83,12 +83,12 @@
 <input id="hobbies" placeholder="Hobbies">
 
 <button onclick="generate()">Generate Resume</button>
-<button onclick="downloadPDF()">Download PDF</button>
+<button class="btn-pdf" onclick="downloadPDF()">Download PDF</button>
 <button onclick="downloadImage()">Download Image</button>
-
+<button class="btn-clear" onclick="clearData()">Clear Data</button> <!-- RESTORED -->
 </div>
 
-<!-- ATS JOB INPUT -->
+<!-- ATS -->
 <div class="card">
   <h2>🎯 Job Description (ATS Check)</h2>
   <textarea id="jobDesc" placeholder="Paste job description..." style="width:100%;height:100px;border-radius:10px;padding:10px;"></textarea>
@@ -100,4 +100,108 @@
 
 </div>
 
-<footer
+<footer>
+<a onclick="showPage('about')">About</a>
+<a onclick="showPage('privacy')">Privacy</a>
+<a onclick="showPage('terms')">Terms</a>
+<a onclick="showPage('contact')">Contact</a>
+</footer>
+
+<script>
+
+let isPremium=false;
+
+/* DRAG */
+function enableDrag(){
+  new Sortable(document.getElementById("resumeBox"), {animation:150});
+}
+
+/* ATS */
+function keywordMatch(resume, job){
+  let words=job.toLowerCase().split(" ");
+  let score=0;
+  words.forEach(w=>{
+    if(resume.toLowerCase().includes(w)) score++;
+  });
+  return Math.min(Math.floor(score/words.length*100),100);
+}
+
+/* GENERATE */
+function generate(){
+
+let resumeText = `${name.value} ${qualification.value} ${experience.value} ${skills.value} ${about.value}`;
+let job = document.getElementById("jobDesc").value;
+let atsScore = job ? keywordMatch(resumeText, job) : 0;
+
+document.getElementById("resume").innerHTML = `
+<div class="resume-box" id="resumeBox">
+
+<div class="drag-item"><h2>${name.value}</h2></div>
+<div class="drag-item">${qualification.value}</div>
+<div class="drag-item">${experience.value}</div>
+<div class="drag-item">${skills.value}</div>
+<div class="drag-item">${about.value}</div>
+
+<h3>ATS Match Score: ${atsScore}%</h3>
+
+</div>
+`;
+
+enableDrag();
+}
+
+/* PDF */
+function downloadPDF(){
+  if(!isPremium){alert("Pay first");return;}
+  html2pdf().from(document.getElementById("resumeBox")).save();
+}
+
+/* IMAGE */
+function downloadImage(){
+  if(!isPremium){alert("Pay first");return;}
+  html2canvas(document.getElementById("resumeBox")).then(c=>{
+    let a=document.createElement("a");
+    a.href=c.toDataURL();
+    a.download="resume.png";
+    a.click();
+  });
+}
+
+/* CLEAR (RESTORED) */
+function clearData(){
+  document.querySelectorAll("input").forEach(i=>i.value="");
+  document.getElementById("jobDesc").value="";
+  document.getElementById("resume").innerHTML="";
+}
+
+/* PAYMENT */
+function verifyPayment(){
+  isPremium=true;
+  alert("Unlocked");
+}
+
+/* MENU */
+function toggleMenu(){
+  let m=document.getElementById("sideMenu");
+  m.style.left = m.style.left==="0px"?"-250px":"0px";
+}
+
+function showPage(type){
+  alert(type.toUpperCase()+" PAGE");
+}
+
+/* COUNTRY */
+fetch("https://ipapi.co/json/")
+.then(r=>r.json())
+.then(d=>{
+  if(d.country!=="IN"){
+    document.getElementById("upiQR").style.display="none";
+    document.getElementById("paypalBtn").style.display="block";
+    document.getElementById("paypalBtn").href="https://www.paypal.com/paypalme/aovai/20";
+  }
+});
+
+</script>
+
+</body>
+</html>
