@@ -121,6 +121,9 @@
 
 <script>
 
+/* SAFE LOAD AFTER DOM */
+window.onload = function(){
+
 let photoData="";
 let isPremium = localStorage.getItem("premium") === "yes";
 let userCountry="IN";
@@ -129,12 +132,12 @@ const upiQR=document.getElementById("upiQR");
 const paypalBtn=document.getElementById("paypalBtn");
 
 /* MENU */
-function toggleMenu(){
+window.toggleMenu=function(){
   let m=document.getElementById("sideMenu");
   m.style.left = m.style.left==="0px"?"-250px":"0px";
 }
 
-function showPage(type){
+window.showPage=function(type){
   toggleMenu();
   let box=document.getElementById("infoPage");
   box.style.display="block";
@@ -143,13 +146,13 @@ function showPage(type){
     box.innerHTML=`<h2>About</h2><p>AOV AI helps users create resumes and improve job chances globally.</p>`;
   }
   if(type==="privacy"){
-    box.innerHTML=`<h2>Privacy</h2><p>We do not store your data. Everything stays on your device.</p>`;
+    box.innerHTML=`<h2>Privacy</h2><p>We do not store your data.</p>`;
   }
   if(type==="terms"){
-    box.innerHTML=`<h2>Terms</h2><p>Use for legal purposes only. No job guarantee provided.</p>`;
+    box.innerHTML=`<h2>Terms</h2><p>Use for legal purposes only.</p>`;
   }
   if(type==="contact"){
-    box.innerHTML=`<h2>Contact</h2><p>Email: aovai@proton.me<br>We respond within 24 hours.</p>`;
+    box.innerHTML=`<h2>Contact</h2><p>Email: aovai@proton.me</p>`;
   }
 }
 
@@ -166,7 +169,7 @@ fetch("https://ipapi.co/json/")
 });
 
 /* VERIFY */
-function verifyPayment(){
+window.verifyPayment=function(){
   let txn=document.getElementById("txn").value;
   if(!txn){alert("Enter Payment ID");return;}
   localStorage.setItem("premium","yes");
@@ -181,32 +184,61 @@ document.getElementById("photoUpload").addEventListener("change",e=>{
   if(e.target.files[0]) r.readAsDataURL(e.target.files[0]);
 });
 
-/* CHECK */
-function checkPremium(){
-  if(!isPremium){alert("Pay first");return false;}
-  return true;
+/* ATS */
+function calculateATS(data){
+  let score=50;
+  if(data.name)score+=10;
+  if(data.skills.length>10)score+=15;
+  if(data.experience.length>10)score+=10;
+  if(data.about.length>20)score+=10;
+  if(data.qualification.length>5)score+=5;
+  return Math.min(score,100);
+}
+
+function getSuggestions(data){
+  let tips=[];
+  if(data.skills.length<10)tips.push("Add more skills");
+  if(data.experience.length<10)tips.push("Add detailed experience");
+  if(data.about.length<20)tips.push("Improve summary");
+  return tips;
 }
 
 /* GENERATE */
-function generate(){
+window.generate=function(){
+  let data={
+    name:name.value,
+    qualification:qualification.value,
+    experience:experience.value,
+    skills:skills.value,
+    hobbies:hobbies.value,
+    about:about.value,
+    declaration:declaration.value,
+    signature:signature.value
+  };
+
+  let score=calculateATS(data);
+  let tips=getSuggestions(data);
+
   document.getElementById("resume").innerHTML=`
   <div class="resume-box" id="resumeBox">
-  <center>${photoData?`<img src="${photoData}" width="100">`:""}<h2>${name.value}</h2></center>
-  <p>${qualification.value}</p>
-  <p>${experience.value}</p>
-  <p>${skills.value}</p>
+  <center>${photoData?`<img src="${photoData}" width="100">`:""}<h2>${data.name}</h2></center>
+  <p>${data.qualification}</p>
+  <p>${data.experience}</p>
+  <p>${data.skills}</p>
+  <h3>ATS Score: ${score}/100</h3>
+  <ul>${tips.map(t=>`<li>${t}</li>`).join("")}</ul>
   </div>`;
 }
 
 /* PDF */
-function downloadPDF(){
-  if(!checkPremium())return;
+window.downloadPDF=function(){
+  if(!isPremium){alert("Pay first");return;}
   html2pdf().from(document.getElementById("resumeBox")).save();
 }
 
 /* IMAGE */
-function downloadImage(){
-  if(!checkPremium())return;
+window.downloadImage=function(){
+  if(!isPremium){alert("Pay first");return;}
   html2canvas(document.getElementById("resumeBox")).then(c=>{
     let a=document.createElement("a");
     a.href=c.toDataURL();a.download="resume.png";a.click();
@@ -214,11 +246,13 @@ function downloadImage(){
 }
 
 /* CLEAR */
-function clearData(){
+window.clearData=function(){
   document.querySelectorAll("input").forEach(i=>i.value="");
   photoData="";
   document.getElementById("resume").innerHTML="";
 }
+
+};
 
 </script>
 
