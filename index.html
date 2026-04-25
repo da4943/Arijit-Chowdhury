@@ -4,9 +4,7 @@
   <title>Free AI Resume Builder | ATS Score | AOV AI</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <!-- SEO -->
   <meta name="description" content="Create professional resume with AI. Get ATS score and download instantly.">
-  <meta name="keywords" content="resume builder, AI resume, ATS score, CV maker">
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
@@ -28,6 +26,8 @@
     .btn-clear{background:#ef4444}
     .resume-box{background:white;color:black;padding:20px;border-radius:12px;}
     .grid{display:grid;grid-template-columns:1fr 1fr;gap:15px;}
+    footer{background:#0f172a;text-align:center;padding:15px;margin-top:30px;}
+    footer a{color:#38bdf8;margin:0 10px;cursor:pointer;text-decoration:none;}
     @media(max-width:768px){.grid{grid-template-columns:1fr}}
   </style>
 </head>
@@ -37,25 +37,20 @@
 <!-- NAV -->
 <div class="nav">
   <div onclick="toggleMenu()" style="cursor:pointer;font-size:22px;">☰</div>
-
   <div class="logo">AOV AI Resume</div>
-
   <div class="social">
-    <a href="https://www.google.com/search?q=jobs" target="_blank">
-      <button class="google">Google</button>
-    </a>
-    <a href="https://www.linkedin.com/jobs/" target="_blank">
-      <button class="linkedin">LinkedIn</button>
-    </a>
+    <a href="https://www.google.com/search?q=jobs" target="_blank"><button class="google">Google</button></a>
+    <a href="https://www.linkedin.com/jobs/" target="_blank"><button class="linkedin">LinkedIn</button></a>
   </div>
 </div>
 
-<!-- SIDE MENU -->
+<!-- MENU -->
 <div id="sideMenu" style="position:fixed;top:0;left:-250px;width:250px;height:100%;background:#0f172a;padding:20px;transition:0.3s;z-index:999;">
   <h3 style="color:#38bdf8;">Menu</h3>
   <button onclick="showPage('about')">About</button>
   <button onclick="showPage('privacy')">Privacy</button>
   <button onclick="showPage('terms')">Terms</button>
+  <button onclick="showPage('contact')">Contact</button>
   <button onclick="toggleMenu()">Close</button>
 </div>
 
@@ -81,7 +76,7 @@
     <button onclick="verifyPayment()">I Paid</button>
   </div>
 
-  <!-- RESUME -->
+  <!-- BUILDER -->
   <div class="card">
     <h2>Resume Builder</h2>
 
@@ -96,7 +91,7 @@
     <input id="hobbies" placeholder="Hobbies">
     <input id="about" placeholder="About You">
 
-    <input type="file" id="photoUpload" accept="image/*">
+    <input type="file" id="photoUpload">
 
     <input id="declaration" placeholder="Declaration">
     <input id="signature" placeholder="Signature">
@@ -111,86 +106,84 @@
     <div id="resume"></div>
   </div>
 
-  <!-- INFO PAGE -->
   <div class="card" id="infoPage" style="display:none;"></div>
 
 </div>
+
+<!-- FOOTER -->
+<footer>
+  <a onclick="showPage('about')">About</a>
+  <a onclick="showPage('privacy')">Privacy</a>
+  <a onclick="showPage('terms')">Terms</a>
+  <a onclick="showPage('contact')">Contact</a>
+  <p style="margin-top:10px;">© 2026 AOV AI</p>
+</footer>
 
 <script>
 
 let photoData="";
 let isPremium = localStorage.getItem("premium") === "yes";
-let userCountry = "IN";
+let userCountry="IN";
 
-/* ELEMENT FIX */
-const upiQR = document.getElementById("upiQR");
-const paypalBtn = document.getElementById("paypalBtn");
-const priceText = document.getElementById("priceText");
+const upiQR=document.getElementById("upiQR");
+const paypalBtn=document.getElementById("paypalBtn");
 
 /* MENU */
 function toggleMenu(){
-  let menu = document.getElementById("sideMenu");
-  menu.style.left = menu.style.left === "0px" ? "-250px" : "0px";
+  let m=document.getElementById("sideMenu");
+  m.style.left = m.style.left==="0px"?"-250px":"0px";
 }
 
 function showPage(type){
   toggleMenu();
-  let box = document.getElementById("infoPage");
-  box.style.display = "block";
+  let box=document.getElementById("infoPage");
+  box.style.display="block";
 
   if(type==="about"){
-    box.innerHTML = `<h2>About</h2><p>AOV AI helps users create resumes and improve job chances globally using simple tools.</p>`;
+    box.innerHTML=`<h2>About</h2><p>AOV AI helps users create resumes and improve job chances globally.</p>`;
   }
   if(type==="privacy"){
-    box.innerHTML = `<h2>Privacy</h2><p>We do not store or share your personal data. All data remains on your device.</p>`;
+    box.innerHTML=`<h2>Privacy</h2><p>We do not store your data. Everything stays on your device.</p>`;
   }
   if(type==="terms"){
-    box.innerHTML = `<h2>Terms</h2><p>Use this website for lawful purposes only. We do not guarantee job placement.</p>`;
+    box.innerHTML=`<h2>Terms</h2><p>Use for legal purposes only. No job guarantee provided.</p>`;
+  }
+  if(type==="contact"){
+    box.innerHTML=`<h2>Contact</h2><p>Email: aovai@proton.me<br>We respond within 24 hours.</p>`;
   }
 }
 
 /* COUNTRY */
 fetch("https://ipapi.co/json/")
-.then(res=>res.json())
-.then(data=>{
-  userCountry=data.country;
-  updatePaymentUI();
-})
-.catch(()=>updatePaymentUI());
-
-function updatePaymentUI(){
-  if(userCountry==="IN"){
-    upiQR.style.display="block";
-    paypalBtn.style.display="none";
-  }else{
+.then(r=>r.json())
+.then(d=>{
+  userCountry=d.country;
+  if(userCountry!=="IN"){
     upiQR.style.display="none";
     paypalBtn.style.display="block";
     paypalBtn.href="https://www.paypal.com/paypalme/aovai/20";
   }
-}
+});
 
 /* VERIFY */
 function verifyPayment(){
-  const txn=document.getElementById("txn").value;
+  let txn=document.getElementById("txn").value;
   if(!txn){alert("Enter Payment ID");return;}
   localStorage.setItem("premium","yes");
   isPremium=true;
-  alert("Premium Unlocked ✔");
+  alert("Unlocked ✔");
 }
 
 /* PHOTO */
 document.getElementById("photoUpload").addEventListener("change",e=>{
-  const reader=new FileReader();
-  reader.onload=()=>photoData=reader.result;
-  if(e.target.files[0]) reader.readAsDataURL(e.target.files[0]);
+  let r=new FileReader();
+  r.onload=()=>photoData=r.result;
+  if(e.target.files[0]) r.readAsDataURL(e.target.files[0]);
 });
 
 /* CHECK */
 function checkPremium(){
-  if(!isPremium){
-    alert(userCountry==="IN"?"Pay ₹200":"Pay $20");
-    return false;
-  }
+  if(!isPremium){alert("Pay first");return false;}
   return true;
 }
 
@@ -198,41 +191,25 @@ function checkPremium(){
 function generate(){
   document.getElementById("resume").innerHTML=`
   <div class="resume-box" id="resumeBox">
-    <center>
-      ${photoData?`<img src="${photoData}" width="100" style="border-radius:50%">`:""}
-      <h2>${name.value}</h2>
-      <p>${qualification.value}</p>
-    </center>
-    <hr>
-    <p><b>Experience:</b> ${experience.value}</p>
-    <p><b>Skills:</b> ${skills.value}</p>
-    <p><b>Hobbies:</b> ${hobbies.value}</p>
-    <h3>About</h3>
-    <p>${about.value}</p>
-    <hr>
-    <p><b>Declaration:</b> ${declaration.value}</p>
-    <p><b>Signature:</b> ${signature.value}</p>
+  <center>${photoData?`<img src="${photoData}" width="100">`:""}<h2>${name.value}</h2></center>
+  <p>${qualification.value}</p>
+  <p>${experience.value}</p>
+  <p>${skills.value}</p>
   </div>`;
 }
 
 /* PDF */
 function downloadPDF(){
   if(!checkPremium())return;
-  const el=document.getElementById("resumeBox");
-  if(!el){alert("Generate first");return;}
-  html2pdf().from(el).save("resume.pdf");
+  html2pdf().from(document.getElementById("resumeBox")).save();
 }
 
 /* IMAGE */
 function downloadImage(){
   if(!checkPremium())return;
-  const el=document.getElementById("resumeBox");
-  if(!el){alert("Generate first");return;}
-  html2canvas(el).then(canvas=>{
-    let link=document.createElement("a");
-    link.download="resume.png";
-    link.href=canvas.toDataURL();
-    link.click();
+  html2canvas(document.getElementById("resumeBox")).then(c=>{
+    let a=document.createElement("a");
+    a.href=c.toDataURL();a.download="resume.png";a.click();
   });
 }
 
